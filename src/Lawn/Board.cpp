@@ -5231,6 +5231,7 @@ void Board::ZombiesWon(Zombie* theZombie)
 
 	GameOverDialog* aGameOverDialog = new GameOverDialog(aGameOverMsg, true);
 	mApp->AddDialog(Dialogs::DIALOG_GAME_OVER, aGameOverDialog);
+	mApp->mWidgetManager->SetFocus(aGameOverDialog);
 
 	mApp->mMusic->StopAllMusic();
 	StopAllZombieSounds();
@@ -7858,7 +7859,6 @@ static void TodCrash()
 	TOD_ASSERT(false, "Crash%s", "!!!!");
 }
 
-//0x41B950（原版中废弃）
 void Board::KeyChar(char theChar)
 {
 	if (!mApp->mDebugKeysEnabled)
