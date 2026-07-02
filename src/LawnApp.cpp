@@ -3093,7 +3093,7 @@ int LawnApp::GetNumPreloadingTasks()
 
 void LawnApp::PreloadForUser()
 {
-	int aNumTasks = mNumLoadingThreadTasks + GetNumPreloadingTasks();
+	int aNumTasks = mCompletedLoadingThreadTasks + GetNumPreloadingTasks();
 	if (mTitleScreen && mTitleScreen->mQuickLoadKey != KeyCode::KEYCODE_UNKNOWN)
 	{
 		TodTrace("preload canceled\n");
@@ -3147,7 +3147,7 @@ void LawnApp::PreloadForUser()
 
 		for (ZombieType i = ZombieType::ZOMBIE_NORMAL; i < ZombieType::NUM_ZOMBIE_TYPES; i = static_cast<ZombieType>(static_cast<int>(i) + 1))
 		{
-			if (HasFinishedAdventure() || mPlayerInfo->mLevel >= GetZombieDefinition(i).mStartingLevel)
+			if (!HasFinishedAdventure() && mPlayerInfo->mLevel < GetZombieDefinition(i).mStartingLevel)
 			{
 				continue;
 			}
