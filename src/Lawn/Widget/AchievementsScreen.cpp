@@ -249,9 +249,11 @@ void ReportAchievement::GiveAchievement(LawnApp* theApp, int theAchievement, boo
 	std::string aFormat = theApp->GetString("%s Achievement!", "%s Achievement!");
 	std::string aMessage = Sexy::StrFormat(aFormat.c_str(), aAchievementName.c_str());
 
-	if (theApp->mBoard)
+	if (theApp->mBoard) {
 		theApp->mBoard->DisplayAdvice(aMessage, MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NONE);
-	theApp->PlaySample(SOUND_ACHIEVEMENT);
+		theApp->mPlayerInfo->mShownAchievements[theAchievement] = true;
+		theApp->PlaySample(SOUND_ACHIEVEMENT);
+	}
 }
 
 // GOTY @Patoke: 0x44D5B0
