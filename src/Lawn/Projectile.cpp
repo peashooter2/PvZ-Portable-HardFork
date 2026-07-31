@@ -83,7 +83,7 @@ void Projectile::ProjectileInitialize(int theX, int theY, int theRenderOrder, in
 	mCobTargetRow = 0;
 	mTargetZombieID = ZombieID::ZOMBIEID_NULL;
 	mOnHighGround = mBoard->mGridSquareType[aGridX][theRow] == GridSquareType::GRIDSQUARE_HIGH_GROUND;
-	if (mBoard->StageHasRoof())
+	if (mBoard->StageHasRoof() && theX < 480)
 	{
 		mShadowY -= 12.0f;
 	}
@@ -232,7 +232,7 @@ Zombie* Projectile::FindCollisionTarget()
 	{
 		if ((aZombie->mZombieType == ZombieType::ZOMBIE_BOSS || aZombie->mRow == mRow) && aZombie->EffectedByDamage(static_cast<unsigned int>(mDamageRangeFlags)))
 		{
-			if (aZombie->mZombiePhase == ZombiePhase::PHASE_SNORKEL_WALKING_IN_POOL && mPosZ >= 45.0f)
+			if (aZombie->mZombiePhase == ZombiePhase::PHASE_SNORKEL_WALKING_IN_POOL && mPosZ <= 45.0f)
 			{
 				continue;
 			}
@@ -243,7 +243,7 @@ Zombie* Projectile::FindCollisionTarget()
 			}
 
 			Rect aZombieRect = aZombie->GetZombieRect();
-			if (GetRectOverlap(aProjectileRect, aZombieRect) > 0)
+			if (GetRectOverlap(aProjectileRect, aZombieRect) >= 0)
 			{
 				if (aBestZombie == nullptr || aZombie->mX < aMinX)
 				{
@@ -286,7 +286,7 @@ void Projectile::CheckForCollision()
 		return;
 	}
 
-	if (mProjectileType == ProjectileType::PROJECTILE_STAR && (mPosY > 600.0f || mPosY < 0.0f))
+	if (mProjectileType == ProjectileType::PROJECTILE_STAR && (mPosY > 600.0f || mPosY < 40.0f))
 	{
 		Die();
 		return;
