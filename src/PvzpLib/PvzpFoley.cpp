@@ -19,9 +19,9 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "TodFoley.h"
-#include "TodDebug.h"
-#include "TodCommon.h"
+#include "PvzpFoley.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
 #include "sound/SoundManager.h"
 
 int gFoleyParamArraySize;
@@ -148,7 +148,7 @@ FoleyTypeData::FoleyTypeData()
 	mLastVariationPlayed = -1;
 }
 
-int TodDSoundInstance::GetSoundPosition()
+int PvzpDSoundInstance::GetSoundPosition()
 {
 	/*
 	unsigned long dwCurrentPlayerCursor;
@@ -158,25 +158,25 @@ int TodDSoundInstance::GetSoundPosition()
 	return 0;
 }
 
-void TodDSoundInstance::SetSoundPosition(int thePosition)
+void PvzpDSoundInstance::SetSoundPosition(int thePosition)
 {
 	//mSoundBuffer->SetCurrentPosition(thePosition);
 }
 
-void TodFoleyInitialize(const FoleyParams* theFoleyParamArray, int theFoleyParamArraySize)
+void PvzpFoleyInitialize(const FoleyParams* theFoleyParamArray, int theFoleyParamArraySize)
 {
-	TOD_ASSERT(gFoleyParamArray == nullptr && gFoleyParamArraySize == 0);
+	PVZP_ASSERT(gFoleyParamArray == nullptr && gFoleyParamArraySize == 0);
 	gFoleyParamArray = theFoleyParamArray;
 	gFoleyParamArraySize = theFoleyParamArraySize;
 }
 
-void TodFoleyDispose()
+void PvzpFoleyDispose()
 {
 	gFoleyParamArray = nullptr;
 	gFoleyParamArraySize = 0;
 }
 
-void SoundSystemReleaseFinishedInstances(TodFoley* theSoundSystem)
+void SoundSystemReleaseFinishedInstances(PvzpFoley* theSoundSystem)
 {
 	for (int aFoleyType = 0; aFoleyType < gFoleyParamArraySize; aFoleyType++)
 		for (int i = 0; i < MAX_FOLEY_INSTANCES; i++)
@@ -184,11 +184,11 @@ void SoundSystemReleaseFinishedInstances(TodFoley* theSoundSystem)
 			FoleyInstance* aFoleyInstance = &theSoundSystem->mFoleyTypeData[aFoleyType].mFoleyInstances[i];
 			if (aFoleyInstance->mRefCount == 0)
 			{
-				TOD_ASSERT(aFoleyInstance->mInstance == nullptr);
+				PVZP_ASSERT(aFoleyInstance->mInstance == nullptr);
 			}
 			else if (!aFoleyInstance->mPaused)
 			{
-				TOD_ASSERT(aFoleyInstance->mInstance);
+				PVZP_ASSERT(aFoleyInstance->mInstance);
 				if (!aFoleyInstance->mInstance->IsPlaying())
 				{
 					aFoleyInstance->mInstance->Release();
@@ -199,7 +199,7 @@ void SoundSystemReleaseFinishedInstances(TodFoley* theSoundSystem)
 		}
 }
 
-bool SoundSystemHasFoleyPlayedTooRecently(TodFoley* theSoundSystem, FoleyType theFoleyType)
+bool SoundSystemHasFoleyPlayedTooRecently(PvzpFoley* theSoundSystem, FoleyType theFoleyType)
 {
 	FoleyTypeData* aFoleyData = &theSoundSystem->mFoleyTypeData[theFoleyType];
 	for (int i = 0; i < MAX_FOLEY_INSTANCES; i++)
@@ -213,14 +213,14 @@ bool SoundSystemHasFoleyPlayedTooRecently(TodFoley* theSoundSystem, FoleyType th
 
 const FoleyParams* LookupFoley(FoleyType theFoleyType)
 {
-	TOD_ASSERT(theFoleyType >= 0 && theFoleyType < gFoleyParamArraySize);
-	TOD_ASSERT(gFoleyParamArraySize < MAX_FOLEY_TYPES);
+	PVZP_ASSERT(theFoleyType >= 0 && theFoleyType < gFoleyParamArraySize);
+	PVZP_ASSERT(gFoleyParamArraySize < MAX_FOLEY_TYPES);
 	const FoleyParams* aFoleyParams = &gFoleyParamArray[theFoleyType];
-	TOD_ASSERT(aFoleyParams->mFoleyType == theFoleyType);
+	PVZP_ASSERT(aFoleyParams->mFoleyType == theFoleyType);
 	return aFoleyParams;
 }
 
-FoleyInstance* SoundSystemFindInstance(TodFoley* theSoundSystem, FoleyType theFoleyType)
+FoleyInstance* SoundSystemFindInstance(PvzpFoley* theSoundSystem, FoleyType theFoleyType)
 {
 	FoleyTypeData* aFoleyData = &theSoundSystem->mFoleyTypeData[theFoleyType];
 	for (int i = 0; i < MAX_FOLEY_INSTANCES; i++)
@@ -228,14 +228,14 @@ FoleyInstance* SoundSystemFindInstance(TodFoley* theSoundSystem, FoleyType theFo
 		FoleyInstance* aFoleyInstance = &aFoleyData->mFoleyInstances[i];
 		if (aFoleyInstance->mRefCount > 0)
 		{
-			TOD_ASSERT(aFoleyInstance->mInstance);
+			PVZP_ASSERT(aFoleyInstance->mInstance);
 			return aFoleyInstance;
 		}
 	}
 	return nullptr;
 }
 
-FoleyInstance* SoundSystemGetFreeInstanceIndex(TodFoley* theSoundSystem, FoleyType theFoleyType)
+FoleyInstance* SoundSystemGetFreeInstanceIndex(PvzpFoley* theSoundSystem, FoleyType theFoleyType)
 {
 	FoleyTypeData* aFoleyData = &theSoundSystem->mFoleyTypeData[theFoleyType];
 	for (int i = 0; i < MAX_FOLEY_INSTANCES; i++)
@@ -243,14 +243,14 @@ FoleyInstance* SoundSystemGetFreeInstanceIndex(TodFoley* theSoundSystem, FoleyTy
 		FoleyInstance* aFoleyInstance = &aFoleyData->mFoleyInstances[i];
 		if (aFoleyInstance->mRefCount == 0)
 		{
-			TOD_ASSERT(aFoleyInstance->mInstance == nullptr);
+			PVZP_ASSERT(aFoleyInstance->mInstance == nullptr);
 			return aFoleyInstance;
 		}
 	}
 	return nullptr;
 }
 
-void TodFoley::PlayFoleyPitch(FoleyType theFoleyType, float thePitch)
+void PvzpFoley::PlayFoleyPitch(FoleyType theFoleyType, float thePitch)
 {
 	const FoleyParams* aFoleyParams = LookupFoley(theFoleyType);
 	SoundSystemReleaseFinishedInstances(this);  // 释放已播放完成的音效实例
@@ -284,8 +284,8 @@ void TodFoley::PlayFoleyPitch(FoleyType theFoleyType, float thePitch)
 			aVariations++;
 		}
 	}
-	TOD_ASSERT(aVariations > 0);
-	int aVariation = TodPickFromArray(aVariationsArray, aVariations);
+	PVZP_ASSERT(aVariations > 0);
+	int aVariation = PvzpPickFromArray(aVariationsArray, aVariations);
 	aFoleyData->mLastVariationPlayed = aVariation;
 	SoundInstance* aSoundInstance = gSexyAppBase->mSoundManager->GetSoundInstance(*aFoleyParams->mSfxID[aVariation]);
 	if (aSoundInstance == nullptr)
@@ -304,7 +304,7 @@ void TodFoley::PlayFoleyPitch(FoleyType theFoleyType, float thePitch)
 }
 
 // GOTY @Patoke: 0x51F6F0
-void TodFoley::PlayFoley(FoleyType theFoleyType)
+void PvzpFoley::PlayFoley(FoleyType theFoleyType)
 {
 	const FoleyParams* aFoleyParams = LookupFoley(theFoleyType);
 	float aPitch = 0.0f;
@@ -313,15 +313,15 @@ void TodFoley::PlayFoley(FoleyType theFoleyType)
 	PlayFoleyPitch(theFoleyType, aPitch);
 }
 
-void TodFoley::StopFoley(FoleyType theFoleyType)
+void PvzpFoley::StopFoley(FoleyType theFoleyType)
 {
 	SoundSystemReleaseFinishedInstances(this);
 	FoleyInstance* aFoleyInstance = SoundSystemFindInstance(this, theFoleyType);
 	if (aFoleyInstance == nullptr)
 		return;
 
-	TOD_ASSERT(aFoleyInstance->mRefCount > 0);
-	TOD_ASSERT(aFoleyInstance->mInstance);
+	PVZP_ASSERT(aFoleyInstance->mRefCount > 0);
+	PVZP_ASSERT(aFoleyInstance->mInstance);
 	aFoleyInstance->mRefCount--;  // 减少 1 次引用计数
 	if (aFoleyInstance->mRefCount == 0)  // 如果减少之后无引用，则直接释放
 	{
@@ -330,7 +330,7 @@ void TodFoley::StopFoley(FoleyType theFoleyType)
 	}
 }
 
-void TodFoley::GamePause(bool theEnteringPause)
+void PvzpFoley::GamePause(bool theEnteringPause)
 {
 	SoundSystemReleaseFinishedInstances(this);
 	for (int aFoleyType = 0; aFoleyType < gFoleyParamArraySize; aFoleyType++)
@@ -344,7 +344,7 @@ void TodFoley::GamePause(bool theEnteringPause)
 				FoleyInstance* aFoleyInstance = &aFoleyData->mFoleyInstances[i];
 				if (aFoleyInstance->mRefCount != 0)  // 如果音效实例存在引用
 				{
-					TodDSoundInstance* aSoundInstance = (TodDSoundInstance*)aFoleyInstance->mInstance;
+					PvzpDSoundInstance* aSoundInstance = (PvzpDSoundInstance*)aFoleyInstance->mInstance;
 					if (theEnteringPause)
 					{
 						aFoleyInstance->mPaused = true;
@@ -377,7 +377,7 @@ void TodFoley::GamePause(bool theEnteringPause)
 	}
 }
 
-void TodFoley::CancelPausedFoley()
+void PvzpFoley::CancelPausedFoley()
 {
 	SoundSystemReleaseFinishedInstances(this);
 	for (int aFoleyType = 0; aFoleyType < gFoleyParamArraySize; aFoleyType++)
@@ -396,7 +396,7 @@ void TodFoley::CancelPausedFoley()
 	}
 }
 
-void TodFoley::ApplyMusicVolume(FoleyInstance* theFoleyInstance)
+void PvzpFoley::ApplyMusicVolume(FoleyInstance* theFoleyInstance)
 {
 	if (gSexyAppBase->mSfxVolume < 1e-6)
 		theFoleyInstance->mInstance->SetVolume(0.0);
@@ -404,7 +404,7 @@ void TodFoley::ApplyMusicVolume(FoleyInstance* theFoleyInstance)
 		theFoleyInstance->mInstance->SetVolume(gSexyAppBase->mMusicVolume / gSexyAppBase->mSfxVolume);  // 这样得到的音量在乘以音效音量后就与音乐音量相等
 }
 
-void TodFoley::RehookupSoundWithMusicVolume()
+void PvzpFoley::RehookupSoundWithMusicVolume()
 {
 	SoundSystemReleaseFinishedInstances(this);
 	for (int aFoleyType = 0; aFoleyType < gFoleyParamArraySize; aFoleyType++)
@@ -423,7 +423,7 @@ void TodFoley::RehookupSoundWithMusicVolume()
 	}
 }
 
-bool TodFoley::IsFoleyPlaying(FoleyType theFoleyType)
+bool PvzpFoley::IsFoleyPlaying(FoleyType theFoleyType)
 {
 	SoundSystemReleaseFinishedInstances(this);
 	return SoundSystemFindInstance(this, theFoleyType) != nullptr;

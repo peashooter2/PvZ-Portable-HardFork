@@ -19,8 +19,8 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "TodDebug.h"
-#include "TodCommon.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
 #include "FilterEffect.h"
 #include "graphics/Graphics.h"
 #include "graphics/MemoryImage.h"
@@ -184,7 +184,7 @@ MemoryImage* FilterEffectCreateImage(Image* theImage, FilterEffect theFilterEffe
 
 Image* FilterEffectGetImage(Image* theImage, FilterEffect theFilterEffect)
 {
-	TOD_ASSERT(theFilterEffect >= 0 && theFilterEffect < FilterEffect::NUM_FILTER_EFFECTS);
+	PVZP_ASSERT(theFilterEffect >= 0 && theFilterEffect < FilterEffect::NUM_FILTER_EFFECTS);
 
 	ImageFilterMap& aFilterMap = gFilterMap[theFilterEffect];
 	ImageFilterMap::iterator it = aFilterMap.find(theImage);

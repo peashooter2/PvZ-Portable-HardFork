@@ -20,14 +20,14 @@
  */
 
 #include "SexyAppBase.h"
-#include "TodList.h"
+#include "PvzpList.h"
 #include <algorithm>
-#include "TodDebug.h"
-#include "TodCommon.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
 #include "../LawnApp.h"
 #include "EffectSystem.h"
 #include "../Resources.h"
-#include "TodStringFile.h"
+#include "PvzpStringFile.h"
 #include "../GameConstants.h"
 #include "graphics/Font.h"
 #include "graphics/GLImage.h"
@@ -38,114 +38,87 @@
 #include "misc/SexyMatrix.h"
 #include "graphics/GLInterface.h"
 
-void Tod_SWTri_AddAllDrawTriFuncs()
+void Pvzp_SWTri_AddAllDrawTriFuncs()
 {
-	SWTri_AddDrawTriFunc(true, false, false, false, 0x8888, false, TodDrawTriangle_8888_TEX1_TALPHA0_MOD0_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, false, false, 0x8888, true, TodDrawTriangle_8888_TEX1_TALPHA0_MOD0_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, false, true, 0x8888, false, TodDrawTriangle_8888_TEX1_TALPHA0_MOD0_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, false, true, 0x8888, true, TodDrawTriangle_8888_TEX1_TALPHA0_MOD0_GLOB1_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, true, false, 0x8888, false, TodDrawTriangle_8888_TEX1_TALPHA0_MOD1_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, true, false, 0x8888, true, TodDrawTriangle_8888_TEX1_TALPHA0_MOD1_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, true, true, 0x8888, false, TodDrawTriangle_8888_TEX1_TALPHA0_MOD1_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, true, true, 0x8888, true, TodDrawTriangle_8888_TEX1_TALPHA0_MOD1_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, false, false, 0x8888, false, PvzpDrawTriangle_8888_TEX1_TALPHA0_MOD0_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, false, false, 0x8888, true, PvzpDrawTriangle_8888_TEX1_TALPHA0_MOD0_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, false, true, 0x8888, false, PvzpDrawTriangle_8888_TEX1_TALPHA0_MOD0_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, false, true, 0x8888, true, PvzpDrawTriangle_8888_TEX1_TALPHA0_MOD0_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, true, false, 0x8888, false, PvzpDrawTriangle_8888_TEX1_TALPHA0_MOD1_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, true, false, 0x8888, true, PvzpDrawTriangle_8888_TEX1_TALPHA0_MOD1_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, true, true, 0x8888, false, PvzpDrawTriangle_8888_TEX1_TALPHA0_MOD1_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, true, true, 0x8888, true, PvzpDrawTriangle_8888_TEX1_TALPHA0_MOD1_GLOB1_BLEND1);
 
-	SWTri_AddDrawTriFunc(true, true, false, false, 0x8888, false, TodDrawTriangle_8888_TEX1_TALPHA1_MOD0_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, false, false, 0x8888, true, TodDrawTriangle_8888_TEX1_TALPHA1_MOD0_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, false, true, 0x8888, false, TodDrawTriangle_8888_TEX1_TALPHA1_MOD0_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, false, true, 0x8888, true, TodDrawTriangle_8888_TEX1_TALPHA1_MOD0_GLOB1_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, true, false, 0x8888, false, TodDrawTriangle_8888_TEX1_TALPHA1_MOD1_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, true, false, 0x8888, true, TodDrawTriangle_8888_TEX1_TALPHA1_MOD1_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, true, true, 0x8888, false, TodDrawTriangle_8888_TEX1_TALPHA1_MOD1_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, true, true, 0x8888, true, TodDrawTriangle_8888_TEX1_TALPHA1_MOD1_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, false, false, 0x8888, false, PvzpDrawTriangle_8888_TEX1_TALPHA1_MOD0_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, false, false, 0x8888, true, PvzpDrawTriangle_8888_TEX1_TALPHA1_MOD0_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, false, true, 0x8888, false, PvzpDrawTriangle_8888_TEX1_TALPHA1_MOD0_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, false, true, 0x8888, true, PvzpDrawTriangle_8888_TEX1_TALPHA1_MOD0_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, true, false, 0x8888, false, PvzpDrawTriangle_8888_TEX1_TALPHA1_MOD1_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, true, false, 0x8888, true, PvzpDrawTriangle_8888_TEX1_TALPHA1_MOD1_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, true, true, 0x8888, false, PvzpDrawTriangle_8888_TEX1_TALPHA1_MOD1_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, true, true, 0x8888, true, PvzpDrawTriangle_8888_TEX1_TALPHA1_MOD1_GLOB1_BLEND1);
 
-	SWTri_AddDrawTriFunc(true, false, false, false, 0x0888, false, TodDrawTriangle_0888_TEX1_TALPHA0_MOD0_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, false, false, 0x0888, true, TodDrawTriangle_0888_TEX1_TALPHA0_MOD0_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, false, true, 0x0888, false, TodDrawTriangle_0888_TEX1_TALPHA0_MOD0_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, false, true, 0x0888, true, TodDrawTriangle_0888_TEX1_TALPHA0_MOD0_GLOB1_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, true, false, 0x0888, false, TodDrawTriangle_0888_TEX1_TALPHA0_MOD1_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, true, false, 0x0888, true, TodDrawTriangle_0888_TEX1_TALPHA0_MOD1_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, true, true, 0x0888, false, TodDrawTriangle_0888_TEX1_TALPHA0_MOD1_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, true, true, 0x0888, true, TodDrawTriangle_0888_TEX1_TALPHA0_MOD1_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, false, false, 0x0888, false, PvzpDrawTriangle_0888_TEX1_TALPHA0_MOD0_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, false, false, 0x0888, true, PvzpDrawTriangle_0888_TEX1_TALPHA0_MOD0_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, false, true, 0x0888, false, PvzpDrawTriangle_0888_TEX1_TALPHA0_MOD0_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, false, true, 0x0888, true, PvzpDrawTriangle_0888_TEX1_TALPHA0_MOD0_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, true, false, 0x0888, false, PvzpDrawTriangle_0888_TEX1_TALPHA0_MOD1_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, true, false, 0x0888, true, PvzpDrawTriangle_0888_TEX1_TALPHA0_MOD1_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, true, true, 0x0888, false, PvzpDrawTriangle_0888_TEX1_TALPHA0_MOD1_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, true, true, 0x0888, true, PvzpDrawTriangle_0888_TEX1_TALPHA0_MOD1_GLOB1_BLEND1);
 
-	SWTri_AddDrawTriFunc(true, true, false, false, 0x0888, false, TodDrawTriangle_0888_TEX1_TALPHA1_MOD0_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, false, false, 0x0888, true, TodDrawTriangle_0888_TEX1_TALPHA1_MOD0_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, false, true, 0x0888, false, TodDrawTriangle_0888_TEX1_TALPHA1_MOD0_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, false, true, 0x0888, true, TodDrawTriangle_0888_TEX1_TALPHA1_MOD0_GLOB1_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, true, false, 0x0888, false, TodDrawTriangle_0888_TEX1_TALPHA1_MOD1_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, true, false, 0x0888, true, TodDrawTriangle_0888_TEX1_TALPHA1_MOD1_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, true, true, 0x0888, false, TodDrawTriangle_0888_TEX1_TALPHA1_MOD1_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, true, true, 0x0888, true, TodDrawTriangle_0888_TEX1_TALPHA1_MOD1_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, false, false, 0x0888, false, PvzpDrawTriangle_0888_TEX1_TALPHA1_MOD0_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, false, false, 0x0888, true, PvzpDrawTriangle_0888_TEX1_TALPHA1_MOD0_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, false, true, 0x0888, false, PvzpDrawTriangle_0888_TEX1_TALPHA1_MOD0_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, false, true, 0x0888, true, PvzpDrawTriangle_0888_TEX1_TALPHA1_MOD0_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, true, false, 0x0888, false, PvzpDrawTriangle_0888_TEX1_TALPHA1_MOD1_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, true, false, 0x0888, true, PvzpDrawTriangle_0888_TEX1_TALPHA1_MOD1_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, true, true, 0x0888, false, PvzpDrawTriangle_0888_TEX1_TALPHA1_MOD1_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, true, true, 0x0888, true, PvzpDrawTriangle_0888_TEX1_TALPHA1_MOD1_GLOB1_BLEND1);
 
-	SWTri_AddDrawTriFunc(true, false, false, false, 0x0565, false, TodDrawTriangle_0565_TEX1_TALPHA0_MOD0_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, false, false, 0x0565, true, TodDrawTriangle_0565_TEX1_TALPHA0_MOD0_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, false, true, 0x0565, false, TodDrawTriangle_0565_TEX1_TALPHA0_MOD0_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, false, true, 0x0565, true, TodDrawTriangle_0565_TEX1_TALPHA0_MOD0_GLOB1_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, true, false, 0x0565, false, TodDrawTriangle_0565_TEX1_TALPHA0_MOD1_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, true, false, 0x0565, true, TodDrawTriangle_0565_TEX1_TALPHA0_MOD1_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, true, true, 0x0565, false, TodDrawTriangle_0565_TEX1_TALPHA0_MOD1_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, true, true, 0x0565, true, TodDrawTriangle_0565_TEX1_TALPHA0_MOD1_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, false, false, 0x0565, false, PvzpDrawTriangle_0565_TEX1_TALPHA0_MOD0_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, false, false, 0x0565, true, PvzpDrawTriangle_0565_TEX1_TALPHA0_MOD0_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, false, true, 0x0565, false, PvzpDrawTriangle_0565_TEX1_TALPHA0_MOD0_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, false, true, 0x0565, true, PvzpDrawTriangle_0565_TEX1_TALPHA0_MOD0_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, true, false, 0x0565, false, PvzpDrawTriangle_0565_TEX1_TALPHA0_MOD1_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, true, false, 0x0565, true, PvzpDrawTriangle_0565_TEX1_TALPHA0_MOD1_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, true, true, 0x0565, false, PvzpDrawTriangle_0565_TEX1_TALPHA0_MOD1_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, true, true, 0x0565, true, PvzpDrawTriangle_0565_TEX1_TALPHA0_MOD1_GLOB1_BLEND1);
 
-	SWTri_AddDrawTriFunc(true, true, false, false, 0x0565, false, TodDrawTriangle_0565_TEX1_TALPHA1_MOD0_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, false, false, 0x0565, true, TodDrawTriangle_0565_TEX1_TALPHA1_MOD0_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, false, true, 0x0565, false, TodDrawTriangle_0565_TEX1_TALPHA1_MOD0_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, false, true, 0x0565, true, TodDrawTriangle_0565_TEX1_TALPHA1_MOD0_GLOB1_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, true, false, 0x0565, false, TodDrawTriangle_0565_TEX1_TALPHA1_MOD1_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, true, false, 0x0565, true, TodDrawTriangle_0565_TEX1_TALPHA1_MOD1_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, true, true, 0x0565, false, TodDrawTriangle_0565_TEX1_TALPHA1_MOD1_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, true, true, 0x0565, true, TodDrawTriangle_0565_TEX1_TALPHA1_MOD1_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, false, false, 0x0565, false, PvzpDrawTriangle_0565_TEX1_TALPHA1_MOD0_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, false, false, 0x0565, true, PvzpDrawTriangle_0565_TEX1_TALPHA1_MOD0_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, false, true, 0x0565, false, PvzpDrawTriangle_0565_TEX1_TALPHA1_MOD0_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, false, true, 0x0565, true, PvzpDrawTriangle_0565_TEX1_TALPHA1_MOD0_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, true, false, 0x0565, false, PvzpDrawTriangle_0565_TEX1_TALPHA1_MOD1_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, true, false, 0x0565, true, PvzpDrawTriangle_0565_TEX1_TALPHA1_MOD1_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, true, true, 0x0565, false, PvzpDrawTriangle_0565_TEX1_TALPHA1_MOD1_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, true, true, 0x0565, true, PvzpDrawTriangle_0565_TEX1_TALPHA1_MOD1_GLOB1_BLEND1);
 
-	SWTri_AddDrawTriFunc(true, false, false, false, 0x0555, false, TodDrawTriangle_0555_TEX1_TALPHA0_MOD0_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, false, false, 0x0555, true, TodDrawTriangle_0555_TEX1_TALPHA0_MOD0_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, false, true, 0x0555, false, TodDrawTriangle_0555_TEX1_TALPHA0_MOD0_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, false, true, 0x0555, true, TodDrawTriangle_0555_TEX1_TALPHA0_MOD0_GLOB1_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, true, false, 0x0555, false, TodDrawTriangle_0555_TEX1_TALPHA0_MOD1_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, true, false, 0x0555, true, TodDrawTriangle_0555_TEX1_TALPHA0_MOD1_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, false, true, true, 0x0555, false, TodDrawTriangle_0555_TEX1_TALPHA0_MOD1_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, false, true, true, 0x0555, true, TodDrawTriangle_0555_TEX1_TALPHA0_MOD1_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, false, false, 0x0555, false, PvzpDrawTriangle_0555_TEX1_TALPHA0_MOD0_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, false, false, 0x0555, true, PvzpDrawTriangle_0555_TEX1_TALPHA0_MOD0_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, false, true, 0x0555, false, PvzpDrawTriangle_0555_TEX1_TALPHA0_MOD0_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, false, true, 0x0555, true, PvzpDrawTriangle_0555_TEX1_TALPHA0_MOD0_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, true, false, 0x0555, false, PvzpDrawTriangle_0555_TEX1_TALPHA0_MOD1_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, true, false, 0x0555, true, PvzpDrawTriangle_0555_TEX1_TALPHA0_MOD1_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, false, true, true, 0x0555, false, PvzpDrawTriangle_0555_TEX1_TALPHA0_MOD1_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, false, true, true, 0x0555, true, PvzpDrawTriangle_0555_TEX1_TALPHA0_MOD1_GLOB1_BLEND1);
 
-	SWTri_AddDrawTriFunc(true, true, false, false, 0x0555, false, TodDrawTriangle_0555_TEX1_TALPHA1_MOD0_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, false, false, 0x0555, true, TodDrawTriangle_0555_TEX1_TALPHA1_MOD0_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, false, true, 0x0555, false, TodDrawTriangle_0555_TEX1_TALPHA1_MOD0_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, false, true, 0x0555, true, TodDrawTriangle_0555_TEX1_TALPHA1_MOD0_GLOB1_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, true, false, 0x0555, false, TodDrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB0_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, true, false, 0x0555, true, TodDrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB0_BLEND1);
-	SWTri_AddDrawTriFunc(true, true, true, true, 0x0555, false, TodDrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB1_BLEND0);
-	SWTri_AddDrawTriFunc(true, true, true, true, 0x0555, true, TodDrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, false, false, 0x0555, false, PvzpDrawTriangle_0555_TEX1_TALPHA1_MOD0_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, false, false, 0x0555, true, PvzpDrawTriangle_0555_TEX1_TALPHA1_MOD0_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, false, true, 0x0555, false, PvzpDrawTriangle_0555_TEX1_TALPHA1_MOD0_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, false, true, 0x0555, true, PvzpDrawTriangle_0555_TEX1_TALPHA1_MOD0_GLOB1_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, true, false, 0x0555, false, PvzpDrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB0_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, true, false, 0x0555, true, PvzpDrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB0_BLEND1);
+	SWTri_AddDrawTriFunc(true, true, true, true, 0x0555, false, PvzpDrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB1_BLEND0);
+	SWTri_AddDrawTriFunc(true, true, true, true, 0x0555, true, PvzpDrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB1_BLEND1);
 }
 
-intptr_t TodPickFromWeightedArray(const TodWeightedArray* theArray, int theCount)
+intptr_t PvzpPickFromWeightedArray(const PvzpWeightedArray* theArray, int theCount)
 {
-	return TodPickArrayItemFromWeightedArray(theArray, theCount)->mItem;
+	return PvzpPickArrayItemFromWeightedArray(theArray, theCount)->mItem;
 }
 
-TodWeightedArray* TodPickArrayItemFromWeightedArray(const TodWeightedArray* theArray, int theCount)
-{
-	if (theCount <= 0)
-		return nullptr;
-
-	int aTotalWeight = 0;
-	for (int i = 0; i < theCount; i++)
-	{
-		aTotalWeight += theArray[i].mWeight;
-	}
-	TOD_ASSERT(aTotalWeight > 0);
-
-	aTotalWeight = Sexy::Rand(aTotalWeight);
-
-	for (int i = 0; i < theCount; i++)
-	{
-		aTotalWeight -= theArray[i].mWeight;
-		if (aTotalWeight < 0)
-		{
-			return (TodWeightedArray*)&theArray[i];
-		}
-	}
-
-	TOD_ASSERT(false);
-	return nullptr;
-}
-
-TodWeightedGridArray* TodPickFromWeightedGridArray(const TodWeightedGridArray* theArray, int theCount)
+PvzpWeightedArray* PvzpPickArrayItemFromWeightedArray(const PvzpWeightedArray* theArray, int theCount)
 {
 	if (theCount <= 0)
 		return nullptr;
@@ -155,7 +128,7 @@ TodWeightedGridArray* TodPickFromWeightedGridArray(const TodWeightedGridArray* t
 	{
 		aTotalWeight += theArray[i].mWeight;
 	}
-	TOD_ASSERT(aTotalWeight > 0);
+	PVZP_ASSERT(aTotalWeight > 0);
 
 	aTotalWeight = Sexy::Rand(aTotalWeight);
 
@@ -164,15 +137,42 @@ TodWeightedGridArray* TodPickFromWeightedGridArray(const TodWeightedGridArray* t
 		aTotalWeight -= theArray[i].mWeight;
 		if (aTotalWeight < 0)
 		{
-			return (TodWeightedGridArray*)&theArray[i];
+			return (PvzpWeightedArray*)&theArray[i];
 		}
 	}
 
-	TOD_ASSERT(false);
+	PVZP_ASSERT(false);
 	return nullptr;
 }
 
-float TodCalcSmoothWeight(float aWeight, float aLastPicked, float aSecondLastPicked)
+PvzpWeightedGridArray* PvzpPickFromWeightedGridArray(const PvzpWeightedGridArray* theArray, int theCount)
+{
+	if (theCount <= 0)
+		return nullptr;
+
+	int aTotalWeight = 0;
+	for (int i = 0; i < theCount; i++)
+	{
+		aTotalWeight += theArray[i].mWeight;
+	}
+	PVZP_ASSERT(aTotalWeight > 0);
+
+	aTotalWeight = Sexy::Rand(aTotalWeight);
+
+	for (int i = 0; i < theCount; i++)
+	{
+		aTotalWeight -= theArray[i].mWeight;
+		if (aTotalWeight < 0)
+		{
+			return (PvzpWeightedGridArray*)&theArray[i];
+		}
+	}
+
+	PVZP_ASSERT(false);
+	return nullptr;
+}
+
+float PvzpCalcSmoothWeight(float aWeight, float aLastPicked, float aSecondLastPicked)
 {
 	if (aWeight < 1E-6f)
 	{
@@ -189,40 +189,40 @@ float TodCalcSmoothWeight(float aWeight, float aLastPicked, float aSecondLastPic
 	return aWeight * aFactorFinal;
 }
 
-int TodPickFromSmoothArray(TodSmoothArray* theArray, int theCount)
+int PvzpPickFromSmoothArray(PvzpSmoothArray* theArray, int theCount)
 {
 	float aTotalWeight = 0.0f;
 	for (int i = 0; i < theCount; i++)
 	{
 		aTotalWeight += theArray[i].mWeight;
 	}
-	TOD_ASSERT(aTotalWeight > 0.0f);
+	PVZP_ASSERT(aTotalWeight > 0.0f);
 
 	float aNormalizeFactor = 1.0f / aTotalWeight;
 	float aTotalAdjustedWeight = 0.0f;
 	for (int j = 0; j < theCount; j++)
 	{
-		aTotalAdjustedWeight += TodCalcSmoothWeight(theArray[j].mWeight * aNormalizeFactor, theArray[j].mLastPicked, theArray[j].mSecondLastPicked);
+		aTotalAdjustedWeight += PvzpCalcSmoothWeight(theArray[j].mWeight * aNormalizeFactor, theArray[j].mLastPicked, theArray[j].mSecondLastPicked);
 	}
-	TOD_ASSERT(aTotalAdjustedWeight > 0.0f);
+	PVZP_ASSERT(aTotalAdjustedWeight > 0.0f);
 
 	float aRandWeight = Rand(aTotalAdjustedWeight);
 	float aAccumulatedWeight = 0.0f;
 	int k;
 	for (k = 0; k < theCount - 1; k++)
 	{
-		aAccumulatedWeight += TodCalcSmoothWeight(theArray[k].mWeight * aNormalizeFactor, theArray[k].mLastPicked, theArray[k].mSecondLastPicked);
+		aAccumulatedWeight += PvzpCalcSmoothWeight(theArray[k].mWeight * aNormalizeFactor, theArray[k].mLastPicked, theArray[k].mSecondLastPicked);
 		if (aRandWeight <= aAccumulatedWeight)
 		{
 			break;
 		}
 	}
 
-	TodUpdateSmoothArrayPick(theArray, theCount, k);
+	PvzpUpdateSmoothArrayPick(theArray, theCount, k);
 	return theArray[k].mItem;
 }
 
-void TodUpdateSmoothArrayPick(TodSmoothArray* theArray, int theCount, int thePickIndex)
+void PvzpUpdateSmoothArrayPick(PvzpSmoothArray* theArray, int theCount, int thePickIndex)
 {
 	for (int i = 0; i < theCount; i++)
 	{
@@ -237,85 +237,85 @@ void TodUpdateSmoothArrayPick(TodSmoothArray* theArray, int theCount, int thePic
 	theArray[thePickIndex].mLastPicked = 0.0f;
 }
 
-float TodCurveQuad(float theTime)
+float PvzpCurveQuad(float theTime)
 {
 	return theTime * theTime;
 }
 
-float TodCurveInvQuad(float theTime)
+float PvzpCurveInvQuad(float theTime)
 {
 	return 2 * theTime - theTime * theTime;
 }
 
-float TodCurveS(float theTime)
+float PvzpCurveS(float theTime)
 {
 	return 3 * theTime * theTime - 2 * theTime * theTime * theTime;
 }
 
-float TodCurveInvQuadS(float theTime)
+float PvzpCurveInvQuadS(float theTime)
 {
 	//float aVal = 2 * (theTime - theTime * theTime);
 	//return theTime <= 0.5 ? aVal : 1 - aVal;
 	if (theTime <= 0.5f)
 	{
-		return TodCurveInvQuad(theTime * 2.0f) * 0.5f;
+		return PvzpCurveInvQuad(theTime * 2.0f) * 0.5f;
 	}
-	return TodCurveQuad((theTime - 0.5f) * 2.0f) * 0.5f + 0.5f;
+	return PvzpCurveQuad((theTime - 0.5f) * 2.0f) * 0.5f + 0.5f;
 }
 
-float TodCurveBounce(float theTime)
+float PvzpCurveBounce(float theTime)
 {
 	return 1 - fabs(2 * theTime - 1);
 }
 
-float TodCurveQuadS(float theTime)
+float PvzpCurveQuadS(float theTime)
 {
 	if (theTime <= 0.5f)
 	{
-		return TodCurveQuad(theTime * 2.0f) * 0.5f;
+		return PvzpCurveQuad(theTime * 2.0f) * 0.5f;
 	}
-	return TodCurveInvQuad((theTime - 0.5f) * 2.0f) * 0.5f + 0.5f;
+	return PvzpCurveInvQuad((theTime - 0.5f) * 2.0f) * 0.5f + 0.5f;
 }
 
-float TodCurveCubic(float theTime)
+float PvzpCurveCubic(float theTime)
 {
 	return theTime * theTime * theTime;
 }
 
-float TodCurveInvCubic(float theTime)
+float PvzpCurveInvCubic(float theTime)
 {
 	return (theTime - 1.0f) * (theTime - 1.0f) * (theTime - 1.0f) + 1.0f;
 }
 
-float TodCurveCubicS(float theTime)
+float PvzpCurveCubicS(float theTime)
 {
 	if (theTime <= 0.5f)
 	{
-		return TodCurveCubic(theTime * 2.0f) * 0.5f;
+		return PvzpCurveCubic(theTime * 2.0f) * 0.5f;
 	}
-	return TodCurveInvCubic((theTime - 0.5f) * 2.0f) * 0.5f + 0.5f;
+	return PvzpCurveInvCubic((theTime - 0.5f) * 2.0f) * 0.5f + 0.5f;
 }
 
-float TodCurvePoly(float theTime, float thePoly)
+float PvzpCurvePoly(float theTime, float thePoly)
 {
 	return static_cast<float>(pow(theTime, thePoly));
 }
 
-float TodCurveInvPoly(float theTime, float thePoly)
+float PvzpCurveInvPoly(float theTime, float thePoly)
 {
 	return static_cast<float>(pow(theTime - 1.0f, thePoly)) + 1.0f;
 }
 
-float TodCurvePolyS(float theTime, float thePoly)
+float PvzpCurvePolyS(float theTime, float thePoly)
 {
 	if (theTime <= 0.5f)
 	{
-		return TodCurvePoly(theTime * 2.0f, thePoly) * 0.5f;
+		return PvzpCurvePoly(theTime * 2.0f, thePoly) * 0.5f;
 	}
-	return TodCurveInvPoly((theTime - 0.5f) * 2.0f, thePoly) * 0.5f + 0.5f;
+	return PvzpCurveInvPoly((theTime - 0.5f) * 2.0f, thePoly) * 0.5f + 0.5f;
 }
 
-float TodCurveCircle(float theTime)
+float PvzpCurveCircle(float theTime)
 {
 	if (theTime > 1 - 1E-6f)
 	{
@@ -324,7 +324,7 @@ float TodCurveCircle(float theTime)
 	return 1.0f - static_cast<float>(sqrt(1.0f - theTime * theTime));
 }
 
-float TodCurveInvCircle(float theTime)
+float PvzpCurveInvCircle(float theTime)
 {
 	if (theTime < 1E-06f)
 	{
@@ -333,30 +333,30 @@ float TodCurveInvCircle(float theTime)
 	return static_cast<float>(sqrt(1.0f - (theTime - 1.0f) * (theTime - 1.0f)));
 }
 
-float TodCurveEvaluate(float theTime, float thePositionStart, float thePositionEnd, TodCurves theCurve)
+float PvzpCurveEvaluate(float theTime, float thePositionStart, float thePositionEnd, PvzpCurves theCurve)
 {
 	float aWarpedTime = 0;
 	switch (theCurve)
 	{
-	case TodCurves::CURVE_CONSTANT:				aWarpedTime = 0;													break;
-	case TodCurves::CURVE_LINEAR:				aWarpedTime = theTime;												break;
-	case TodCurves::CURVE_EASE_IN:				aWarpedTime = TodCurveQuad(theTime);								break;
-	case TodCurves::CURVE_EASE_OUT:				aWarpedTime = TodCurveInvQuad(theTime);								break;
-	case TodCurves::CURVE_EASE_IN_OUT:			aWarpedTime = TodCurveS(TodCurveS(theTime));						break;
-	case TodCurves::CURVE_EASE_IN_OUT_WEAK:		aWarpedTime = TodCurveS(theTime);									break;
-	case TodCurves::CURVE_FAST_IN_OUT:			aWarpedTime = TodCurveInvQuadS(TodCurveInvQuadS(theTime));			break;
-	case TodCurves::CURVE_FAST_IN_OUT_WEAK:		aWarpedTime = TodCurveInvQuadS(theTime);							break;
-	case TodCurves::CURVE_BOUNCE:				aWarpedTime = TodCurveBounce(theTime);								break;
-	case TodCurves::CURVE_BOUNCE_FAST_MIDDLE:	aWarpedTime = TodCurveQuad(TodCurveBounce(theTime));				break;
-	case TodCurves::CURVE_BOUNCE_SLOW_MIDDLE:	aWarpedTime = TodCurveInvQuad(TodCurveBounce(theTime));				break;
-	case TodCurves::CURVE_SIN_WAVE:				aWarpedTime = sinf(2 * PI * theTime);								break;
-	case TodCurves::CURVE_EASE_SIN_WAVE:		aWarpedTime = sinf(2 * PI * TodCurveS(theTime));					break;
-	default:									TOD_ASSERT(false);														break;
+	case PvzpCurves::CURVE_CONSTANT:				aWarpedTime = 0;													break;
+	case PvzpCurves::CURVE_LINEAR:				aWarpedTime = theTime;												break;
+	case PvzpCurves::CURVE_EASE_IN:				aWarpedTime = PvzpCurveQuad(theTime);								break;
+	case PvzpCurves::CURVE_EASE_OUT:				aWarpedTime = PvzpCurveInvQuad(theTime);								break;
+	case PvzpCurves::CURVE_EASE_IN_OUT:			aWarpedTime = PvzpCurveS(PvzpCurveS(theTime));						break;
+	case PvzpCurves::CURVE_EASE_IN_OUT_WEAK:		aWarpedTime = PvzpCurveS(theTime);									break;
+	case PvzpCurves::CURVE_FAST_IN_OUT:			aWarpedTime = PvzpCurveInvQuadS(PvzpCurveInvQuadS(theTime));			break;
+	case PvzpCurves::CURVE_FAST_IN_OUT_WEAK:		aWarpedTime = PvzpCurveInvQuadS(theTime);							break;
+	case PvzpCurves::CURVE_BOUNCE:				aWarpedTime = PvzpCurveBounce(theTime);								break;
+	case PvzpCurves::CURVE_BOUNCE_FAST_MIDDLE:	aWarpedTime = PvzpCurveQuad(PvzpCurveBounce(theTime));				break;
+	case PvzpCurves::CURVE_BOUNCE_SLOW_MIDDLE:	aWarpedTime = PvzpCurveInvQuad(PvzpCurveBounce(theTime));				break;
+	case PvzpCurves::CURVE_SIN_WAVE:				aWarpedTime = sinf(2 * PI * theTime);								break;
+	case PvzpCurves::CURVE_EASE_SIN_WAVE:		aWarpedTime = sinf(2 * PI * PvzpCurveS(theTime));					break;
+	default:									PVZP_ASSERT(false);														break;
 	}
 	return (thePositionEnd - thePositionStart) * aWarpedTime + thePositionStart;
 }
 
-float TodCurveEvaluateClamped(float theTime, float thePositionStart, float thePositionEnd, TodCurves theCurve)
+float PvzpCurveEvaluateClamped(float theTime, float thePositionStart, float thePositionEnd, PvzpCurves theCurve)
 {
 	if (theTime <= 0.0f)
 	{
@@ -365,11 +365,11 @@ float TodCurveEvaluateClamped(float theTime, float thePositionStart, float thePo
 
 	if (theTime >= 1.0f)
 	{
-		if (theCurve == TodCurves::CURVE_BOUNCE ||
-			theCurve == TodCurves::CURVE_BOUNCE_FAST_MIDDLE ||
-			theCurve == TodCurves::CURVE_BOUNCE_SLOW_MIDDLE ||
-			theCurve == TodCurves::CURVE_SIN_WAVE ||
-			theCurve == TodCurves::CURVE_EASE_SIN_WAVE)
+		if (theCurve == PvzpCurves::CURVE_BOUNCE ||
+			theCurve == PvzpCurves::CURVE_BOUNCE_FAST_MIDDLE ||
+			theCurve == PvzpCurves::CURVE_BOUNCE_SLOW_MIDDLE ||
+			theCurve == PvzpCurves::CURVE_SIN_WAVE ||
+			theCurve == PvzpCurves::CURVE_EASE_SIN_WAVE)
 		{
 			return thePositionStart;
 		}
@@ -379,44 +379,44 @@ float TodCurveEvaluateClamped(float theTime, float thePositionStart, float thePo
 		}
 	}
 
-	return TodCurveEvaluate(theTime, thePositionStart, thePositionEnd, theCurve);
+	return PvzpCurveEvaluate(theTime, thePositionStart, thePositionEnd, theCurve);
 }
 
-float TodAnimateCurveFloatTime(float theTimeStart, float theTimeEnd, float theTimeAge, float thePositionStart, float thePositionEnd, TodCurves theCurve)
+float PvzpAnimateCurveFloatTime(float theTimeStart, float theTimeEnd, float theTimeAge, float thePositionStart, float thePositionEnd, PvzpCurves theCurve)
 {
 	float aWarpedAge = (theTimeAge - theTimeStart) / (theTimeEnd - theTimeStart);
-	return TodCurveEvaluateClamped(aWarpedAge, thePositionStart, thePositionEnd, theCurve);
+	return PvzpCurveEvaluateClamped(aWarpedAge, thePositionStart, thePositionEnd, theCurve);
 }
 
-float TodAnimateCurveFloat(int theTimeStart, int theTimeEnd, int theTimeAge, float thePositionStart, float thePositionEnd, TodCurves theCurve)
+float PvzpAnimateCurveFloat(int theTimeStart, int theTimeEnd, int theTimeAge, float thePositionStart, float thePositionEnd, PvzpCurves theCurve)
 {
-	//return TodAnimateCurveFloatTime(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve);
+	//return PvzpAnimateCurveFloatTime(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve);
 
 	float aWarpedAge = (theTimeAge - theTimeStart) / static_cast<float>(theTimeEnd - theTimeStart);
-	return TodCurveEvaluateClamped(aWarpedAge, thePositionStart, thePositionEnd, theCurve);
+	return PvzpCurveEvaluateClamped(aWarpedAge, thePositionStart, thePositionEnd, theCurve);
 }
 
 // GOTY @Patoke: 0x51BEA0
-int TodAnimateCurve(int theTimeStart, int theTimeEnd, int theTimeAge, int thePositionStart, int thePositionEnd, TodCurves theCurve)
+int PvzpAnimateCurve(int theTimeStart, int theTimeEnd, int theTimeAge, int thePositionStart, int thePositionEnd, PvzpCurves theCurve)
 {
-	return FloatRoundToInt(TodAnimateCurveFloat(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve));
+	return FloatRoundToInt(PvzpAnimateCurveFloat(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve));
 }
 
 int RandRangeInt(int theMin, int theMax)
 {
-	TOD_ASSERT(theMin <= theMax);
+	PVZP_ASSERT(theMin <= theMax);
 	return Rand(theMax - theMin + 1) + theMin;
 }
 
 float RandRangeFloat(float theMin, float theMax)
 {
-	TOD_ASSERT(theMin <= theMax);
+	PVZP_ASSERT(theMin <= theMax);
 	return Rand(theMax - theMin) + theMin;
 }
 
-void TodDrawString(Graphics* g, std::string_view theText, int thePosX, int thePosY, _Font* theFont, const Color& theColor, DrawStringJustification theJustification)
+void PvzpDrawString(Graphics* g, std::string_view theText, int thePosX, int thePosY, _Font* theFont, const Color& theColor, DrawStringJustification theJustification)
 {
-	std::string aFinalString = TodStringTranslate(theText);
+	std::string aFinalString = PvzpStringTranslate(theText);
 
 	int aPosX = thePosX;
 	if (theJustification == DrawStringJustification::DS_ALIGN_RIGHT || theJustification == DrawStringJustification::DS_ALIGN_RIGHT_VERTICAL_MIDDLE)
@@ -431,10 +431,10 @@ void TodDrawString(Graphics* g, std::string_view theText, int thePosX, int thePo
 	theFont->DrawString(g, aPosX, thePosY, aFinalString, theColor, g->mClipRect);
 }
 
-void TodDrawImageCelScaled(Graphics* g, Image* theImageStrip, int thePosX, int thePosY, int theCelCol, int theCelRow, float theScaleX, float theScaleY)
+void PvzpDrawImageCelScaled(Graphics* g, Image* theImageStrip, int thePosX, int thePosY, int theCelCol, int theCelRow, float theScaleX, float theScaleY)
 {
-	TOD_ASSERT(theCelCol >= 0 && theCelCol < theImageStrip->mNumCols);
-	TOD_ASSERT(theCelRow >= 0 && theCelRow < theImageStrip->mNumRows);
+	PVZP_ASSERT(theCelCol >= 0 && theCelCol < theImageStrip->mNumCols);
+	PVZP_ASSERT(theCelRow >= 0 && theCelRow < theImageStrip->mNumRows);
 
 	int aCelWidth = theImageStrip->GetCelWidth();
 	int aCelHeight = theImageStrip->GetCelHeight();
@@ -448,9 +448,9 @@ static RenderCommand gRenderCommandPool[POOL_SIZE];
 static RenderCommand* gRenderTail[256];
 static RenderCommand* gRenderHead[256];
 
-void TodDrawStringMatrix(Graphics* g, const _Font* theFont, const SexyMatrix3& theMatrix, std::string_view theString, const Color& theColor)
+void PvzpDrawStringMatrix(Graphics* g, const _Font* theFont, const SexyMatrix3& theMatrix, std::string_view theString, const Color& theColor)
 {
-	std::string aFinalString = TodStringTranslate(theString);
+	std::string aFinalString = PvzpStringTranslate(theString);
 
 	memset(gRenderTail, 0, sizeof(gRenderTail));
 	memset(gRenderHead, 0, sizeof(gRenderHead));
@@ -600,7 +600,7 @@ void TodDrawStringMatrix(Graphics* g, const _Font* theFont, const SexyMatrix3& t
 				float aPosY = aSrcRect.mHeight * 0.5f + aRenderCommand->mDest[1];
 				SexyMatrix3Translation(aTransform, aPosX, aPosY);
 				SexyMatrix3Multiply(aTransform, theMatrix, aTransform);
-				TodBltMatrix(g, aRenderCommand->mImage, aTransform, g->mClipRect, aRenderCommand->mColor, aDrawMode, aSrcRect);
+				PvzpBltMatrix(g, aRenderCommand->mImage, aTransform, g->mClipRect, aRenderCommand->mColor, aDrawMode, aSrcRect);
 			}
 			
 			aRenderCommand = aRenderCommand->mNext;
@@ -609,10 +609,10 @@ void TodDrawStringMatrix(Graphics* g, const _Font* theFont, const SexyMatrix3& t
 }
 
 // GOTY @Patoke: 0x51C863
-void TodDrawImageCelF(Graphics* g, Image* theImageStrip, float thePosX, float thePosY, int theCelCol, int theCelRow)
+void PvzpDrawImageCelF(Graphics* g, Image* theImageStrip, float thePosX, float thePosY, int theCelCol, int theCelRow)
 {
-	TOD_ASSERT(theCelCol >= 0 && theCelCol < theImageStrip->mNumCols);
-	TOD_ASSERT(theCelRow >= 0 && theCelRow < theImageStrip->mNumRows);
+	PVZP_ASSERT(theCelCol >= 0 && theCelCol < theImageStrip->mNumCols);
+	PVZP_ASSERT(theCelRow >= 0 && theCelRow < theImageStrip->mNumRows);
 
 	int aCelWidth = theImageStrip->GetCelWidth();
 	int aCelHeight = theImageStrip->GetCelHeight();
@@ -626,7 +626,7 @@ void SexyMatrix3Translation(SexyMatrix3& m, float x, float y)
 	m.m12 += y;
 }
 
-void TodScaleTransformMatrix(SexyMatrix3& m, float x, float y, float theScaleX, float theScaleY)
+void PvzpScaleTransformMatrix(SexyMatrix3& m, float x, float y, float theScaleX, float theScaleY)
 {
 	m.m00 = theScaleX;
 	m.m10 = 0.0f;
@@ -639,7 +639,7 @@ void TodScaleTransformMatrix(SexyMatrix3& m, float x, float y, float theScaleX, 
 	m.m22 = 1.0f;
 }
 
-void TodScaleRotateTransformMatrix(SexyMatrix3& m, float x, float y, float rad, float theScaleX, float theScaleY)
+void PvzpScaleRotateTransformMatrix(SexyMatrix3& m, float x, float y, float rad, float theScaleX, float theScaleY)
 {
 	m.m00 = cos(rad) * theScaleX;
 	m.m10 = -sin(rad) * theScaleX;
@@ -675,12 +675,12 @@ void SexyMatrix3ExtractScale(const SexyMatrix3& m, float& theScaleX, float& theS
 	}
 }
 
-void TodMarkImageForSanding(Image* theImage)
+void PvzpMarkImageForSanding(Image* theImage)
 {
 	((MemoryImage*)theImage)->mRenderFlags |= RENDERIMAGEFLAG_SANDING;
 }
 
-void TodSandImageIfNeeded(Image* theImage)
+void PvzpSandImageIfNeeded(Image* theImage)
 {
 	MemoryImage* aImage = (MemoryImage*)theImage;
 	/*if (TestBit(aImage->mRenderFlags, RENDERIMAGEFLAG_SANDING))*/ // UB shift by a billion
@@ -692,7 +692,7 @@ void TodSandImageIfNeeded(Image* theImage)
 	}
 }
 
-void TodBltMatrix(Graphics* g, Image* theImage, const SexyMatrix3& theTransform, const Rect& theClipRect, const Color& theColor, int theDrawMode, const Rect& theSrcRect)
+void PvzpBltMatrix(Graphics* g, Image* theImage, const SexyMatrix3& theTransform, const Rect& theClipRect, const Color& theColor, int theDrawMode, const Rect& theSrcRect)
 {
 	float aOffsetX = 0.0f;
 	float aOffsetY = 0.0f;
@@ -703,10 +703,10 @@ void TodBltMatrix(Graphics* g, Image* theImage, const SexyMatrix3& theTransform,
 	}
 	else if (theDrawMode == Graphics::DRAWMODE_ADDITIVE)
 	{
-		gTodTriangleDrawAdditive = true;
+		gPvzpTriangleDrawAdditive = true;
 	}
 
-	TodSandImageIfNeeded(theImage);
+	PvzpSandImageIfNeeded(theImage);
 
 	if (theClipRect.mX != 0 || theClipRect.mY != 0 || theClipRect.mWidth != BOARD_WIDTH || theClipRect.mHeight != BOARD_HEIGHT)
 	{
@@ -724,12 +724,12 @@ void TodBltMatrix(Graphics* g, Image* theImage, const SexyMatrix3& theTransform,
 		g->mDestImage->BltMatrix(theImage, aOffsetX, aOffsetY, theTransform, aBufFixClipRect, theColor, theDrawMode, theSrcRect, g->mLinearBlend);
 	}
 
-	gTodTriangleDrawAdditive = false;
+	gPvzpTriangleDrawAdditive = false;
 }
 
-void TodDrawImageCelCenterScaledF(Graphics* g, Image* theImageStrip, float thePosX, float thePosY, int theCelCol, float theScaleX, float theScaleY)
+void PvzpDrawImageCelCenterScaledF(Graphics* g, Image* theImageStrip, float thePosX, float thePosY, int theCelCol, float theScaleX, float theScaleY)
 {
-	TOD_ASSERT(theCelCol >= 0 && theCelCol < theImageStrip->mNumCols);
+	PVZP_ASSERT(theCelCol >= 0 && theCelCol < theImageStrip->mNumCols);
 
 	int aCelWidth = theImageStrip->GetCelWidth();
 	int aCelHeight = theImageStrip->GetCelHeight();
@@ -755,13 +755,13 @@ void TodDrawImageCelCenterScaledF(Graphics* g, Image* theImageStrip, float thePo
 	aTransform.m22 = 1.0f;
 
 	const Color& aColor = g->mColorizeImages ? g->mColor : Color::White;
-	TodBltMatrix(g, theImageStrip, aTransform, g->mClipRect, aColor, g->mDrawMode, aSrcRect);
+	PvzpBltMatrix(g, theImageStrip, aTransform, g->mClipRect, aColor, g->mDrawMode, aSrcRect);
 }
 
-void TodDrawImageCelScaledF(Graphics* g, Image* theImageStrip, float thePosX, float thePosY, int theCelCol, int theCelRow, float theScaleX, float theScaleY)
+void PvzpDrawImageCelScaledF(Graphics* g, Image* theImageStrip, float thePosX, float thePosY, int theCelCol, int theCelRow, float theScaleX, float theScaleY)
 {
 	//(void)theCelRow;
-	TOD_ASSERT(theCelCol >= 0 && theCelCol < theImageStrip->mNumCols);
+	PVZP_ASSERT(theCelCol >= 0 && theCelCol < theImageStrip->mNumCols);
 
 	int aCelWidth = theImageStrip->GetCelWidth();
 	int aCelHeight = theImageStrip->GetCelHeight();
@@ -787,11 +787,11 @@ void TodDrawImageCelScaledF(Graphics* g, Image* theImageStrip, float thePosX, fl
 	aTransform.m22 = 1.0f;
 
 	const Color& aColor = g->mColorizeImages ? g->mColor : Color::White;
-	TodBltMatrix(g, theImageStrip, aTransform, g->mClipRect, aColor, g->mDrawMode, aSrcRect);
+	PvzpBltMatrix(g, theImageStrip, aTransform, g->mClipRect, aColor, g->mDrawMode, aSrcRect);
 }
 
 // GOTY @Patoke: 0x51CC90
-void TodDrawImageScaledF(Graphics* g, Image* theImage, float thePosX, float thePosY, float theScaleX, float theScaleY)
+void PvzpDrawImageScaledF(Graphics* g, Image* theImage, float thePosX, float thePosY, float theScaleX, float theScaleY)
 {
 	if (theScaleX == 1.0f && theScaleY == 1.0f)
 	{
@@ -815,10 +815,10 @@ void TodDrawImageScaledF(Graphics* g, Image* theImage, float thePosX, float theP
 	aTransform.m22 = 1.0f;
 
 	const Color& aColor = g->mColorizeImages ? g->mColor : Color::White;
-	TodBltMatrix(g, theImage, aTransform, g->mClipRect, aColor, g->mDrawMode, aSrcRect);
+	PvzpBltMatrix(g, theImage, aTransform, g->mClipRect, aColor, g->mDrawMode, aSrcRect);
 }
 
-void TodDrawImageCenterScaledF(Graphics* g, Image* theImage, float thePosX, float thePosY, float theScaleX, float theScaleY)
+void PvzpDrawImageCenterScaledF(Graphics* g, Image* theImage, float thePosX, float thePosY, float theScaleX, float theScaleY)
 {
 	if (theScaleX == 1.0f && theScaleY == 1.0f)
 	{
@@ -842,7 +842,7 @@ void TodDrawImageCenterScaledF(Graphics* g, Image* theImage, float thePosX, floa
 	aTransform.m22 = 1.0f;
 
 	const Color& aColor = g->mColorizeImages ? g->mColor : Color::White;
-	TodBltMatrix(g, theImage, aTransform, g->mClipRect, aColor, g->mDrawMode, aSrcRect);
+	PvzpBltMatrix(g, theImage, aTransform, g->mClipRect, aColor, g->mDrawMode, aSrcRect);
 }
 
 uint32_t AverageNearByPixels(MemoryImage* theImage, uint32_t* thePixel, int x, int y)
@@ -918,7 +918,7 @@ void FixPixelsOnAlphaEdgeForBlending(Image* theImage)
 	int aDuration = std::max(aTimer.GetDuration(), 0.0);
 	if (aDuration > 20)
 	{
-		TodTraceAndLogLn("LOADING:Long sanding '%s' %d ms on %s", theImage->mFilePath.c_str(), aDuration, LawnGetCurrentLevelName().c_str());
+		PvzpTraceAndLogLn("LOADING:Long sanding '%s' %d ms on %s", theImage->mFilePath.c_str(), aDuration, LawnGetCurrentLevelName().c_str());
 	}
 }
 
@@ -1031,13 +1031,13 @@ Color ColorsMultiply(const Color& theColor1, const Color& theColor2)
 }
 
 // GOTY @Patoke: inlined 0x51D4C0
-bool TodLoadResources(const std::string& theGroup)
+bool PvzpLoadResources(const std::string& theGroup)
 {
-	return static_cast<TodResourceManager*>(gSexyAppBase->mResourceManager)->TodLoadResources(theGroup);
+	return static_cast<PvzpResourceManager*>(gSexyAppBase->mResourceManager)->PvzpLoadResources(theGroup);
 }
 
 // GOTY @Patoke: 0x51D4C0
-bool TodResourceManager::TodLoadResources(const std::string& theGroup)
+bool PvzpResourceManager::PvzpLoadResources(const std::string& theGroup)
 {
 	if (IsGroupLoaded(theGroup))
 		return true;
@@ -1046,7 +1046,7 @@ bool TodResourceManager::TodLoadResources(const std::string& theGroup)
 	aTimer.Start();
 
 	StartLoadResources(theGroup);
-	while (!gSexyAppBase->mShutdown && TodLoadNextResource());
+	while (!gSexyAppBase->mShutdown && PvzpLoadNextResource());
 	if (gSexyAppBase->mShutdown)
 		return false;
 
@@ -1067,20 +1067,20 @@ bool TodResourceManager::TodLoadResources(const std::string& theGroup)
 	int aDuration = std::max(aTimer.GetDuration(), 0.0);
 	if (aDuration > 20)
 	{
-		TodTraceAndLogLn("LOADED: '%s' %d ms on %s", theGroup.c_str(), aDuration, LawnGetCurrentLevelName().c_str());
+		PvzpTraceAndLogLn("LOADED: '%s' %d ms on %s", theGroup.c_str(), aDuration, LawnGetCurrentLevelName().c_str());
 	}
 
 	return true;
 }
 
-void TodAddImageToMap(SharedImageRef* theImage, const std::string& thePath)
+void PvzpAddImageToMap(SharedImageRef* theImage, const std::string& thePath)
 { 
-	static_cast<TodResourceManager*>(gSexyAppBase->mResourceManager)->AddImageToMap(theImage, thePath);
+	static_cast<PvzpResourceManager*>(gSexyAppBase->mResourceManager)->AddImageToMap(theImage, thePath);
 }
 
-void TodResourceManager::AddImageToMap(SharedImageRef* theImage, const std::string& thePath)
+void PvzpResourceManager::AddImageToMap(SharedImageRef* theImage, const std::string& thePath)
 {
-	TOD_ASSERT(mImageMap.find(thePath) == mImageMap.end());
+	PVZP_ASSERT(mImageMap.find(thePath) == mImageMap.end());
 
 	ImageRes* aImageRes = new ImageRes();
 	aImageRes->mImage = *theImage;
@@ -1088,15 +1088,15 @@ void TodResourceManager::AddImageToMap(SharedImageRef* theImage, const std::stri
 	mImageMap.insert(ResMap::value_type(thePath, aImageRes));
 }
 
-bool TodLoadNextResource()
+bool PvzpLoadNextResource()
 {
-	return static_cast<TodResourceManager*>(gSexyAppBase->mResourceManager)->TodLoadNextResource();
+	return static_cast<PvzpResourceManager*>(gSexyAppBase->mResourceManager)->PvzpLoadNextResource();
 }
 
-bool TodResourceManager::TodLoadNextResource()
+bool PvzpResourceManager::PvzpLoadNextResource()
 {
 	//GetTickCount();
-	TodHesitationTrace("preres");
+	PvzpHesitationTrace("preres");
 
 	while (mCurResGroupListItr != mCurResGroupList->end())
 	{
@@ -1155,30 +1155,30 @@ bool TodResourceManager::TodLoadNextResource()
 			Image* aImage = (Image*)anImageRes->mImage;
 			if (aImage != nullptr)
 			{
-				TodMarkImageForSanding(aImage);
+				PvzpMarkImageForSanding(aImage);
 			}
 		}
 
 		//GetTickCount();
-		TodHesitationTrace("Loading: '%s'", aRes->mPath.c_str());
-		TodHesitationTrace("resource '%s'", aRes->mPath.c_str());
+		PvzpHesitationTrace("Loading: '%s'", aRes->mPath.c_str());
+		PvzpHesitationTrace("resource '%s'", aRes->mPath.c_str());
 		return true;
 	}
 
 	return false;
 }
 
-bool TodFindImagePath(Image* theImage, std::string* thePath)
+bool PvzpFindImagePath(Image* theImage, std::string* thePath)
 {
-	return static_cast<TodResourceManager*>(gSexyAppBase->mResourceManager)->FindImagePath(theImage, thePath);
+	return static_cast<PvzpResourceManager*>(gSexyAppBase->mResourceManager)->FindImagePath(theImage, thePath);
 }
 
 // @Patoke implemented
-bool TodFindFontPath(_Font* theFont, std::string* thePath) {
-	return static_cast<TodResourceManager*>(gSexyAppBase->mResourceManager)->FindFontPath(theFont, thePath);
+bool PvzpFindFontPath(_Font* theFont, std::string* thePath) {
+	return static_cast<PvzpResourceManager*>(gSexyAppBase->mResourceManager)->FindFontPath(theFont, thePath);
 }
 
-bool TodResourceManager::FindFontPath(_Font* theFont, std::string* thePath)
+bool PvzpResourceManager::FindFontPath(_Font* theFont, std::string* thePath)
 {
 	for (auto anItr = mFontMap.begin(); anItr != mFontMap.end(); anItr++)
 	{
@@ -1193,7 +1193,7 @@ bool TodResourceManager::FindFontPath(_Font* theFont, std::string* thePath)
 	return false;
 }
 
-bool TodResourceManager::FindImagePath(Image* theImage, std::string* thePath)
+bool PvzpResourceManager::FindImagePath(Image* theImage, std::string* thePath)
 {
 	for (auto anItr = mImageMap.begin(); anItr != mImageMap.end(); anItr++)
 	{
@@ -1208,10 +1208,10 @@ bool TodResourceManager::FindImagePath(Image* theImage, std::string* thePath)
 	return false;
 }
 
-TodAllocator gGlobalAllocators[MAX_GLOBAL_ALLOCATORS];
+PvzpAllocator gGlobalAllocators[MAX_GLOBAL_ALLOCATORS];
 int gNumGlobalAllocators = 0;
 
-TodAllocator* FindGlobalAllocator(int theSize)
+PvzpAllocator* FindGlobalAllocator(int theSize)
 {
 	for (int i = 0; i < gNumGlobalAllocators; i++)
 	{
@@ -1221,9 +1221,9 @@ TodAllocator* FindGlobalAllocator(int theSize)
 		}
 	}
 
-	TOD_ASSERT(gNumGlobalAllocators < MAX_GLOBAL_ALLOCATORS - 1);
+	PVZP_ASSERT(gNumGlobalAllocators < MAX_GLOBAL_ALLOCATORS - 1);
 
-	TodAllocator* pAllocator = &gGlobalAllocators[gNumGlobalAllocators++];
+	PvzpAllocator* pAllocator = &gGlobalAllocators[gNumGlobalAllocators++];
 	pAllocator->Initialize(16, theSize);
 	return pAllocator;
 }
@@ -1238,22 +1238,22 @@ void FreeGlobalAllocators()
 	gNumGlobalAllocators = 0;
 }
 
-std::string TodReplaceString(std::string_view theText, const char* theStringToFind, std::string_view theStringToSubstitute)
+std::string PvzpReplaceString(std::string_view theText, const char* theStringToFind, std::string_view theStringToSubstitute)
 {
-	std::string aFinalString = TodStringTranslate(theText);
+	std::string aFinalString = PvzpStringTranslate(theText);
 	size_t aPos = aFinalString.find(theStringToFind);
 	if (aPos != std::string::npos)
 	{
-		std::string aFinalStringToSubstitute = TodStringTranslate(theStringToSubstitute);
+		std::string aFinalStringToSubstitute = PvzpStringTranslate(theStringToSubstitute);
 		aFinalString.replace(aPos, strlen(theStringToFind), aFinalStringToSubstitute);
 	}
 
 	return aFinalString;
 }
 
-std::string TodReplaceNumberString(std::string_view theText, const char* theStringToFind, int theNumber)
+std::string PvzpReplaceNumberString(std::string_view theText, const char* theStringToFind, int theNumber)
 {
-	std::string aFinalString = TodStringTranslate(theText);
+	std::string aFinalString = PvzpStringTranslate(theText);
 	size_t aPos = aFinalString.find(theStringToFind);
 	if (aPos != std::string::npos)
 	{
@@ -1265,9 +1265,9 @@ std::string TodReplaceNumberString(std::string_view theText, const char* theStri
 }
 
 // GOTY @Patoke: 0x51DB00
-bool TodIsPointInPolygon(const SexyVector2* thePolygonPoint, int theNumberPolygonPoints, const SexyVector2& theCheckPoint)
+bool PvzpIsPointInPolygon(const SexyVector2* thePolygonPoint, int theNumberPolygonPoints, const SexyVector2& theCheckPoint)
 {
-	TOD_ASSERT(theNumberPolygonPoints >= 3);
+	PVZP_ASSERT(theNumberPolygonPoints >= 3);
 
 	for (int i = 0; i < theNumberPolygonPoints; i++)
 	{
@@ -1282,7 +1282,7 @@ bool TodIsPointInPolygon(const SexyVector2* thePolygonPoint, int theNumberPolygo
 	return true;
 }
 
-int TodVsnprintf(char* theBuffer, int theSize, const char* theFormat, va_list theArgList)
+int PvzpVsnprintf(char* theBuffer, int theSize, const char* theFormat, va_list theArgList)
 {
 	try
 	{
@@ -1296,16 +1296,16 @@ int TodVsnprintf(char* theBuffer, int theSize, const char* theFormat, va_list th
 	}
 	catch (std::exception&)
 	{
-		TOD_ASSERT(, "bad format string");
+		PVZP_ASSERT(, "bad format string");
 		return 1;
 	}
 }
 
-int TodSnprintf(char* theBuffer, int theSize, const char* theFormat, ...)
+int PvzpSnprintf(char* theBuffer, int theSize, const char* theFormat, ...)
 {
 	va_list argList;
 	va_start(argList, theFormat);
-	int aCount = TodVsnprintf(theBuffer, theSize, theFormat, argList);
+	int aCount = PvzpVsnprintf(theBuffer, theSize, theFormat, argList);
 	va_end(argList);
 
 	return aCount;

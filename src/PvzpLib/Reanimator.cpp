@@ -19,8 +19,8 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "TodDebug.h"
-#include "TodCommon.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
 #include "Definition.h"
 #include "Reanimator.h"
 #include "Attachment.h"
@@ -340,18 +340,18 @@ Reanimation::~Reanimation()
 
 void Reanimation::ReanimationDelete()
 {
-	TOD_ASSERT(mDead);
+	PVZP_ASSERT(mDead);
 	if (mTrackInstances != nullptr)
 	{
 		int aItemSize = mDefinition->mTracks.count * sizeof(ReanimatorTrackInstance);
-		FindGlobalAllocator(aItemSize)->Free(mTrackInstances, aItemSize);  // 由 TodAllocator 回收动画轨道的内存区域
+		FindGlobalAllocator(aItemSize)->Free(mTrackInstances, aItemSize);  // 由 PvzpAllocator 回收动画轨道的内存区域
 		mTrackInstances = nullptr;
 	}
 }
 
 void Reanimation::ReanimationInitializeType(float theX, float theY, ReanimationType theReanimType)
 {
-	TOD_ASSERT(theReanimType >= 0 && theReanimType < gReanimatorDefCount);
+	PVZP_ASSERT(theReanimType >= 0 && theReanimType < gReanimatorDefCount);
 	ReanimatorEnsureDefinitionLoaded(theReanimType, false);
 	mReanimationType = theReanimType;
 	ReanimationInitialize(theX, theY, &gReanimatorDefArray[theReanimType]);
@@ -365,32 +365,32 @@ void ReanimationCreateAtlas(ReanimatorDefinition* theDefinition, ReanimationType
 
 	PerfTimer aTimer;
 	aTimer.Start();
-	TodHesitationTrace("preatlas");
+	PvzpHesitationTrace("preatlas");
 	ReanimAtlas* aAtlas = new ReanimAtlas();
 	theDefinition->mReanimAtlas = aAtlas;  // 赋值动画 Atlas 指针
 	aAtlas->ReanimAtlasCreate(theDefinition);
 
-	TodHesitationTrace("atlas '%s'", aParam.mReanimFileName);
+	PvzpHesitationTrace("atlas '%s'", aParam.mReanimFileName);
 	int aDuration = std::max(aTimer.GetDuration(), 0.0);
 	if (aDuration > 20 && theReanimationType != ReanimationType::REANIM_NONE)  //（仅内测版）创建时间过长的报告
-		TodTraceAndLogLn("LOADING:Long atlas '%s' %d ms on %s", aParam.mReanimFileName, aDuration, LawnGetCurrentLevelName().c_str());
+		PvzpTraceAndLogLn("LOADING:Long atlas '%s' %d ms on %s", aParam.mReanimFileName, aDuration, LawnGetCurrentLevelName().c_str());
 }
 
 void ReanimationPreload(ReanimationType theReanimationType)
 {
-	TOD_ASSERT(theReanimationType >= 0 && theReanimationType < gReanimatorDefCount);
+	PVZP_ASSERT(theReanimationType >= 0 && theReanimationType < gReanimatorDefCount);
 
 	ReanimatorDefinition* aReanimDef = &gReanimatorDefArray[theReanimationType];
 	ReanimationCreateAtlas(aReanimDef, theReanimationType);
 	if (aReanimDef->mReanimAtlas)
 	{
-		TodSandImageIfNeeded(aReanimDef->mReanimAtlas->mMemoryImage);
+		PvzpSandImageIfNeeded(aReanimDef->mReanimAtlas->mMemoryImage);
 	}
 }
 
 void Reanimation::ReanimationInitialize(float theX, float theY, ReanimatorDefinition* theDefinition)
 {
-	TOD_ASSERT(mTrackInstances == nullptr);
+	PVZP_ASSERT(mTrackInstances == nullptr);
 	ReanimationCreateAtlas(theDefinition, mReanimationType);
 	mDead = false;
 	SetPosition(theX, theY);
@@ -420,7 +420,7 @@ void Reanimation::Update()
 	if (mFrameCount == 0 || mDead)
 		return;
 
-	TOD_ASSERT(std::isfinite(mAnimRate));
+	PVZP_ASSERT(std::isfinite(mAnimRate));
 	mLastFrameTime = mAnimTime;  // 更新上一帧的循环率
 	mAnimTime += SECONDS_PER_UPDATE * mAnimRate / mFrameCount;  // 更新当前循环率
 
@@ -454,7 +454,7 @@ void Reanimation::Update()
 			}
 			break;
 		default:
-			TOD_ASSERT(false);
+			PVZP_ASSERT(false);
 			break;
 		}
 	}
@@ -488,7 +488,7 @@ void Reanimation::Update()
 			}
 			break;
 		default:
-			TOD_ASSERT(false);
+			PVZP_ASSERT(false);
 			break;
 		}
 	}
@@ -563,9 +563,9 @@ void Reanimation::GetCurrentTransform(int theTrackIndex, ReanimatorTransform* th
 
 void Reanimation::GetTransformAtTime(int theTrackIndex, ReanimatorTransform* theTransform, ReanimatorFrameTime* theFrameTime)
 {
-	TOD_ASSERT(theTrackIndex >= 0 && theTrackIndex < mDefinition->mTracks.count);
+	PVZP_ASSERT(theTrackIndex >= 0 && theTrackIndex < mDefinition->mTracks.count);
 	ReanimatorTrack* aTrack = &mDefinition->mTracks.tracks[theTrackIndex];
-	TOD_ASSERT(aTrack->mTransforms.count == mDefinition->mTracks.tracks[0].mTransforms.count);
+	PVZP_ASSERT(aTrack->mTransforms.count == mDefinition->mTracks.tracks[0].mTransforms.count);
 	ReanimatorTransform& aTransBefore = aTrack->mTransforms.mTransforms[theFrameTime->mAnimFrameBeforeInt];  // 前一帧的变换定义
 	ReanimatorTransform& aTransAfter = aTrack->mTransforms.mTransforms[theFrameTime->mAnimFrameAfterInt];  // 后一帧的变换定义
 
@@ -634,11 +634,11 @@ void Reanimation::ReanimBltMatrix(Graphics* g, Image* theImage, SexyMatrix3& the
 		g->SetClipRect(aOldClipRect);  // 还原裁剪矩形
 	}
 	else
-		TodBltMatrix(g, theImage, theTransform, theClipRect, theColor, theDrawMode, theSrcRect);
+		PvzpBltMatrix(g, theImage, theTransform, theClipRect, theColor, theDrawMode, theSrcRect);
 }
 
 // GOTY @Patoke: 0x4769B0
-bool Reanimation::DrawTrack(Graphics* g, int theTrackIndex, int theRenderGroup, TodTriangleGroup* theTriangleGroup)
+bool Reanimation::DrawTrack(Graphics* g, int theTrackIndex, int theRenderGroup, PvzpTriangleGroup* theTriangleGroup)
 {
 	(void)theRenderGroup;
 	ReanimatorTransform aTransform;
@@ -802,12 +802,12 @@ bool Reanimation::DrawTrack(Graphics* g, int theTrackIndex, int theRenderGroup, 
 	}
 	else if (aTransform.mFont != nullptr && *aTransform.mText != '\0')  // 如果不存在图像但存在文本
 	{
-		TodDrawStringMatrix(g, aTransform.mFont, aMatrix, aTransform.mText, aColor);
+		PvzpDrawStringMatrix(g, aTransform.mFont, aMatrix, aTransform.mText, aColor);
 		if (mEnableExtraAdditiveDraw)
 		{
 			int aOldMode = g->GetDrawMode();  // 备份绘制模式
 			g->SetDrawMode(Graphics::DRAWMODE_ADDITIVE);
-			TodDrawStringMatrix(g, aTransform.mFont, aMatrix, aTransform.mText, aExtraAdditiveColor);
+			PvzpDrawStringMatrix(g, aTransform.mFont, aMatrix, aTransform.mText, aExtraAdditiveColor);
 			g->SetDrawMode(aOldMode);  // 还原绘制模式
 		}
 	}
@@ -899,7 +899,7 @@ void Reanimation::GetTrackMatrix(int theTrackIndex, SexyTransform2D& theMatrix)
 
 void Reanimation::GetFrameTime(ReanimatorFrameTime* theFrameTime)
 {
-	TOD_ASSERT(mFrameStart + mFrameCount <= mDefinition->mTracks.tracks[0].mTransforms.count);
+	PVZP_ASSERT(mFrameStart + mFrameCount <= mDefinition->mTracks.tracks[0].mTransforms.count);
 	int aFrameCount;
 	if (mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_FULL_LAST_FRAME || mLoopType == ReanimLoopType::REANIM_LOOP_FULL_LAST_FRAME ||
 		mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_FULL_LAST_FRAME_AND_HOLD)
@@ -917,7 +917,7 @@ void Reanimation::GetFrameTime(ReanimatorFrameTime* theFrameTime)
 	}
 	else
 		theFrameTime->mAnimFrameAfterInt = theFrameTime->mAnimFrameBeforeInt + 1;  // 后一整数帧等于前一整数帧的后一帧
-	TOD_ASSERT(theFrameTime->mAnimFrameBeforeInt >= 0 && theFrameTime->mAnimFrameAfterInt < mDefinition->mTracks.tracks[0].mTransforms.count);
+	PVZP_ASSERT(theFrameTime->mAnimFrameBeforeInt >= 0 && theFrameTime->mAnimFrameAfterInt < mDefinition->mTracks.tracks[0].mTransforms.count);
 }
 
 void Reanimation::DrawRenderGroup(Graphics* g, int theRenderGroup)
@@ -925,7 +925,7 @@ void Reanimation::DrawRenderGroup(Graphics* g, int theRenderGroup)
 	if (mDead)
 		return;
 
-	TodTriangleGroup aTriangleGroup;
+	PvzpTriangleGroup aTriangleGroup;
 	for (int aTrackIndex = 0; aTrackIndex < mDefinition->mTracks.count; aTrackIndex++)
 	{
 		ReanimatorTrackInstance* aTrackInstance = &mTrackInstances[aTrackIndex];
@@ -954,7 +954,7 @@ int Reanimation::FindTrackIndex(const char* theTrackName)
 		if (strcasecmp(mDefinition->mTracks.tracks[aTrackIndex].mName, theTrackName) == 0)
 			return aTrackIndex;
 
-	TodTrace("Can't find track '%s'", theTrackName);
+	PvzpTrace("Can't find track '%s'", theTrackName);
 	return 0;
 }
 
@@ -996,7 +996,7 @@ void Reanimation::GetTrackBasePoseMatrix(int theTrackIndex, SexyTransform2D& the
 	MatrixFromTransform(aTransformStart, theBasePosMatrix);
 }
 
-AttachEffect* Reanimation::AttachParticleToTrack(const char* theTrackName, TodParticleSystem* theParticleSystem, float thePosX, float thePosY)
+AttachEffect* Reanimation::AttachParticleToTrack(const char* theTrackName, PvzpParticleSystem* theParticleSystem, float thePosX, float thePosY)
 {
 	int aTrackIndex = FindTrackIndex(theTrackName);
 	ReanimatorTrackInstance* aTrackInstance = &mTrackInstances[aTrackIndex];
@@ -1032,7 +1032,7 @@ void Reanimation::GetFramesForLayer(const char* theTrackName, int& theFrameStart
 	}
 
 	int aTrackIndex = FindTrackIndex(theTrackName);
-	TOD_ASSERT(aTrackIndex >= 0 && aTrackIndex < mDefinition->mTracks.count);
+	PVZP_ASSERT(aTrackIndex >= 0 && aTrackIndex < mDefinition->mTracks.count);
 	ReanimatorTrack* aTrack = &mDefinition->mTracks.tracks[aTrackIndex];
 	theFrameStart = 0;
 	theFrameCount = 1;
@@ -1093,7 +1093,7 @@ void Reanimation::ReanimationDie()
 			return;
 		for (int aTrackIndex = 0; aTrackIndex < mDefinition->mTracks.count; aTrackIndex++)
 		{
-			TOD_ASSERT(mTrackInstances);
+			PVZP_ASSERT(mTrackInstances);
 			AttachmentDie(mTrackInstances[aTrackIndex].mAttachmentID);
 		}
 	}
@@ -1155,7 +1155,7 @@ void ReanimationHolder::InitializeHolder()
 
 Reanimation* ReanimationHolder::AllocReanimation(float theX, float theY, int theRenderOrder, ReanimationType theReanimationType)
 {
-	TOD_ASSERT(mReanimations.mSize != mReanimations.mMaxSize);
+	PVZP_ASSERT(mReanimations.mSize != mReanimations.mMaxSize);
 	Reanimation* aReanim = mReanimations.DataArrayAlloc();
 	aReanim->mRenderOrder = theRenderOrder;
 	aReanim->mReanimationHolder = this;
@@ -1165,12 +1165,12 @@ Reanimation* ReanimationHolder::AllocReanimation(float theX, float theY, int the
 
 void ReanimatorEnsureDefinitionLoaded(ReanimationType theReanimType, bool theIsPreloading)
 {
-	TOD_ASSERT(theReanimType >= 0 && theReanimType < gReanimatorDefCount);
+	PVZP_ASSERT(theReanimType >= 0 && theReanimType < gReanimatorDefCount);
 	ReanimatorDefinition* aReanimDef = &gReanimatorDefArray[theReanimType];
 	if (aReanimDef->mTracks.tracks != nullptr)  // 如果轨道指针不为空指针，说明定义数据已经加载
 		return;
 	const ReanimationParams* aReanimParams = &gReanimationParamArray[theReanimType];
-	TodTrace("'%s'\n", aReanimParams->mReanimFileName);
+	PvzpTrace("'%s'\n", aReanimParams->mReanimFileName);
 	if (theIsPreloading)
 	{
 		if (gSexyAppBase->mShutdown || LawnGetCloseRequest())  // 预加载时若程序退出，则取消加载
@@ -1179,29 +1179,29 @@ void ReanimatorEnsureDefinitionLoaded(ReanimationType theReanimType, bool theIsP
 	else  // < 以下部分仅内测版执行 >
 	{
 		if (LawnHasUsedCheatKeys())
-			TodTraceAndLogLn("Cheater failed to preload '%s' on %s", aReanimParams->mReanimFileName, LawnGetCurrentLevelName().c_str());
+			PvzpTraceAndLogLn("Cheater failed to preload '%s' on %s", aReanimParams->mReanimFileName, LawnGetCurrentLevelName().c_str());
 		else
-			TodTraceAndLogLn("Non-cheater failed to preload '%s' on %s", aReanimParams->mReanimFileName, LawnGetCurrentLevelName().c_str());
+			PvzpTraceAndLogLn("Non-cheater failed to preload '%s' on %s", aReanimParams->mReanimFileName, LawnGetCurrentLevelName().c_str());
 	}  // < 以上部分仅内测版执行 >
 
 	PerfTimer aTimer;
 	aTimer.Start();
-	TodHesitationBracket aHesitation("Load Reanim '%s'", aReanimParams->mReanimFileName);
+	PvzpHesitationBracket aHesitation("Load Reanim '%s'", aReanimParams->mReanimFileName);
 	if (!ReanimationLoadDefinition(aReanimParams->mReanimFileName, aReanimDef))
 	{
 		char aBuf[1024];
 		snprintf(aBuf, sizeof(aBuf), "Failed to load reanim '%s'", aReanimParams->mReanimFileName);
-		TodErrorMessageBox(aBuf, "Error");
+		PvzpErrorMessageBox(aBuf, "Error");
 	}
 	int aDuration = aTimer.GetDuration();
 	if (aDuration > 100)  //（仅内测版）创建时间过长的报告
-		TodTraceAndLogLn("LOADING:Long reanim '%s' %d ms on %s", aReanimParams->mReanimFileName, aDuration, LawnGetCurrentLevelName().c_str());
+		PvzpTraceAndLogLn("LOADING:Long reanim '%s' %d ms on %s", aReanimParams->mReanimFileName, aDuration, LawnGetCurrentLevelName().c_str());
 }
 
 void ReanimatorLoadDefinitions(const ReanimationParams* theReanimationParamArray, int theReanimationParamArraySize)
 {
-	TodHesitationBracket aHesitation("ReanimatorLoadDefinitions");
-	TOD_ASSERT(!gReanimationParamArray && !gReanimatorDefArray);
+	PvzpHesitationBracket aHesitation("ReanimatorLoadDefinitions");
+	PVZP_ASSERT(!gReanimationParamArray && !gReanimatorDefArray);
 	gReanimationParamArraySize = theReanimationParamArraySize;
 	gReanimationParamArray = theReanimationParamArray;
 	gReanimatorDefCount = theReanimationParamArraySize;
@@ -1211,7 +1211,7 @@ void ReanimatorLoadDefinitions(const ReanimationParams* theReanimationParamArray
 	for (unsigned int i = 0; i < gReanimationParamArraySize; i++)
 	{
 		const ReanimationParams* aReanimationParams = &theReanimationParamArray[i];
-		TOD_ASSERT(aReanimationParams->mReanimationType == i);
+		PVZP_ASSERT(aReanimationParams->mReanimationType == i);
 		if (DefinitionIsCompiled(aReanimationParams->mReanimFileName))
 			ReanimatorEnsureDefinitionLoaded(aReanimationParams->mReanimationType, true);
 	}
@@ -1235,7 +1235,7 @@ float Reanimation::GetTrackVelocity(const char* theTrackName)
 	ReanimatorFrameTime aFrameTime;
 	GetFrameTime(&aFrameTime);
 	int aTrackIndex = FindTrackIndex(theTrackName);
-	TOD_ASSERT(aTrackIndex >= 0 && aTrackIndex < mDefinition->mTracks.count);
+	PVZP_ASSERT(aTrackIndex >= 0 && aTrackIndex < mDefinition->mTracks.count);
 
 	ReanimatorTrack* aTrack = &mDefinition->mTracks.tracks[aTrackIndex];
 	float aDis = aTrack->mTransforms.mTransforms[aFrameTime.mAnimFrameAfterInt].mTransX - aTrack->mTransforms.mTransforms[aFrameTime.mAnimFrameBeforeInt].mTransX;
@@ -1247,7 +1247,7 @@ bool Reanimation::IsTrackShowing(const char* theTrackName)
 	ReanimatorFrameTime aFrameTime;
 	GetFrameTime(&aFrameTime);
 	int aTrackIndex = FindTrackIndex(theTrackName);
-	TOD_ASSERT(aTrackIndex >= 0 && aTrackIndex < mDefinition->mTracks.count);
+	PVZP_ASSERT(aTrackIndex >= 0 && aTrackIndex < mDefinition->mTracks.count);
 
 	return mDefinition->mTracks.tracks[aTrackIndex].mTransforms.mTransforms[aFrameTime.mAnimFrameAfterInt].mFrame >= 0.0f;  // 返回下一整数帧是否存在图像
 }
@@ -1294,7 +1294,7 @@ void Reanimation::PropogateColorToAttachments()
 
 bool Reanimation::ShouldTriggerTimedEvent(float theEventTime)
 {
-	TOD_ASSERT(theEventTime >= 0.0f && theEventTime <= 1.0f);
+	PVZP_ASSERT(theEventTime >= 0.0f && theEventTime <= 1.0f);
 	if (mFrameCount == 0 || mLastFrameTime <= 0.0f || mAnimRate <= 0.0f)  // 没有动画或倒放或未播放
 		return false;
 

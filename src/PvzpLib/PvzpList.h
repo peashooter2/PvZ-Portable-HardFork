@@ -19,15 +19,15 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __TODLIST_H__
-#define __TODLIST_H__
+#ifndef __PVZPLIST_H__
+#define __PVZPLIST_H__
 
 #define MAX_GLOBAL_ALLOCATORS 128
 
-#include "TodDebug.h"
-#include "TodCommon.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
 
-struct TodAllocator
+struct PvzpAllocator
 {
     void*				mFreeList;
     void*				mBlockList;
@@ -46,26 +46,26 @@ struct TodAllocator
     bool                IsPointerOnFreeList(void* theItem);
 };
 extern int gNumGlobalAllocators;
-extern TodAllocator gGlobalAllocators[MAX_GLOBAL_ALLOCATORS];
+extern PvzpAllocator gGlobalAllocators[MAX_GLOBAL_ALLOCATORS];
 
-template <typename T> class TodListNode
+template <typename T> class PvzpListNode
 {
 public:
 	T					mValue;
-	TodListNode<T>*		mNext;
-	TodListNode<T>*		mPrev;
+	PvzpListNode<T>*		mNext;
+	PvzpListNode<T>*		mPrev;
 };
 
-template <typename T> class TodList
+template <typename T> class PvzpList
 {
 public:
-	TodListNode<T>*		mHead;
-	TodListNode<T>*		mTail;
+	PvzpListNode<T>*		mHead;
+	PvzpListNode<T>*		mTail;
 	int					mSize;
-	TodAllocator*		mpAllocator;
+	PvzpAllocator*		mpAllocator;
 
 public:
-    TodList()
+    PvzpList()
     {
         mHead = nullptr;
         mTail = nullptr;
@@ -73,29 +73,29 @@ public:
         mpAllocator = nullptr;
     }
 
-    ~TodList()
+    ~PvzpList()
     {
         RemoveAll();
     }
 
-    TodListNode<T>* GetHead()
+    PvzpListNode<T>* GetHead()
     {
-        TOD_ASSERT(mHead != nullptr);
+        PVZP_ASSERT(mHead != nullptr);
         return mHead;
     }
 
-    TodListNode<T>* GetTail()
+    PvzpListNode<T>* GetTail()
     {
-        TOD_ASSERT(mTail != nullptr);
+        PVZP_ASSERT(mTail != nullptr);
         return mTail;
     }
 
     void AddHead(const T& theHead)
     {
         if (mpAllocator == nullptr)
-            mpAllocator = FindGlobalAllocator(sizeof(TodListNode<T>));
+            mpAllocator = FindGlobalAllocator(sizeof(PvzpListNode<T>));
 
-        TodListNode<T>* aNode = (TodListNode<T>*)mpAllocator->Calloc(sizeof(TodListNode<T>));
+        PvzpListNode<T>* aNode = (PvzpListNode<T>*)mpAllocator->Calloc(sizeof(PvzpListNode<T>));
         if (aNode)
             aNode->mValue = theHead;
         aNode->mNext = mHead;  // 新节点的下一个节点指向原节点
@@ -111,9 +111,9 @@ public:
     void AddTail(const T& theTail)
     {
         if (mpAllocator == nullptr)
-            mpAllocator = FindGlobalAllocator(sizeof(TodListNode<T>));
+            mpAllocator = FindGlobalAllocator(sizeof(PvzpListNode<T>));
 
-        TodListNode<T>* aNode = (TodListNode<T>*)mpAllocator->Calloc(sizeof(TodListNode<T>));
+        PvzpListNode<T>* aNode = (PvzpListNode<T>*)mpAllocator->Calloc(sizeof(PvzpListNode<T>));
         if (aNode)
             aNode->mValue = theTail;
         aNode->mNext = nullptr;
@@ -128,8 +128,8 @@ public:
 
     inline T RemoveHead()
     {
-        TodListNode<T>* aHead = mHead;
-        TodListNode<T>* aSecNode = aHead->mNext;
+        PvzpListNode<T>* aHead = mHead;
+        PvzpListNode<T>* aSecNode = aHead->mNext;
         mHead = aSecNode;
         if (aSecNode)
             aSecNode->mPrev = nullptr;
@@ -138,13 +138,13 @@ public:
         
         T aVal = aHead->mValue;
         mSize--;
-        mpAllocator->Free(aHead, sizeof(TodListNode<T>));
+        mpAllocator->Free(aHead, sizeof(PvzpListNode<T>));
         return aVal;
     }
 
-    inline TodListNode<T>* RemoveAt(TodListNode<T>* theNode)
+    inline PvzpListNode<T>* RemoveAt(PvzpListNode<T>* theNode)
     {
-        TodListNode<T>* aNext = theNode->mNext;
+        PvzpListNode<T>* aNext = theNode->mNext;
         if (theNode->mPrev != nullptr)
             theNode->mPrev->mNext = aNext;
         else
@@ -156,13 +156,13 @@ public:
             mTail = theNode->mPrev;
 
         mSize--;
-        mpAllocator->Free(theNode, sizeof(TodListNode<T>));
+        mpAllocator->Free(theNode, sizeof(PvzpListNode<T>));
         return aNext;
     }
 
-    inline TodListNode<T>* Find(const T& theItem) const
+    inline PvzpListNode<T>* Find(const T& theItem) const
     {
-        for (TodListNode<T>* aNode = mHead; aNode != nullptr; aNode = aNode->mNext)
+        for (PvzpListNode<T>* aNode = mHead; aNode != nullptr; aNode = aNode->mNext)
             if (aNode->mValue == theItem)
                 return aNode;
         return nullptr;
@@ -170,12 +170,12 @@ public:
 
     inline void RemoveAll()
     {
-        TodListNode<T>* aNode = mHead;
+        PvzpListNode<T>* aNode = mHead;
         while (aNode)
         {
-            TodListNode<T>* temp = aNode;
+            PvzpListNode<T>* temp = aNode;
             aNode = aNode->mNext;
-            mpAllocator->Free(temp, sizeof(TodListNode<T>));
+            mpAllocator->Free(temp, sizeof(PvzpListNode<T>));
         }
 
         mSize = 0;
@@ -183,9 +183,9 @@ public:
         mTail = nullptr;
     }
 
-    inline void SetAllocator(TodAllocator* theAllocator) 
+    inline void SetAllocator(PvzpAllocator* theAllocator) 
     { 
-        TOD_ASSERT(mSize == 0);
+        PVZP_ASSERT(mSize == 0);
         mpAllocator = theAllocator;
     }
 };

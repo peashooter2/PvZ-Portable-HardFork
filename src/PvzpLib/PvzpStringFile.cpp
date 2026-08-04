@@ -19,17 +19,17 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "TodDebug.h"
-#include "TodCommon.h"
-#include "TodStringFile.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
+#include "PvzpStringFile.h"
 #include "paklib/PakInterface.h"
 #include "graphics/Font.h"
 
-int gTodStringFormatCount;
-TodStringListFormat* gTodStringFormats;
+int gPvzpStringFormatCount;
+PvzpStringListFormat* gPvzpStringFormats;
 
 const int gLawnStringFormatCount = 12;
-TodStringListFormat gLawnStringFormats[12] = {    // GOTY @Patoke: 0x7248EC
+PvzpStringListFormat gLawnStringFormats[12] = {    // GOTY @Patoke: 0x7248EC
 	{ "NORMAL",           nullptr,    Color(40,   50,     90,     255),       0,      0U },
 	{ "FLAVOR",           nullptr,    Color(143,  67,     27,     255),       0,      1U },
 	{ "KEYWORD",          nullptr,    Color(143,  67,     27,     255),       0,      0U },
@@ -44,7 +44,7 @@ TodStringListFormat gLawnStringFormats[12] = {    // GOTY @Patoke: 0x7248EC
 	{ "CREDITS2",         nullptr,    Color(0,    0,      0,      0),         2,      0U } // @Patoke: wrong size (2 duplicates)
 };
 
-TodStringListFormat::TodStringListFormat()
+PvzpStringListFormat::PvzpStringListFormat()
 {
 	mFormatName = "";
 	mNewFont = nullptr;
@@ -52,25 +52,25 @@ TodStringListFormat::TodStringListFormat()
 	mFormatFlags = 0U;
 }
 
-TodStringListFormat::TodStringListFormat(const char* theFormatName, _Font** theFont, const Color& theColor, int theLineSpacingOffset, unsigned int theFormatFlags) : 
+PvzpStringListFormat::PvzpStringListFormat(const char* theFormatName, _Font** theFont, const Color& theColor, int theLineSpacingOffset, unsigned int theFormatFlags) : 
 	mFormatName(theFormatName), mNewFont(theFont), mNewColor(theColor), mLineSpacingOffset(theLineSpacingOffset), mFormatFlags(theFormatFlags)
 { 
 }
 
-void TodStringListSetColors(TodStringListFormat* theFormats, int theCount)
+void PvzpStringListSetColors(PvzpStringListFormat* theFormats, int theCount)
 {
-	gTodStringFormats = theFormats;
-	gTodStringFormatCount = theCount;
+	gPvzpStringFormats = theFormats;
+	gPvzpStringFormatCount = theCount;
 }
 
-bool TodStringListReadName(const char*& thePtr, std::string& theName)
+bool PvzpStringListReadName(const char*& thePtr, std::string& theName)
 {
 	const char* aNameStart = strchr(thePtr, '[');
 	if (aNameStart == nullptr)  // 如果文本中不存在“[”
 	{
 		if (strspn(thePtr, " \n\r\t") != strlen(thePtr))  // 如果文本不全是空白字符
 		{
-			TodTrace("Failed to find string name");
+			PvzpTrace("Failed to find string name");
 			return false;
 		}
 
@@ -82,7 +82,7 @@ bool TodStringListReadName(const char*& thePtr, std::string& theName)
 		const char* aNameEnd = strchr(aNameStart + 1, ']');
 		if (aNameEnd == nullptr)  // 如果“[”后不存在“]”
 		{
-			TodTrace("Failed to find ']'");
+			PvzpTrace("Failed to find ']'");
 			return false;
 		}
 
@@ -90,7 +90,7 @@ bool TodStringListReadName(const char*& thePtr, std::string& theName)
 		theName = Sexy::Trim(std::string(aNameStart + 1, aCount));  // 取得中括号之间的部分并去除字符串前后的空白字符
 		if (theName.size() == 0)
 		{
-			TodTrace("Name Too Short");
+			PvzpTrace("Name Too Short");
 			return false;
 		}
 
@@ -99,7 +99,7 @@ bool TodStringListReadName(const char*& thePtr, std::string& theName)
 	}
 }
 
-void TodStringRemoveReturnChars(std::string& theString)
+void PvzpStringRemoveReturnChars(std::string& theString)
 {
 	for (size_t i = 0; i < theString.size(); )
 	{
@@ -110,17 +110,17 @@ void TodStringRemoveReturnChars(std::string& theString)
 	}
 }
 
-bool TodStringListReadValue(const char*& thePtr, std::string& theValue)
+bool PvzpStringListReadValue(const char*& thePtr, std::string& theValue)
 {
 	const char* aValueEnd = strchr(thePtr, '[');
 	int aLen = aValueEnd ? aValueEnd - thePtr : strlen(thePtr);
 	theValue = Sexy::Trim(std::string(thePtr, aLen));  // 如果存在下一个“[”，则取到“[”前为止；否则，取剩下的全部
-	TodStringRemoveReturnChars(theValue);  // 移除所有的换行符
+	PvzpStringRemoveReturnChars(theValue);  // 移除所有的换行符
 	thePtr += aLen;  // 移动读取指针至“[”处（或结尾处）
 	return true;
 }
 
-bool TodStringListReadItems(const char* theFileText)
+bool PvzpStringListReadItems(const char* theFileText)
 {
 	const char* aPtr = theFileText;
 	std::string aName;
@@ -128,11 +128,11 @@ bool TodStringListReadItems(const char* theFileText)
 
 	for (;;)
 	{
-		if (!TodStringListReadName(aPtr, aName))  // 读取一个标签
+		if (!PvzpStringListReadName(aPtr, aName))  // 读取一个标签
 			return false;
 		if (aName.size() == 0)  // 读取成功但没有读取到标签，表明读取完成
 			return true;
-		if (!TodStringListReadValue(aPtr, aValue))  // 读取对应的内容
+		if (!PvzpStringListReadValue(aPtr, aValue))  // 读取对应的内容
 			return false;
 
 		std::string aNameUpper = Sexy::StringToUpper(aName);
@@ -140,25 +140,25 @@ bool TodStringListReadItems(const char* theFileText)
 	}
 }
 
-bool TodStringListReadFile(const char* theFileName)
+bool PvzpStringListReadFile(const char* theFileName)
 {
 	std::string aFileContent;
 	if (!gSexyAppBase->ReadUTF8StringFromFile(theFileName, &aFileContent))
 	{
-		TodTrace("Failed to open '%s'", theFileName);
+		PvzpTrace("Failed to open '%s'", theFileName);
 		return false;
 	}
 
-	return TodStringListReadItems(aFileContent.c_str());
+	return PvzpStringListReadItems(aFileContent.c_str());
 }
 
-void TodStringListLoad(const char* theFileName)
+void PvzpStringListLoad(const char* theFileName)
 {
-	if (!TodStringListReadFile(theFileName))
-		TodErrorMessageBox(Sexy::StrFormat("Failed to load string list file '%s'", theFileName).c_str(), "Error");
+	if (!PvzpStringListReadFile(theFileName))
+		PvzpErrorMessageBox(Sexy::StrFormat("Failed to load string list file '%s'", theFileName).c_str(), "Error");
 }
 
-std::string TodStringListFind(std::string_view theName)
+std::string PvzpStringListFind(std::string_view theName)
 {
 	auto anItr = gSexyAppBase->mStringProperties.find(theName);
 	if (anItr != gSexyAppBase->mStringProperties.end())
@@ -172,17 +172,17 @@ std::string TodStringListFind(std::string_view theName)
 }
 
 // GOTY @Patoke: 0x523B90
-std::string TodStringTranslate(std::string_view theString)
+std::string PvzpStringTranslate(std::string_view theString)
 {
 	if (theString.size() >= 3 && theString[0] == '[')
 	{
 		std::string_view aName = theString.substr(1, theString.size() - 2);  // 取"["与"]"中间的部分
-		return TodStringListFind(aName);
+		return PvzpStringListFind(aName);
 	}
 	return std::string(theString);
 }
 
-std::string TodStringTranslate(const char* theString)
+std::string PvzpStringTranslate(const char* theString)
 {
 	if (theString != nullptr)
 	{
@@ -190,7 +190,7 @@ std::string TodStringTranslate(const char* theString)
 		if (aLen >= 3 && theString[0] == '[')
 		{
 			std::string aName(theString, 1, aLen - 2);  // 取“[”与“]”中间的部分
-			return TodStringListFind(aName);
+			return PvzpStringListFind(aName);
 		}
 		else
 			return theString;
@@ -199,7 +199,7 @@ std::string TodStringTranslate(const char* theString)
 		return "";
 }
 
-bool TodStringListExists(std::string_view theString)
+bool PvzpStringListExists(std::string_view theString)
 {
 	if (theString.size() >= 3 && theString[0] == '[')
 	{
@@ -210,11 +210,11 @@ bool TodStringListExists(std::string_view theString)
 }
 
 // GOTY @Patoke: 0x523E20
-void TodWriteStringSetFormat(const char* theFormat, TodStringListFormat& theCurrentFormat)
+void PvzpWriteStringSetFormat(const char* theFormat, PvzpStringListFormat& theCurrentFormat)
 {
-	for (int i = 0; i < gTodStringFormatCount; i++)
+	for (int i = 0; i < gPvzpStringFormatCount; i++)
 	{
-		const TodStringListFormat& aFormat = gTodStringFormats[i];
+		const PvzpStringListFormat& aFormat = gPvzpStringFormats[i];
 		if (strncmp(theFormat, aFormat.mFormatName, strlen(aFormat.mFormatName)) == 0)
 		{
 			if (aFormat.mNewFont != nullptr)
@@ -228,19 +228,19 @@ void TodWriteStringSetFormat(const char* theFormat, TodStringListFormat& theCurr
 	}
 }
 
-bool CharIsSpaceInFormat(char theChar, const TodStringListFormat& theCurrentFormat)
+bool CharIsSpaceInFormat(char theChar, const PvzpStringListFormat& theCurrentFormat)
 {
-	return theChar == ' ' || (TestBit(theCurrentFormat.mFormatFlags, TodStringFormatFlag::TOD_FORMAT_IGNORE_NEWLINES) && theChar == '\n');
+	return theChar == ' ' || (TestBit(theCurrentFormat.mFormatFlags, PvzpStringFormatFlag::PVZP_FORMAT_IGNORE_NEWLINES) && theChar == '\n');
 }
 
-int TodWriteString(Graphics* g, const std::string& theString, int theX, int theY, TodStringListFormat& theCurrentFormat, int theWidth, DrawStringJustification theJustification, bool drawString, int theOffset, int theLength)
+int PvzpWriteString(Graphics* g, const std::string& theString, int theX, int theY, PvzpStringListFormat& theCurrentFormat, int theWidth, DrawStringJustification theJustification, bool drawString, int theOffset, int theLength)
 {
 	_Font* aFont = *theCurrentFormat.mNewFont;
 	if (drawString)
 	{
 		const auto aMeasureSpareX = [&]() -> int {
-			TodStringListFormat aMeasureFormat = theCurrentFormat;
-			return theWidth - TodWriteString(g, theString, theX, theY, aMeasureFormat, theWidth, DrawStringJustification::DS_ALIGN_LEFT, false, theOffset, theLength);
+			PvzpStringListFormat aMeasureFormat = theCurrentFormat;
+			return theWidth - PvzpWriteString(g, theString, theX, theY, aMeasureFormat, theWidth, DrawStringJustification::DS_ALIGN_LEFT, false, theOffset, theLength);
 		};
 		switch (theJustification)
 		{
@@ -279,13 +279,13 @@ int TodWriteString(Graphics* g, const std::string& theString, int theX, int theY
 				
 				aXOffset += aFont->StringWidth(aString);  // 横向偏移值加上绘制的字符串的宽度
 				aString.assign("");  // 清空字符串
-				TodWriteStringSetFormat(aFormatStart + 1, theCurrentFormat);  // 根据当前控制字符调整格式
+				PvzpWriteStringSetFormat(aFormatStart + 1, theCurrentFormat);  // 根据当前控制字符调整格式
 				// _Font* aFont = *theCurrentFormat.mNewFont; // unused
 			}
 		}
 		else
 		{
-			if (TestBit(theCurrentFormat.mFormatFlags, TodStringFormatFlag::TOD_FORMAT_IGNORE_NEWLINES))  // 如果将换行符视作空格
+			if (TestBit(theCurrentFormat.mFormatFlags, PvzpStringFormatFlag::PVZP_FORMAT_IGNORE_NEWLINES))  // 如果将换行符视作空格
 			{
 				if (CharIsSpaceInFormat(theString[i], theCurrentFormat))  // 如果当前字符是空格
 				{
@@ -306,7 +306,7 @@ int TodWriteString(Graphics* g, const std::string& theString, int theX, int theY
 	return aXOffset + aFont->StringWidth(aString);
 }
 
-int TodWriteWordWrappedHelper(Graphics* g, const std::string& theString, int theX, int theY, TodStringListFormat& theCurrentFormat, int theWidth, DrawStringJustification theJustification, bool drawString, int theOffset, int theLength, int theMaxChars)
+int PvzpWriteWordWrappedHelper(Graphics* g, const std::string& theString, int theX, int theY, PvzpStringListFormat& theCurrentFormat, int theWidth, DrawStringJustification theJustification, bool drawString, int theOffset, int theLength, int theMaxChars)
 {
 	if (theOffset + theLength > theMaxChars)
 	{
@@ -314,14 +314,14 @@ int TodWriteWordWrappedHelper(Graphics* g, const std::string& theString, int the
 		if (theLength <= 0)
 			return -1;
 	}
-	return TodWriteString(g, theString, theX, theY, theCurrentFormat, theWidth, theJustification, drawString, theOffset, theLength);
+	return PvzpWriteString(g, theString, theX, theY, theCurrentFormat, theWidth, theJustification, drawString, theOffset, theLength);
 }
 
 // GOTY @Patoke: 0x5241C0
-int TodDrawStringWrappedHelper(Graphics* g, const std::string& theText, const Rect& theRect, _Font* theFont, const Color& theColor, DrawStringJustification theJustification, bool drawString)
+int PvzpDrawStringWrappedHelper(Graphics* g, const std::string& theText, const Rect& theRect, _Font* theFont, const Color& theColor, DrawStringJustification theJustification, bool drawString)
 {
 	int theMaxChars = theText.size();
-	TodStringListFormat aCurrentFormat;
+	PvzpStringListFormat aCurrentFormat;
 	aCurrentFormat.mNewFont = &theFont;
 	aCurrentFormat.mNewColor = theColor;
 	aCurrentFormat.mFormatName = "";
@@ -355,7 +355,7 @@ int TodDrawStringWrappedHelper(Graphics* g, const std::string& theText, const Re
 				aCurPos += aFmtEnd - aFmtStart + 1;
 				int aOldAscentOffset = theFont->GetAscent() - theFont->GetAscentPadding();
 				Color aExistingColor = aCurrentFormat.mNewColor;
-				TodWriteStringSetFormat(aFormat, aCurrentFormat);
+				PvzpWriteStringSetFormat(aFormat, aCurrentFormat);
 				aCurrentFormat.mNewColor = aExistingColor;
 				int aNewAscentOffset = (*aCurrentFormat.mNewFont)->GetAscent() - (*aCurrentFormat.mNewFont)->GetAscentPadding();
 				aLineSpacing = (*aCurrentFormat.mNewFont)->GetLineSpacing() + aCurrentFormat.mLineSpacingOffset;
@@ -373,7 +373,7 @@ int TodDrawStringWrappedHelper(Graphics* g, const std::string& theText, const Re
 			continue;
 		size_t aCharEnd = aCurPos;
 		bool aIsNewline = (aCurChar == U'\n') &&
-			!TestBit(aCurrentFormat.mFormatFlags, TodStringFormatFlag::TOD_FORMAT_IGNORE_NEWLINES);
+			!TestBit(aCurrentFormat.mFormatFlags, PvzpStringFormatFlag::PVZP_FORMAT_IGNORE_NEWLINES);
 		bool aIsSpace = !aIsNewline && (aCurChar == U' ' ||
 			(aCurChar < 0x80 && CharIsSpaceInFormat(static_cast<char>(aCurChar), aCurrentFormat)));
 
@@ -413,7 +413,7 @@ int TodDrawStringWrappedHelper(Graphics* g, const std::string& theText, const Re
 				int aCurY = static_cast<int>(g->mTransY) + theRect.mY + aYOffset;
 				if (aCurY >= g->mClipRect.mY && aCurY <= g->mClipRect.mY + g->mClipRect.mHeight + aLineSpacing)
 				{
-					TodWriteWordWrappedHelper(
+					PvzpWriteWordWrappedHelper(
 						g,
 						theText,
 						theRect.mX,
@@ -444,7 +444,7 @@ int TodDrawStringWrappedHelper(Graphics* g, const std::string& theText, const Re
 				if (aDrawEnd <= aLineFeedPos)
 					aDrawEnd = aCharEnd;
 
-				aLineWidth = TodWriteWordWrappedHelper(
+				aLineWidth = PvzpWriteWordWrappedHelper(
 					g,
 					theText,
 					theRect.mX,
@@ -474,7 +474,7 @@ int TodDrawStringWrappedHelper(Graphics* g, const std::string& theText, const Re
 
 	if (aLineFeedPos < theText.size())
 	{
-		int aLastLineLength = TodWriteWordWrappedHelper(
+		int aLastLineLength = PvzpWriteWordWrappedHelper(
 			g,
 			theText,
 			theRect.mX,
@@ -497,15 +497,15 @@ int TodDrawStringWrappedHelper(Graphics* g, const std::string& theText, const Re
 }
 
 // GOTY @Patoke: 0x5246A0
-void TodDrawStringWrapped(Graphics* g, std::string_view theText, const Rect& theRect, _Font* theFont, const Color& theColor, DrawStringJustification theJustification)
+void PvzpDrawStringWrapped(Graphics* g, std::string_view theText, const Rect& theRect, _Font* theFont, const Color& theColor, DrawStringJustification theJustification)
 {
-	std::string aTextFinal = TodStringTranslate(theText);
-	Rect aRectTodUse = theRect;
+	std::string aTextFinal = PvzpStringTranslate(theText);
+	Rect aRectPvzpUse = theRect;
 	if (theJustification == DrawStringJustification::DS_ALIGN_LEFT_VERTICAL_MIDDLE ||
 		theJustification == DrawStringJustification::DS_ALIGN_RIGHT_VERTICAL_MIDDLE ||
 		theJustification == DrawStringJustification::DS_ALIGN_CENTER_VERTICAL_MIDDLE)  // 如果纵向需要居中
 	{
-		aRectTodUse.mY += (aRectTodUse.mHeight - TodDrawStringWrappedHelper(g, aTextFinal, aRectTodUse, theFont, theColor, theJustification, false)) / 2;
+		aRectPvzpUse.mY += (aRectPvzpUse.mHeight - PvzpDrawStringWrappedHelper(g, aTextFinal, aRectPvzpUse, theFont, theColor, theJustification, false)) / 2;
 	}
-	TodDrawStringWrappedHelper(g, aTextFinal, aRectTodUse, theFont, theColor, theJustification, true);
+	PvzpDrawStringWrappedHelper(g, aTextFinal, aRectPvzpUse, theFont, theColor, theJustification, true);
 }

@@ -37,7 +37,7 @@ using namespace Sexy;
 
 class Trail;
 class Reanimation;
-class TodParticleSystem;
+class PvzpParticleSystem;
 
 class AttachEffect
 {
@@ -85,7 +85,7 @@ public:
 };
 
 AttachEffect*               AttachReanim(AttachmentID& theAttachmentID, Reanimation* theReanimation, float theOffsetX, float theOffsetY);
-AttachEffect*               AttachParticle(AttachmentID& theAttachmentID, TodParticleSystem* theParticleSystem, float theOffsetX, float theOffsetY);
+AttachEffect*               AttachParticle(AttachmentID& theAttachmentID, PvzpParticleSystem* theParticleSystem, float theOffsetX, float theOffsetY);
 AttachEffect*               AttachTrail(AttachmentID& theAttachmentID, Trail* theTrail, float theOffsetX, float theOffsetY);
 /*inline*/ void             AttachmentPropogateColor(AttachmentID& theAttachmentID, const Color& theColor, bool theEnableAdditiveColor, const Color& theAdditiveColor, bool theEnableOverlayColor, const Color& theOverlayColor);
 /*inline*/ void             AttachmentOverrideColor(AttachmentID& theAttachmentID, const Color& theColor);

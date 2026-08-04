@@ -19,8 +19,8 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "TodCommon.h"
-#include "TodParticle.h"
+#include "PvzpCommon.h"
+#include "PvzpParticle.h"
 #include "Trail.h"
 #include <assert.h>
 #include <cstring>
@@ -29,7 +29,7 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
-#include "TodDebug.h"
+#include "PvzpDebug.h"
 #include "Definition.h"
 #include "zlib.h"
 #include "paklib/PakInterface.h"
@@ -79,64 +79,64 @@ constinit const DefField gParticleFieldDefFields[] = {
 constinit const DefMap gParticleFieldDefMap = { .mMapFields = gParticleFieldDefFields, .mDefSize = sizeof(ParticleField), .mConstructorFunc = ParticleFieldConstructor };
 
 constinit const DefField gEmitterDefFields[] = {
-    { .mFieldName = "Image", .mFieldOffset = offsetof(TodEmitterDefinition,mImage), .mFieldType = DefFieldType::DT_IMAGE, .mExtraData = nullptr },
-    { .mFieldName = "ImageRow", .mFieldOffset = offsetof(TodEmitterDefinition,mImageRow), .mFieldType = DefFieldType::DT_INT, .mExtraData = nullptr },
-    { .mFieldName = "ImageCol", .mFieldOffset = offsetof(TodEmitterDefinition,mImageCol), .mFieldType = DefFieldType::DT_INT, .mExtraData = nullptr },
-    { .mFieldName = "ImageFrames", .mFieldOffset = offsetof(TodEmitterDefinition,mImageFrames), .mFieldType = DefFieldType::DT_INT, .mExtraData = nullptr },
-    { .mFieldName = "Animated", .mFieldOffset = offsetof(TodEmitterDefinition,mAnimated), .mFieldType = DefFieldType::DT_INT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleFlags", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleFlags), .mFieldType = DefFieldType::DT_FLAGS, .mExtraData = gParticleFlagSymbols },
-    { .mFieldName = "EmitterType", .mFieldOffset = offsetof(TodEmitterDefinition,mEmitterType), .mFieldType = DefFieldType::DT_ENUM, .mExtraData = gEmitterTypeSymbols },
-    { .mFieldName = "Name", .mFieldOffset = offsetof(TodEmitterDefinition,mName), .mFieldType = DefFieldType::DT_STRING, .mExtraData = nullptr },
-    { .mFieldName = "SystemDuration", .mFieldOffset = offsetof(TodEmitterDefinition,mSystemDuration), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "OnDuration", .mFieldOffset = offsetof(TodEmitterDefinition,mOnDuration), .mFieldType = DefFieldType::DT_STRING, .mExtraData = nullptr },
-    { .mFieldName = "CrossFadeDuration", .mFieldOffset = offsetof(TodEmitterDefinition,mCrossFadeDuration), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "SpawnRate", .mFieldOffset = offsetof(TodEmitterDefinition,mSpawnRate), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "SpawnMinActive", .mFieldOffset = offsetof(TodEmitterDefinition,mSpawnMinActive), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "SpawnMaxActive", .mFieldOffset = offsetof(TodEmitterDefinition,mSpawnMaxActive), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "SpawnMaxLaunched", .mFieldOffset = offsetof(TodEmitterDefinition,mSpawnMaxLaunched), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "EmitterRadius", .mFieldOffset = offsetof(TodEmitterDefinition,mEmitterRadius), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "EmitterOffsetX", .mFieldOffset = offsetof(TodEmitterDefinition,mEmitterOffsetX), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "EmitterOffsetY", .mFieldOffset = offsetof(TodEmitterDefinition,mEmitterOffsetY), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "EmitterBoxX", .mFieldOffset = offsetof(TodEmitterDefinition,mEmitterBoxX), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "EmitterBoxY", .mFieldOffset = offsetof(TodEmitterDefinition,mEmitterBoxY), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "EmitterPath", .mFieldOffset = offsetof(TodEmitterDefinition,mEmitterPath), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "EmitterSkewX", .mFieldOffset = offsetof(TodEmitterDefinition,mEmitterSkewX), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "EmitterSkewY", .mFieldOffset = offsetof(TodEmitterDefinition,mEmitterSkewY), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleDuration", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleDuration), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "SystemRed", .mFieldOffset = offsetof(TodEmitterDefinition,mSystemRed), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "SystemGreen", .mFieldOffset = offsetof(TodEmitterDefinition,mSystemGreen), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "SystemBlue", .mFieldOffset = offsetof(TodEmitterDefinition,mSystemBlue), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "SystemAlpha", .mFieldOffset = offsetof(TodEmitterDefinition,mSystemAlpha), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "SystemBrightness", .mFieldOffset = offsetof(TodEmitterDefinition,mSystemBrightness), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "LaunchSpeed", .mFieldOffset = offsetof(TodEmitterDefinition,mLaunchSpeed), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "LaunchAngle", .mFieldOffset = offsetof(TodEmitterDefinition,mLaunchAngle), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "Field", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleFields), .mFieldType = DefFieldType::DT_ARRAY, .mExtraData = &gParticleFieldDefMap },
-    { .mFieldName = "SystemField", .mFieldOffset = offsetof(TodEmitterDefinition,mSystemFields), .mFieldType = DefFieldType::DT_ARRAY, .mExtraData = &gParticleFieldDefMap },
-    { .mFieldName = "ParticleRed", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleRed), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleGreen", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleGreen), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleBlue", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleBlue), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleAlpha", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleAlpha), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleBrightness", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleBrightness), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleSpinAngle", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleSpinAngle), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleSpinSpeed", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleSpinSpeed), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleScale", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleScale), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ParticleStretch", .mFieldOffset = offsetof(TodEmitterDefinition,mParticleStretch), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "CollisionReflect", .mFieldOffset = offsetof(TodEmitterDefinition,mCollisionReflect), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "CollisionSpin", .mFieldOffset = offsetof(TodEmitterDefinition,mCollisionSpin), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ClipTop", .mFieldOffset = offsetof(TodEmitterDefinition,mClipTop), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ClipBottom", .mFieldOffset = offsetof(TodEmitterDefinition,mClipBottom), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ClipLeft", .mFieldOffset = offsetof(TodEmitterDefinition,mClipLeft), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "ClipRight", .mFieldOffset = offsetof(TodEmitterDefinition,mClipRight), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
-    { .mFieldName = "AnimationRate", .mFieldOffset = offsetof(TodEmitterDefinition,mAnimationRate), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "Image", .mFieldOffset = offsetof(PvzpEmitterDefinition,mImage), .mFieldType = DefFieldType::DT_IMAGE, .mExtraData = nullptr },
+    { .mFieldName = "ImageRow", .mFieldOffset = offsetof(PvzpEmitterDefinition,mImageRow), .mFieldType = DefFieldType::DT_INT, .mExtraData = nullptr },
+    { .mFieldName = "ImageCol", .mFieldOffset = offsetof(PvzpEmitterDefinition,mImageCol), .mFieldType = DefFieldType::DT_INT, .mExtraData = nullptr },
+    { .mFieldName = "ImageFrames", .mFieldOffset = offsetof(PvzpEmitterDefinition,mImageFrames), .mFieldType = DefFieldType::DT_INT, .mExtraData = nullptr },
+    { .mFieldName = "Animated", .mFieldOffset = offsetof(PvzpEmitterDefinition,mAnimated), .mFieldType = DefFieldType::DT_INT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleFlags", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleFlags), .mFieldType = DefFieldType::DT_FLAGS, .mExtraData = gParticleFlagSymbols },
+    { .mFieldName = "EmitterType", .mFieldOffset = offsetof(PvzpEmitterDefinition,mEmitterType), .mFieldType = DefFieldType::DT_ENUM, .mExtraData = gEmitterTypeSymbols },
+    { .mFieldName = "Name", .mFieldOffset = offsetof(PvzpEmitterDefinition,mName), .mFieldType = DefFieldType::DT_STRING, .mExtraData = nullptr },
+    { .mFieldName = "SystemDuration", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSystemDuration), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "OnDuration", .mFieldOffset = offsetof(PvzpEmitterDefinition,mOnDuration), .mFieldType = DefFieldType::DT_STRING, .mExtraData = nullptr },
+    { .mFieldName = "CrossFadeDuration", .mFieldOffset = offsetof(PvzpEmitterDefinition,mCrossFadeDuration), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "SpawnRate", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSpawnRate), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "SpawnMinActive", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSpawnMinActive), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "SpawnMaxActive", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSpawnMaxActive), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "SpawnMaxLaunched", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSpawnMaxLaunched), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "EmitterRadius", .mFieldOffset = offsetof(PvzpEmitterDefinition,mEmitterRadius), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "EmitterOffsetX", .mFieldOffset = offsetof(PvzpEmitterDefinition,mEmitterOffsetX), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "EmitterOffsetY", .mFieldOffset = offsetof(PvzpEmitterDefinition,mEmitterOffsetY), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "EmitterBoxX", .mFieldOffset = offsetof(PvzpEmitterDefinition,mEmitterBoxX), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "EmitterBoxY", .mFieldOffset = offsetof(PvzpEmitterDefinition,mEmitterBoxY), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "EmitterPath", .mFieldOffset = offsetof(PvzpEmitterDefinition,mEmitterPath), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "EmitterSkewX", .mFieldOffset = offsetof(PvzpEmitterDefinition,mEmitterSkewX), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "EmitterSkewY", .mFieldOffset = offsetof(PvzpEmitterDefinition,mEmitterSkewY), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleDuration", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleDuration), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "SystemRed", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSystemRed), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "SystemGreen", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSystemGreen), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "SystemBlue", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSystemBlue), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "SystemAlpha", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSystemAlpha), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "SystemBrightness", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSystemBrightness), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "LaunchSpeed", .mFieldOffset = offsetof(PvzpEmitterDefinition,mLaunchSpeed), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "LaunchAngle", .mFieldOffset = offsetof(PvzpEmitterDefinition,mLaunchAngle), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "Field", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleFields), .mFieldType = DefFieldType::DT_ARRAY, .mExtraData = &gParticleFieldDefMap },
+    { .mFieldName = "SystemField", .mFieldOffset = offsetof(PvzpEmitterDefinition,mSystemFields), .mFieldType = DefFieldType::DT_ARRAY, .mExtraData = &gParticleFieldDefMap },
+    { .mFieldName = "ParticleRed", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleRed), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleGreen", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleGreen), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleBlue", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleBlue), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleAlpha", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleAlpha), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleBrightness", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleBrightness), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleSpinAngle", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleSpinAngle), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleSpinSpeed", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleSpinSpeed), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleScale", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleScale), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ParticleStretch", .mFieldOffset = offsetof(PvzpEmitterDefinition,mParticleStretch), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "CollisionReflect", .mFieldOffset = offsetof(PvzpEmitterDefinition,mCollisionReflect), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "CollisionSpin", .mFieldOffset = offsetof(PvzpEmitterDefinition,mCollisionSpin), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ClipTop", .mFieldOffset = offsetof(PvzpEmitterDefinition,mClipTop), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ClipBottom", .mFieldOffset = offsetof(PvzpEmitterDefinition,mClipBottom), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ClipLeft", .mFieldOffset = offsetof(PvzpEmitterDefinition,mClipLeft), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "ClipRight", .mFieldOffset = offsetof(PvzpEmitterDefinition,mClipRight), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
+    { .mFieldName = "AnimationRate", .mFieldOffset = offsetof(PvzpEmitterDefinition,mAnimationRate), .mFieldType = DefFieldType::DT_TRACK_FLOAT, .mExtraData = nullptr },
     { .mFieldName = "", .mFieldOffset = 0x0, .mFieldType = DefFieldType::DT_INVALID, .mExtraData = nullptr },
 };
-constinit const DefMap gEmitterDefMap = { .mMapFields = gEmitterDefFields, .mDefSize = sizeof(TodEmitterDefinition), .mConstructorFunc = TodEmitterDefinitionConstructor };
+constinit const DefMap gEmitterDefMap = { .mMapFields = gEmitterDefFields, .mDefSize = sizeof(PvzpEmitterDefinition), .mConstructorFunc = PvzpEmitterDefinitionConstructor };
 
 constinit const DefField gParticleDefFields[] = {
-    { .mFieldName = "Emitter", .mFieldOffset = offsetof(TodParticleDefinition,mEmitterDefs), .mFieldType = DefFieldType::DT_ARRAY, .mExtraData = &gEmitterDefMap },
+    { .mFieldName = "Emitter", .mFieldOffset = offsetof(PvzpParticleDefinition,mEmitterDefs), .mFieldType = DefFieldType::DT_ARRAY, .mExtraData = &gEmitterDefMap },
     { .mFieldName = "", .mFieldOffset = 0x0, .mFieldType = DefFieldType::DT_INVALID, .mExtraData = nullptr }
 };
-constinit const DefMap gParticleDefMap = { .mMapFields = gParticleDefFields, .mDefSize = sizeof(TodParticleDefinition), .mConstructorFunc = TodParticleDefinitionConstructor };
+constinit const DefMap gParticleDefMap = { .mMapFields = gParticleDefFields, .mDefSize = sizeof(PvzpParticleDefinition), .mConstructorFunc = PvzpParticleDefinitionConstructor };
 
 constinit const DefField gReanimatorTransformDefFields[] = {
     { .mFieldName = "x", .mFieldOffset = offsetof(ReanimatorTransform,mTransX), .mFieldType = DefFieldType::DT_FLOAT, .mExtraData = nullptr },
@@ -183,30 +183,30 @@ void* ParticleFieldConstructor(void* thePointer)
     return thePointer;
 }
 
-void* TodEmitterDefinitionConstructor(void* thePointer)
+void* PvzpEmitterDefinitionConstructor(void* thePointer)
 {
     if (thePointer)
     {
-        memset(thePointer, 0, sizeof(TodEmitterDefinition));
-        ((TodEmitterDefinition*)thePointer)->mImageFrames = 1;
-        ((TodEmitterDefinition*)thePointer)->mEmitterType = EmitterType::EMITTER_BOX;
-        ((TodEmitterDefinition*)thePointer)->mName = "";
-        ((TodEmitterDefinition*)thePointer)->mOnDuration = "";
-        ((TodEmitterDefinition*)thePointer)->mImageRow = 0;
-        ((TodEmitterDefinition*)thePointer)->mImageCol = 0;
-        ((TodEmitterDefinition*)thePointer)->mAnimated = 0;
-        ((TodEmitterDefinition*)thePointer)->mImage = nullptr;
-        ((TodEmitterDefinition*)thePointer)->mParticleFields.count = 0;
+        memset(thePointer, 0, sizeof(PvzpEmitterDefinition));
+        ((PvzpEmitterDefinition*)thePointer)->mImageFrames = 1;
+        ((PvzpEmitterDefinition*)thePointer)->mEmitterType = EmitterType::EMITTER_BOX;
+        ((PvzpEmitterDefinition*)thePointer)->mName = "";
+        ((PvzpEmitterDefinition*)thePointer)->mOnDuration = "";
+        ((PvzpEmitterDefinition*)thePointer)->mImageRow = 0;
+        ((PvzpEmitterDefinition*)thePointer)->mImageCol = 0;
+        ((PvzpEmitterDefinition*)thePointer)->mAnimated = 0;
+        ((PvzpEmitterDefinition*)thePointer)->mImage = nullptr;
+        ((PvzpEmitterDefinition*)thePointer)->mParticleFields.count = 0;
     }
     return thePointer;
 }
 
-void* TodParticleDefinitionConstructor(void* thePointer)
+void* PvzpParticleDefinitionConstructor(void* thePointer)
 {
     if (thePointer)
     {
-        ((TodParticleDefinition*)thePointer)->mEmitterDefs = nullptr;
-        ((TodParticleDefinition*)thePointer)->mEmitterDefCount = 0;
+        ((PvzpParticleDefinition*)thePointer)->mEmitterDefs = nullptr;
+        ((PvzpParticleDefinition*)thePointer)->mEmitterDefCount = 0;
     }
     return thePointer;
 }
@@ -278,14 +278,14 @@ unsigned int DefGetSizeFloatTrack(FloatParameterTrack* theValue) {
 unsigned int DefGetSizeImage(Image** theValue) {
     std::string aImagePath{};
     if (*theValue)
-        TodFindImagePath(*theValue, &aImagePath);
+        PvzpFindImagePath(*theValue, &aImagePath);
     return aImagePath.length() + sizeof(unsigned int);
 }
 
 unsigned int DefGetSizeFont(_Font** theValue) {
     std::string aFontPath{};
     if (*theValue)
-        TodFindFontPath(*theValue, &aFontPath);
+        PvzpFindFontPath(*theValue, &aFontPath);
     return aFontPath.length() + sizeof(unsigned int);
 }
 
@@ -324,7 +324,7 @@ unsigned int DefinitionGetSize(const DefMap* theDefMap, void* theDefinition) {
 void* DefinitionAlloc(int theSize)
 {
     void* aPtr = operator new[](theSize);
-    TOD_ASSERT(aPtr);
+    PVZP_ASSERT(aPtr);
     memset(aPtr, 0, theSize);
     return aPtr;
 }
@@ -355,9 +355,9 @@ bool DefinitionLoadImage(Image** theImage, const std::string& theName)
             SharedImageRef aImageRef = gSexyAppBase->GetSharedImage(aPathToTry);
             if ((Image*)aImageRef != nullptr)
             {
-                TodHesitationTrace("Load Image '%s'", theName.c_str());
-                TodAddImageToMap(&aImageRef, theName);
-                TodMarkImageForSanding((Image*)aImageRef);
+                PvzpHesitationTrace("Load Image '%s'", theName.c_str());
+                PvzpAddImageToMap(&aImageRef, theName);
+                PvzpMarkImageForSanding((Image*)aImageRef);
                 *theImage = (Image*)aImageRef;
                 return true;
             }
@@ -384,7 +384,7 @@ inline bool DefReadFromCacheArray(void*& theReadPtr, DefinitionArrayDef* theArra
     SMemR(theReadPtr, &aDefSize, sizeof(int));  // 先读取一个整数表示 theDefMap 描述的定义结构类的大小
     if (aDefSize != theDefMap->mDefSize)  // 比较其与当前给出的定义结构图声明的大小是否一致
     {
-        TodTrace("cache has old def: array size");
+        PvzpTrace("cache has old def: array size");
         return false;
     }
     if (theArray->mArrayCount == 0)  // 如果类中没有实例，则无需读取
@@ -496,9 +496,9 @@ uint DefinitionCalcHashSymbolMap(int aSchemaHash, const DefSymbol* theSymbolMap)
     return aSchemaHash;
 }
 
-uint DefinitionCalcHashDefMap(int aSchemaHash, const DefMap* theDefMap, TodList<const DefMap*>& theProgressMaps)
+uint DefinitionCalcHashDefMap(int aSchemaHash, const DefMap* theDefMap, PvzpList<const DefMap*>& theProgressMaps)
 {
-    for (TodListNode<const DefMap*>* aNode = theProgressMaps.mHead; aNode != nullptr; aNode = aNode->mNext)
+    for (PvzpListNode<const DefMap*>* aNode = theProgressMaps.mHead; aNode != nullptr; aNode = aNode->mNext)
         if (aNode->mValue == theDefMap)
             return aSchemaHash;
     theProgressMaps.AddTail(theDefMap);
@@ -527,10 +527,10 @@ uint DefinitionCalcHashDefMap(int aSchemaHash, const DefMap* theDefMap, TodList<
 uint DefinitionCalcHash(const DefMap* theDefMap)
 {
     // Uninitialised!!
-    TodList<const DefMap*> aProgressMaps = TodList<const DefMap*>();
+    PvzpList<const DefMap*> aProgressMaps = PvzpList<const DefMap*>();
     uint aResult = DefinitionCalcHashDefMap(crc32(0L, (Bytef*)Z_NULL, 0) + 1, theDefMap, aProgressMaps);
 
-    // TodList destructor is called upon it going out of scope.
+    // PvzpList destructor is called upon it going out of scope.
     return aResult;
 }
 
@@ -540,14 +540,14 @@ void* DefinitionUncompressCompiledBuffer(void* theCompressedBuffer, size_t theCo
     // theCompressedBuffer 的前两个四字节存有特殊数据，此处检测其长度是否足够 8 字节（即 2 个四字节）
     if (theCompressedBufferSize < 8)
     {
-        TodTrace("Compile def too small: %s", theCompiledFilePath.c_str());
+        PvzpTrace("Compile def too small: %s", theCompiledFilePath.c_str());
         return nullptr;
     }
     // 将 theCompressedBuffer 的前两个四字节视为一个 CompressedDefinitionHeader
     CompressedDefinitionHeader* aHeader = (CompressedDefinitionHeader*)theCompressedBuffer;
     if (aHeader->mCookie != 0xDEADFED4L)
     {
-        TodTrace("Compiled fire cookie wrong: %s\n", theCompiledFilePath.c_str());
+        PvzpTrace("Compiled fire cookie wrong: %s\n", theCompiledFilePath.c_str());
         return nullptr;
     }
     
@@ -557,8 +557,8 @@ void* DefinitionUncompressCompiledBuffer(void* theCompressedBuffer, size_t theCo
     ulong aUncompressedSizeResult = aHeader->mUncompressedSize;  // 用作出参的未压缩数据实际长度
     int aResult = uncompress(aUncompressedBuffer, &aUncompressedSizeResult, aSrc, theCompressedBufferSize - sizeof(CompressedDefinitionHeader));
     (void)aResult; // Compiler can't work out that this is used in the Debug build
-    TOD_ASSERT(aResult == Z_OK);
-    TOD_ASSERT(aUncompressedSizeResult == aHeader->mUncompressedSize);
+    PVZP_ASSERT(aResult == Z_OK);
+    PVZP_ASSERT(aUncompressedSizeResult == aHeader->mUncompressedSize);
     theUncompressedSize = aHeader->mUncompressedSize;
     return aUncompressedBuffer;
 }
@@ -603,7 +603,7 @@ bool DefinitionReadCompiledFile(const std::string& theCompiledFilePath, const De
     aFileStream.read(aCompressedBuffer.data(), (std::streamsize)aCompressedSize);
     bool aReadCompressedFailed = !aFileStream || (size_t)aFileStream.gcount() != aCompressedSize;
     if (aReadCompressedFailed) { // 判断是否读取成功
-        TodTrace("Failed to read compiled file: %s\n", theCompiledFilePath.c_str());
+        PvzpTrace("Failed to read compiled file: %s\n", theCompiledFilePath.c_str());
         return false;
     }
 
@@ -614,7 +614,7 @@ bool DefinitionReadCompiledFile(const std::string& theCompiledFilePath, const De
 
     uint aDefHash = DefinitionCalcHash(theDefMap);  // 计算 CRC 校验值，后将用于检测数据的完整性
     if (aUncompressedSize < theDefMap->mDefSize + sizeof(uint)) {
-        TodTrace("Compiled file size too small: %s\n", theCompiledFilePath.c_str());
+        PvzpTrace("Compiled file size too small: %s\n", theCompiledFilePath.c_str());
         return false;
     } // 检测解压数据的长度是否足够“定义数据 + 一个校验值记录数据”的长度
 
@@ -624,7 +624,7 @@ bool DefinitionReadCompiledFile(const std::string& theCompiledFilePath, const De
     uint aCashHash;
     SMemR(aBufferPtr, &aCashHash, sizeof(uint));  // 读取记录的 CRC 校验值
     if (aCashHash != aDefHash) {
-        TodTrace("Compiled file schema wrong: %s\n", theCompiledFilePath.c_str());
+        PvzpTrace("Compiled file schema wrong: %s\n", theCompiledFilePath.c_str());
         return false;
     } // 判断校验值是否一致，若不一致则说明数据发生错误
 
@@ -637,7 +637,7 @@ bool DefinitionReadCompiledFile(const std::string& theCompiledFilePath, const De
     bool aResult = DefMapReadFromCache(aBufferPtr, theDefMap, theDefinition);
     size_t aReadMemSize = (uintptr_t)aBufferPtr - (uintptr_t)aUncompressedBuffer.get();
     if (aResult && aReadMemSize != aUncompressedSize) {
-        TodTrace("Compiled file wrong size: %s\n", theCompiledFilePath.c_str());
+        PvzpTrace("Compiled file wrong size: %s\n", theCompiledFilePath.c_str());
         return false;
     }
     return aResult;
@@ -671,7 +671,7 @@ bool DefinitionIsCompiled(const std::string& theXMLFilePath)
     std::filesystem::file_time_type aXMLFileTime{};
     if (!DefinitionGetFileModTime(theXMLFilePath, aXMLFileTime))
     {
-        TodTrace("Can't find source file to compile '%s'", theXMLFilePath.c_str());
+        PvzpTrace("Can't find source file to compile '%s'", theXMLFilePath.c_str());
         return false;
     }
 
@@ -695,7 +695,7 @@ void DefinitionXmlError(XMLParser* theXmlParser, const char* theFormat, ...)
 
     int aLine = theXmlParser->GetCurrentLineNum();
     std::string aFileName = theXmlParser->GetFileName();
-    TodTraceAndLogLn("%s(%d): XML Definition Error: %s", aFileName.c_str(), aLine, aFormattedMessage.c_str());
+    PvzpTraceAndLogLn("%s(%d): XML Definition Error: %s", aFileName.c_str(), aLine, aFormattedMessage.c_str());
 }
 
 bool DefinitionReadXMLString(XMLParser* theXmlParser, std::string& theValue)
@@ -858,33 +858,33 @@ Float Track Field EBNF:
 */
 
 /*
-struct TodCurveStringMap {
+struct PvzpCurveStringMap {
     char *mString;
-    TodCurves mCurveType;
+    PvzpCurves mCurveType;
 };
 
-const TodCurveStringMap TodCurveStrings[] = {
-    {(char *)"Bounce",        TodCurves::CURVE_BOUNCE},
-    {(char *)"FastInOutWeak", TodCurves::CURVE_FAST_IN_OUT_WEAK},
-    {(char *)"EaseInOutWeak", TodCurves::CURVE_EASE_IN_OUT_WEAK},
-    {(char *)"EaseOut",       TodCurves::CURVE_EASE_OUT},
-    {(char *)"EaseIn",        TodCurves::CURVE_EASE_IN},
+const PvzpCurveStringMap PvzpCurveStrings[] = {
+    {(char *)"Bounce",        PvzpCurves::CURVE_BOUNCE},
+    {(char *)"FastInOutWeak", PvzpCurves::CURVE_FAST_IN_OUT_WEAK},
+    {(char *)"EaseInOutWeak", PvzpCurves::CURVE_EASE_IN_OUT_WEAK},
+    {(char *)"EaseOut",       PvzpCurves::CURVE_EASE_OUT},
+    {(char *)"EaseIn",        PvzpCurves::CURVE_EASE_IN},
 };
 */
 
 constinit const DefSymbol gDefTrackEaseSymbols[] = {
-    { .mSymbolValue = TodCurves::CURVE_EASE_IN_OUT_WEAK,   .mSymbolName = "EaseInOutWeak" },
-    { .mSymbolValue = TodCurves::CURVE_FAST_IN_OUT_WEAK,   .mSymbolName = "FastInOutWeak" },
-    { .mSymbolValue = TodCurves::CURVE_EASE_IN_OUT,        .mSymbolName = "EaseInOut" },
-    { .mSymbolValue = TodCurves::CURVE_FAST_IN_OUT,        .mSymbolName = "FastInOut" },
-    { .mSymbolValue = TodCurves::CURVE_EASE_IN,            .mSymbolName = "EaseIn" },
-    { .mSymbolValue = TodCurves::CURVE_EASE_OUT,           .mSymbolName = "EaseOut" },
-    { .mSymbolValue = TodCurves::CURVE_EASE_SIN_WAVE,      .mSymbolName = "EaseSinWave" },
-    { .mSymbolValue = TodCurves::CURVE_BOUNCE_FAST_MIDDLE, .mSymbolName = "BounceFastMiddle" },
-    { .mSymbolValue = TodCurves::CURVE_BOUNCE_SLOW_MIDDLE, .mSymbolName = "BounceSlowMiddle" },
-    { .mSymbolValue = TodCurves::CURVE_BOUNCE,             .mSymbolName = "Bounce" },
-    { .mSymbolValue = TodCurves::CURVE_SIN_WAVE,           .mSymbolName = "SinWave" },
-    { .mSymbolValue = TodCurves::CURVE_LINEAR,             .mSymbolName = "Linear" },
+    { .mSymbolValue = PvzpCurves::CURVE_EASE_IN_OUT_WEAK,   .mSymbolName = "EaseInOutWeak" },
+    { .mSymbolValue = PvzpCurves::CURVE_FAST_IN_OUT_WEAK,   .mSymbolName = "FastInOutWeak" },
+    { .mSymbolValue = PvzpCurves::CURVE_EASE_IN_OUT,        .mSymbolName = "EaseInOut" },
+    { .mSymbolValue = PvzpCurves::CURVE_FAST_IN_OUT,        .mSymbolName = "FastInOut" },
+    { .mSymbolValue = PvzpCurves::CURVE_EASE_IN,            .mSymbolName = "EaseIn" },
+    { .mSymbolValue = PvzpCurves::CURVE_EASE_OUT,           .mSymbolName = "EaseOut" },
+    { .mSymbolValue = PvzpCurves::CURVE_EASE_SIN_WAVE,      .mSymbolName = "EaseSinWave" },
+    { .mSymbolValue = PvzpCurves::CURVE_BOUNCE_FAST_MIDDLE, .mSymbolName = "BounceFastMiddle" },
+    { .mSymbolValue = PvzpCurves::CURVE_BOUNCE_SLOW_MIDDLE, .mSymbolName = "BounceSlowMiddle" },
+    { .mSymbolValue = PvzpCurves::CURVE_BOUNCE,             .mSymbolName = "Bounce" },
+    { .mSymbolValue = PvzpCurves::CURVE_SIN_WAVE,           .mSymbolName = "SinWave" },
+    { .mSymbolValue = PvzpCurves::CURVE_LINEAR,             .mSymbolName = "Linear" },
 };
 
 bool DefinitionReadFloatTrackField(XMLParser* theXmlParser, FloatParameterTrack* theTrack)
@@ -910,8 +910,8 @@ bool DefinitionReadFloatTrackField(XMLParser* theXmlParser, FloatParameterTrack*
         if (aStringChars[anIdx] == '\0') goto _m_break; // No empty strings allowed
 
         aTrackNode.mTime = -1;
-        aTrackNode.mCurveType = TodCurves::CURVE_LINEAR;
-        aTrackNode.mDistribution = TodCurves::CURVE_LINEAR;
+        aTrackNode.mCurveType = PvzpCurves::CURVE_LINEAR;
+        aTrackNode.mDistribution = PvzpCurves::CURVE_LINEAR;
 
         if (aStringChars[anIdx] == '[') {
             // <range>
@@ -927,7 +927,7 @@ bool DefinitionReadFloatTrackField(XMLParser* theXmlParser, FloatParameterTrack*
                     size_t aStrLen = strlen(gDefTrackEaseSymbols[i].mSymbolName);
                     if (strncmp(gDefTrackEaseSymbols[i].mSymbolName, aStringChars + anIdx, aStrLen) == 0) // could be the distribution?
                     {
-                        aTrackNode.mDistribution = (TodCurves)gDefTrackEaseSymbols[i].mSymbolValue;
+                        aTrackNode.mDistribution = (PvzpCurves)gDefTrackEaseSymbols[i].mSymbolValue;
                         anIdx += aStrLen + 1; // Accounts for space (' '), expressions never end with a curve
                         break;
                     }
@@ -978,7 +978,7 @@ bool DefinitionReadFloatTrackField(XMLParser* theXmlParser, FloatParameterTrack*
                 size_t aStrLen = strlen(gDefTrackEaseSymbols[i].mSymbolName);
                 if (strncmp(gDefTrackEaseSymbols[i].mSymbolName, aStringChars + anIdx, aStrLen) == 0) // mCurveType
                 {
-                    aTrackNode.mCurveType = (TodCurves)gDefTrackEaseSymbols[i].mSymbolValue;
+                    aTrackNode.mCurveType = (PvzpCurves)gDefTrackEaseSymbols[i].mSymbolValue;
                     anIdx += aStrLen;
                     if (aStringChars[anIdx] == '\0') goto _m_break; // Done!
                     anIdx++;
@@ -1024,9 +1024,9 @@ bool DefinitionReadFloatTrackField(XMLParser* theXmlParser, FloatParameterTrack*
 
     
     /*
-    TodTraceAndLogLn("%s | %d", aStringChars, aFloatTrackVec.size());
+    PvzpTraceAndLogLn("%s | %d", aStringChars, aFloatTrackVec.size());
     for (auto &i : aFloatTrackVec) {
-        TodTraceAndLogLn("%f", i.mTime);
+        PvzpTraceAndLogLn("%f", i.mTime);
     }
     */
 
@@ -1084,7 +1084,7 @@ bool DefinitionReadImageField(XMLParser* theXmlParser, Image** theImage)
         return true;
 
     std::string aMessgae = StrFormat("Failed to find image '%s' in %s", aStringValue.c_str(), theXmlParser->GetFileName().c_str());
-    TodErrorMessageBox(aMessgae.c_str(), "Missing image");
+    PvzpErrorMessageBox(aMessgae.c_str(), "Missing image");
 
     return false;
 }
@@ -1099,7 +1099,7 @@ bool DefinitionReadFontField(XMLParser* theXmlParser, _Font** theFont)
         return true;
 
     std::string aMessgae = StrFormat("Failed to find font '%s' in %s", aStringValue.c_str(), theXmlParser->GetFileName().c_str());
-    TodErrorMessageBox(aMessgae.c_str(), "Missing font");
+    PvzpErrorMessageBox(aMessgae.c_str(), "Missing font");
 
     return false;
 }
@@ -1162,7 +1162,7 @@ bool DefinitionReadField(XMLParser* theXmlParser, const DefMap* theDefMap, void*
                 break;
             default:
                 aSuccess = false;
-                TOD_ASSERT(false);
+                PVZP_ASSERT(false);
                 break;
             }
             if (aSuccess)
@@ -1214,7 +1214,7 @@ void DefWriteToCacheFloatTrack(void*& theWritePtr, FloatParameterTrack* theValue
 void DefWriteToCacheImage(void*& theWritePtr, Image** theValue) {
     std::string aImageName{};
     if (*theValue)
-        TodFindImagePath(*theValue, &aImageName);
+        PvzpFindImagePath(*theValue, &aImageName);
 
     unsigned int aImageSize = aImageName.length();
     SMemW(theWritePtr, &aImageSize, sizeof(unsigned int));
@@ -1225,7 +1225,7 @@ void DefWriteToCacheImage(void*& theWritePtr, Image** theValue) {
 void DefWriteToCacheFont(void*& theWritePtr, _Font** theValue) {
     std::string aFontName{};
     if (*theValue) {
-        TodFindFontPath(*theValue, &aFontName);
+        PvzpFindFontPath(*theValue, &aFontName);
     }
 
     unsigned int aFontSize = aFontName.length();
@@ -1300,7 +1300,7 @@ bool DefinitionCompileFile(const std::string& theXMLFilePath, const std::string&
     XMLParser aXMLParser = XMLParser();
     if (!aXMLParser.OpenFile(theXMLFilePath))
     {
-        TodTrace("XML file not found: %s\n", theXMLFilePath.c_str());
+        PvzpTrace("XML file not found: %s\n", theXMLFilePath.c_str());
         return false;
     }
     else if (!DefinitionLoadMap(&aXMLParser, theDefMap, theDefinition))
@@ -1318,26 +1318,26 @@ bool DefinitionCompileAndLoad(const std::string& theXMLFilePath, const DefMap* t
     const bool aRequireCompiledUpToDate = false;
 #endif
 
-    TodHesitationTrace("predef");
+    PvzpHesitationTrace("predef");
     std::string aCompiledFilePath = DefinitionGetCompiledFilePathFromXMLFilePath(theXMLFilePath);
 
     const bool aShouldTryCompiled = !aRequireCompiledUpToDate || DefinitionIsCompiled(theXMLFilePath);
     if (aShouldTryCompiled && DefinitionReadCompiledFile(aCompiledFilePath, theDefMap, theDefinition))
     {
-        TodHesitationTrace("loaded %s", aCompiledFilePath.c_str());
+        PvzpHesitationTrace("loaded %s", aCompiledFilePath.c_str());
         return true;
     }
 
     PerfTimer aTimer;
     aTimer.Start();
     bool aResult = DefinitionCompileFile(theXMLFilePath, aCompiledFilePath, theDefMap, theDefinition);
-    TodTrace("compile %d ms:'%s'", (int)aTimer.GetDuration(), aCompiledFilePath.c_str());
-    TodHesitationTrace("compiled %s", aCompiledFilePath.c_str());
+    PvzpTrace("compile %d ms:'%s'", (int)aTimer.GetDuration(), aCompiledFilePath.c_str());
+    PvzpHesitationTrace("compiled %s", aCompiledFilePath.c_str());
     if (aResult)
         return true;
 
 #ifndef PVZ_DEBUG
-    TodErrorMessageBox(StrFormat("missing resource %s", aCompiledFilePath.c_str()).c_str(), "Error");
+    PvzpErrorMessageBox(StrFormat("missing resource %s", aCompiledFilePath.c_str()).c_str(), "Error");
     exit(0);
 #endif
     return false;
@@ -1349,7 +1349,7 @@ float FloatTrackEvaluate(FloatParameterTrack& theTrack, float theTimeValue, floa
         return 0.0f;
 
     if (theTimeValue < theTrack.mNodes[0].mTime)  // 如果当前时间小于第一个节点的开始时间
-        return TodCurveEvaluate(theInterp, theTrack.mNodes[0].mLowValue, theTrack.mNodes[0].mHighValue, theTrack.mNodes[0].mDistribution);
+        return PvzpCurveEvaluate(theInterp, theTrack.mNodes[0].mLowValue, theTrack.mNodes[0].mHighValue, theTrack.mNodes[0].mDistribution);
 
     for (int i = 1; i < theTrack.mCountNodes; i++)
     {
@@ -1359,14 +1359,14 @@ float FloatTrackEvaluate(FloatParameterTrack& theTrack, float theTimeValue, floa
             FloatParameterTrackNode* aNodeCur = &theTrack.mNodes[i - 1];
             // 计算当前时间在〔当前节点至下一节点〕的过程中的进度
             float aTimeFraction = (theTimeValue - aNodeCur->mTime) / (aNodeNxt->mTime - aNodeCur->mTime);
-            float aLeftValue = TodCurveEvaluate(theInterp, aNodeCur->mLowValue, aNodeCur->mHighValue, aNodeCur->mDistribution);
-            float aRightValue = TodCurveEvaluate(theInterp, aNodeNxt->mLowValue, aNodeNxt->mHighValue, aNodeNxt->mDistribution);
-            return TodCurveEvaluate(aTimeFraction, aLeftValue, aRightValue, aNodeCur->mCurveType);
+            float aLeftValue = PvzpCurveEvaluate(theInterp, aNodeCur->mLowValue, aNodeCur->mHighValue, aNodeCur->mDistribution);
+            float aRightValue = PvzpCurveEvaluate(theInterp, aNodeNxt->mLowValue, aNodeNxt->mHighValue, aNodeNxt->mDistribution);
+            return PvzpCurveEvaluate(aTimeFraction, aLeftValue, aRightValue, aNodeCur->mCurveType);
         }
     }
 
     FloatParameterTrackNode* aLastNode = &theTrack.mNodes[theTrack.mCountNodes - 1];  // 如果当前时间大于最后一个节点的开始时间
-    return TodCurveEvaluate(theInterp, aLastNode->mLowValue, aLastNode->mHighValue, aLastNode->mDistribution);
+    return PvzpCurveEvaluate(theInterp, aLastNode->mLowValue, aLastNode->mHighValue, aLastNode->mDistribution);
 }
 
 void FloatTrackSetDefault(FloatParameterTrack& theTrack, float theValue)
@@ -1379,8 +1379,8 @@ void FloatTrackSetDefault(FloatParameterTrack& theTrack, float theValue)
         aNode->mTime = 0.0f;
         aNode->mLowValue = theValue;
         aNode->mHighValue = theValue;
-        aNode->mCurveType = TodCurves::CURVE_CONSTANT;
-        aNode->mDistribution = TodCurves::CURVE_LINEAR;
+        aNode->mCurveType = PvzpCurves::CURVE_CONSTANT;
+        aNode->mDistribution = PvzpCurves::CURVE_LINEAR;
     } else if (theTrack.mNodes == nullptr) {
         theTrack.mCountNodes = 0;
     }
@@ -1388,7 +1388,7 @@ void FloatTrackSetDefault(FloatParameterTrack& theTrack, float theValue)
 
 bool FloatTrackIsSet(const FloatParameterTrack& theTrack)
 {
-    return theTrack.mCountNodes != 0 && theTrack.mNodes[0].mCurveType != TodCurves::CURVE_CONSTANT;
+    return theTrack.mCountNodes != 0 && theTrack.mNodes[0].mCurveType != PvzpCurves::CURVE_CONSTANT;
 }
 
 bool FloatTrackIsConstantZero(FloatParameterTrack& theTrack)

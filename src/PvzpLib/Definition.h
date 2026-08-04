@@ -19,13 +19,13 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __TODDEFINITION_H__
-#define __TODDEFINITION_H__
+#ifndef __PVZPDEFINITION_H__
+#define __PVZPDEFINITION_H__
 
 #include <string>
-#include "TodList.h"
+#include "PvzpList.h"
 #include "Reanimator.h"
-#include "TodParticle.h"
+#include "PvzpParticle.h"
 
 enum class DefFieldType : int
 {
@@ -45,7 +45,7 @@ enum class DefFieldType : int
 /*
     [为通俗理解以下内容，在此规定]
         “用于存储其他类的定义数据”的类，称为定义数据类，记作 _DefClass。相应地，将被 _DefClass 定义的类记作 _Class。
-        例如，ReanimatorDefinition 作为 Reanimation 类（动画类）的定义数据类，TodParticleDefinition 作为 TodParticleSystem 类（粒子系统类）的定义数据类等。
+        例如，ReanimatorDefinition 作为 Reanimation 类（动画类）的定义数据类，PvzpParticleDefinition 作为 PvzpParticleSystem 类（粒子系统类）的定义数据类等。
 */
 
 // ====================================================================================================
@@ -95,8 +95,8 @@ public:
     void*               (*mConstructorFunc)(void*);     //+0x8：_DefClass 类型实例的构造函数的指针
 };
 
-void*            TodParticleDefinitionConstructor(void* thePointer);
-void*            TodEmitterDefinitionConstructor(void* thePointer);
+void*            PvzpParticleDefinitionConstructor(void* thePointer);
+void*            PvzpEmitterDefinitionConstructor(void* thePointer);
 void*            ParticleFieldConstructor(void* thePointer);
 void*            TrailDefinitionConstructor(void* thePointer);
 void*            ReanimatorTransformConstructor(void* thePointer);
@@ -134,7 +134,7 @@ public:
     void*               mArrayData;                     //+0x0：由若干个特定定义数据类型的实例构成的数组，例如动画定义中的“轨道”定义
     int                 mArrayCount;                    //+0x4：数组的大小，例如动画定义中的“轨道”数量或粒子系统定义中的“发射器”数量
     // 定义数据类中的一个“数组（指针） + 数量”的组合，在读取时将被 DefField 视作一个 DefinitionArrayDef 结构
-    // 例如 TodParticleDefinition 下的 *mEmitterDefs 和 mEmitterDefCount、以及 TodEmitterDefinition 下的 *mParticleFields 和 mParticleFieldCount 等。
+    // 例如 PvzpParticleDefinition 下的 *mEmitterDefs 和 mEmitterDefCount、以及 PvzpEmitterDefinition 下的 *mParticleFields 和 mParticleFieldCount 等。
     // 在读取时，作为 mArrayCount 的一项数据总是能在初次读取时就被正确读取（因为是整数类型），故其也会在后续 mArrayData 的修复过程中成为校验参考
 };
 
@@ -204,7 +204,7 @@ void*                   DefinitionCompressCompiledBuffer(void* theBuffer, unsign
 /*inline*/ void*        DefinitionAlloc(int theSize);
 void*                   DefinitionUncompressCompiledBuffer(void* theCompressedBuffer, size_t theCompressedBufferSize, size_t& theUncompressedSize, const std::string& theCompiledFilePath);
 uint                    DefinitionCalcHashSymbolMap(int aSchemaHash, const DefSymbol* theSymbolMap);
-uint                    DefinitionCalcHashDefMap(int aSchemaHash, const DefMap* theDefMap, TodList<const DefMap*>& theProgressMaps);
+uint                    DefinitionCalcHashDefMap(int aSchemaHash, const DefMap* theDefMap, PvzpList<const DefMap*>& theProgressMaps);
 uint                    DefinitionCalcHash(const DefMap* theDefMap);
 inline bool             DefReadFromCacheString(void*& theReadPtr, const char** theString);
 inline bool             DefReadFromCacheArray(void*& theReadPtr, DefinitionArrayDef* theArray, const DefMap* theDefMap);

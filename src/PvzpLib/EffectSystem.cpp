@@ -20,10 +20,10 @@
  */
 
 #include "Trail.h"
-#include "TodDebug.h"
+#include "PvzpDebug.h"
 #include "Attachment.h"
 #include "Reanimator.h"
-#include "TodParticle.h"
+#include "PvzpParticle.h"
 #include "EffectSystem.h"
 #include "../GameConstants.h"
 #include "graphics/GLImage.h"
@@ -38,11 +38,11 @@ EffectSystem::~EffectSystem()
 
 void EffectSystem::EffectSystemInitialize()
 {
-	TOD_ASSERT(!gEffectSystem);
-	TOD_ASSERT(!mParticleHolder && !mTrailHolder && !mReanimationHolder && !mAttachmentHolder);
+	PVZP_ASSERT(!gEffectSystem);
+	PVZP_ASSERT(!mParticleHolder && !mTrailHolder && !mReanimationHolder && !mAttachmentHolder);
 
 	gEffectSystem = this;
-	mParticleHolder = std::make_unique<TodParticleHolder>();
+	mParticleHolder = std::make_unique<PvzpParticleHolder>();
 	mTrailHolder = std::make_unique<TrailHolder>();
 	mReanimationHolder = std::make_unique<ReanimationHolder>();
 	mAttachmentHolder = std::make_unique<AttachmentHolder>();
@@ -78,7 +78,7 @@ void EffectSystem::EffectSystemFreeAll()
 
 void EffectSystem::ProcessDeleteQueue()
 {
-	for (TodParticleSystem* aParticle : mParticleHolder->mParticleSystems)
+	for (PvzpParticleSystem* aParticle : mParticleHolder->mParticleSystems)
 		if (aParticle->mDead)
 			mParticleHolder->mParticleSystems.DataArrayFree(aParticle);
 
@@ -97,7 +97,7 @@ void EffectSystem::ProcessDeleteQueue()
 
 void EffectSystem::Update()
 {
-	for (TodParticleSystem* aParticle : mParticleHolder->mParticleSystems)
+	for (PvzpParticleSystem* aParticle : mParticleHolder->mParticleSystems)
 		if (!aParticle->mIsAttachment)
 			aParticle->Update();
 
@@ -114,8 +114,8 @@ void EffectSystem::Update()
 // #################################################################################################### //
 // #################################################################################################### //
 
-static TriVertex		gTodVertexReservoir[64];
-static unsigned int		gTodVertexReservoirUsed = 0;
+static TriVertex		gPvzpVertexReservoir[64];
+static unsigned int		gPvzpVertexReservoirUsed = 0;
 
 static int FixedFloor(int x)
 {
@@ -125,7 +125,7 @@ static int FixedFloor(int x)
 		return (x & 0xFFFF0000) - 0x10000;
 }
 
-static inline void Tod_Tod_lClip(TriVertex& dst, const TriVertex& on, const TriVertex& off, const float edge)
+static inline void Pvzp_lClip(TriVertex& dst, const TriVertex& on, const TriVertex& off, const float edge)
 {
 	float delta = (edge - off.x) / (on.x - off.x);
 	dst.x = off.x + (on.x - off.x) * delta;
@@ -152,7 +152,7 @@ static inline void rClip(TriVertex& dst, const TriVertex& on, const TriVertex& o
 		((int)((off.color       & 0xff) + ((on.color       & 0xff) - (off.color       & 0xff)) * delta));
 }
 
-static inline void Tod_tClip(TriVertex& dst, const TriVertex& on, const TriVertex& off, const float edge)
+static inline void Pvzp_tClip(TriVertex& dst, const TriVertex& on, const TriVertex& off, const float edge)
 {
 	float delta = (edge - off.y) / (on.y - off.y);
 	dst.x = off.x + (on.x - off.x) * delta;
@@ -165,7 +165,7 @@ static inline void Tod_tClip(TriVertex& dst, const TriVertex& on, const TriVerte
 		((int)((off.color >>  8 & 0xff) + ((on.color >>  8 & 0xff) - (off.color >>  8  & 0xff)) * delta) <<  8) |
 		((int)((off.color       & 0xff) + ((on.color       & 0xff) - (off.color        & 0xff)) * delta));
 }
-static inline void Tod_bClip(TriVertex& dst, const TriVertex& on, const TriVertex& off, const float edge)
+static inline void Pvzp_bClip(TriVertex& dst, const TriVertex& on, const TriVertex& off, const float edge)
 {
 	float delta = (edge - off.y) / (on.y - off.y);
 	dst.x = off.x + (on.x - off.x) * delta;
@@ -179,7 +179,7 @@ static inline void Tod_bClip(TriVertex& dst, const TriVertex& on, const TriVerte
 		((int)((off.color       & 0xff) + ((on.color       & 0xff) - (off.color        & 0xff)) * delta));
 }
 
-static inline unsigned int Tod_leClip(TriVertex** src, TriVertex** dst, const float edge)
+static inline unsigned int Pvzp_leClip(TriVertex** src, TriVertex** dst, const float edge)
 {
 	TriVertex** _dst = dst;
 
@@ -196,8 +196,8 @@ static inline unsigned int Tod_leClip(TriVertex** src, TriVertex** dst, const fl
 			break;
 		case 1:
 		{
-			TriVertex& tmp = gTodVertexReservoir[gTodVertexReservoirUsed++];
-			Tod_Tod_lClip(tmp, *nex, *cur, edge);
+			TriVertex& tmp = gPvzpVertexReservoir[gPvzpVertexReservoirUsed++];
+			Pvzp_lClip(tmp, *nex, *cur, edge);
 			*dst = &tmp;
 			++dst;
 			break;
@@ -206,8 +206,8 @@ static inline unsigned int Tod_leClip(TriVertex** src, TriVertex** dst, const fl
 		{
 			*dst = *v;
 			++dst;
-			TriVertex& tmp = gTodVertexReservoir[gTodVertexReservoirUsed++];
-			Tod_Tod_lClip(tmp, *cur, *nex, edge);
+			TriVertex& tmp = gPvzpVertexReservoir[gPvzpVertexReservoirUsed++];
+			Pvzp_lClip(tmp, *cur, *nex, edge);
 			*dst = &tmp;
 			++dst;
 			break;
@@ -218,7 +218,7 @@ static inline unsigned int Tod_leClip(TriVertex** src, TriVertex** dst, const fl
 	return static_cast<int>(dst - _dst);
 }
 
-static inline unsigned int Tod_reClip(TriVertex** src, TriVertex** dst, const float edge)
+static inline unsigned int Pvzp_reClip(TriVertex** src, TriVertex** dst, const float edge)
 {
 	TriVertex** _dst = dst;
 
@@ -235,7 +235,7 @@ static inline unsigned int Tod_reClip(TriVertex** src, TriVertex** dst, const fl
 			break;
 		case 1:
 		{
-			TriVertex& tmp = gTodVertexReservoir[gTodVertexReservoirUsed++];
+			TriVertex& tmp = gPvzpVertexReservoir[gPvzpVertexReservoirUsed++];
 			rClip(tmp, *nex, *cur, edge);
 			*dst = &tmp;
 			++dst;
@@ -245,7 +245,7 @@ static inline unsigned int Tod_reClip(TriVertex** src, TriVertex** dst, const fl
 		{
 			*dst = *v;
 			++dst;
-			TriVertex& tmp = gTodVertexReservoir[gTodVertexReservoirUsed++];
+			TriVertex& tmp = gPvzpVertexReservoir[gPvzpVertexReservoirUsed++];
 			rClip(tmp, *cur, *nex, edge);
 			*dst = &tmp;
 			++dst;
@@ -257,7 +257,7 @@ static inline unsigned int Tod_reClip(TriVertex** src, TriVertex** dst, const fl
 	return static_cast<int>(dst - _dst);
 }
 
-static inline unsigned int Tod_teClip(TriVertex** src, TriVertex** dst, const float edge)
+static inline unsigned int Pvzp_teClip(TriVertex** src, TriVertex** dst, const float edge)
 {
 	TriVertex** _dst = dst;
 
@@ -274,8 +274,8 @@ static inline unsigned int Tod_teClip(TriVertex** src, TriVertex** dst, const fl
 			break;
 		case 1:
 		{
-			TriVertex& tmp = gTodVertexReservoir[gTodVertexReservoirUsed++];
-			Tod_tClip(tmp, *nex, *cur, edge);
+			TriVertex& tmp = gPvzpVertexReservoir[gPvzpVertexReservoirUsed++];
+			Pvzp_tClip(tmp, *nex, *cur, edge);
 			*dst = &tmp;
 			++dst;
 			break;
@@ -284,8 +284,8 @@ static inline unsigned int Tod_teClip(TriVertex** src, TriVertex** dst, const fl
 		{
 			*dst = *v;
 			++dst;
-			TriVertex& tmp = gTodVertexReservoir[gTodVertexReservoirUsed++];
-			Tod_tClip(tmp, *cur, *nex, edge);
+			TriVertex& tmp = gPvzpVertexReservoir[gPvzpVertexReservoirUsed++];
+			Pvzp_tClip(tmp, *cur, *nex, edge);
 			*dst = &tmp;
 			++dst;
 			break;
@@ -296,7 +296,7 @@ static inline unsigned int Tod_teClip(TriVertex** src, TriVertex** dst, const fl
 	return static_cast<int>(dst - _dst);
 }
 
-static inline unsigned int Tod_beClip(TriVertex** src, TriVertex** dst, const float edge)
+static inline unsigned int Pvzp_beClip(TriVertex** src, TriVertex** dst, const float edge)
 {
 	TriVertex** _dst = dst;
 
@@ -313,8 +313,8 @@ static inline unsigned int Tod_beClip(TriVertex** src, TriVertex** dst, const fl
 			break;
 		case 1:
 		{
-			TriVertex& tmp = gTodVertexReservoir[gTodVertexReservoirUsed++];
-			Tod_bClip(tmp, *nex, *cur, edge);
+			TriVertex& tmp = gPvzpVertexReservoir[gPvzpVertexReservoirUsed++];
+			Pvzp_bClip(tmp, *nex, *cur, edge);
 			*dst = &tmp;
 			++dst;
 			break;
@@ -323,8 +323,8 @@ static inline unsigned int Tod_beClip(TriVertex** src, TriVertex** dst, const fl
 		{
 			*dst = *v;
 			++dst;
-			TriVertex& tmp = gTodVertexReservoir[gTodVertexReservoirUsed++];
-			Tod_bClip(tmp, *cur, *nex, edge);
+			TriVertex& tmp = gPvzpVertexReservoir[gPvzpVertexReservoirUsed++];
+			Pvzp_bClip(tmp, *cur, *nex, edge);
 			*dst = &tmp;
 			++dst;
 			break;
@@ -335,9 +335,9 @@ static inline unsigned int Tod_beClip(TriVertex** src, TriVertex** dst, const fl
 	return static_cast<int>(dst - _dst);
 }
 
-static inline int Tod_clipShape(TriVertex** dst, TriVertex* src, const float left, const float right, const float top, const float bottom)
+static inline int Pvzp_clipShape(TriVertex** dst, TriVertex* src, const float left, const float right, const float top, const float bottom)
 {
-	gTodVertexReservoirUsed = 0;
+	gPvzpVertexReservoirUsed = 0;
 
 	TriVertex* buf[64];
 	TriVertex* ptr[4];
@@ -346,20 +346,20 @@ static inline int Tod_clipShape(TriVertex** dst, TriVertex* src, const float lef
 	ptr[2] = src + 2;
 	ptr[3] = 0;
 
-	if (Tod_leClip(ptr, buf, left) < 3)
+	if (Pvzp_leClip(ptr, buf, left) < 3)
 		return 0;
-	if (Tod_reClip(buf, dst, right) < 3)
+	if (Pvzp_reClip(buf, dst, right) < 3)
 		return 0;
-	if (Tod_teClip(dst, buf, top) < 3)
+	if (Pvzp_teClip(dst, buf, top) < 3)
 		return 0;
-	return Tod_beClip(buf, dst, bottom);
+	return Pvzp_beClip(buf, dst, bottom);
 }
 
-bool gTodTriangleDrawAdditive = false;
+bool gPvzpTriangleDrawAdditive = false;
 
-#include "TodDrawTriangleInc.inc"
+#include "PvzpDrawTriangleInc.inc"
 
-TodTriangleGroup::TodTriangleGroup()
+PvzpTriangleGroup::PvzpTriangleGroup()
 {
 	for (int i = 0; i < 256; i++)
 		for (int j = 0; j < 3; j++)
@@ -370,14 +370,14 @@ TodTriangleGroup::TodTriangleGroup()
 	mDrawMode = Graphics::DRAWMODE_NORMAL;
 }
 
-void TodTriangleGroup::DrawGroup(Graphics* g)
+void PvzpTriangleGroup::DrawGroup(Graphics* g)
 {
 	if (mImage && mTriangleCount)
 	{
 		// @Patoke: do we want this? if 3D acceleration is off then blending is messed up
 		if (!gSexyAppBase->Is3DAccelerated() && mDrawMode == Graphics::DRAWMODE_ADDITIVE)
-			gTodTriangleDrawAdditive = true;
-		TodSandImageIfNeeded(mImage);
+			gPvzpTriangleDrawAdditive = true;
+		PvzpSandImageIfNeeded(mImage);
 
 		if (GLImage::Check3D(g->mDestImage))
 		{
@@ -391,13 +391,13 @@ void TodTriangleGroup::DrawGroup(Graphics* g)
 		}
 
 		mTriangleCount = 0;
-		gTodTriangleDrawAdditive = false;
+		gPvzpTriangleDrawAdditive = false;
 	}
 }
 
-void TodTriangleGroup::AddTriangle(Graphics* g, Image* theImage, const SexyMatrix3& theMatrix, const Rect& theClipRect, const Color& theColor, int theDrawMode, const Rect& theSrcRect)
+void PvzpTriangleGroup::AddTriangle(Graphics* g, Image* theImage, const SexyMatrix3& theMatrix, const Rect& theClipRect, const Color& theColor, int theDrawMode, const Rect& theSrcRect)
 {
-	TOD_ASSERT(theImage != nullptr);
+	PVZP_ASSERT(theImage != nullptr);
 
 	if (mTriangleCount > 0 && (mDrawMode != theDrawMode || mImage != theImage))
 		DrawGroup(g);
@@ -423,8 +423,8 @@ void TodTriangleGroup::AddTriangle(Graphics* g, Image* theImage, const SexyMatri
 		tp[i].y -= 0.5f;
 	}
 
-	TOD_ASSERT(theSrcRect.mX >= 0 && theSrcRect.mWidth >= 0 && theSrcRect.mX + theSrcRect.mWidth <= mImage->mWidth);
-	TOD_ASSERT(theSrcRect.mY >= 0 && theSrcRect.mHeight >= 0 && theSrcRect.mY + theSrcRect.mHeight <= mImage->mHeight);
+	PVZP_ASSERT(theSrcRect.mX >= 0 && theSrcRect.mWidth >= 0 && theSrcRect.mX + theSrcRect.mWidth <= mImage->mWidth);
+	PVZP_ASSERT(theSrcRect.mY >= 0 && theSrcRect.mHeight >= 0 && theSrcRect.mY + theSrcRect.mHeight <= mImage->mHeight);
 
 	float aOneOverWidth = 1.0f / mImage->mWidth;
 	float aOneOverHeight = 1.0f / mImage->mHeight;
@@ -504,7 +504,7 @@ void TodTriangleGroup::AddTriangle(Graphics* g, Image* theImage, const SexyMatri
 		
 		for (int i = 0; i < 2; i++)
 		{
-			int vCount = Tod_clipShape(clipped, aTriRef[i], clipX0, clipX1, clipY0, clipY1);
+			int vCount = Pvzp_clipShape(clipped, aTriRef[i], clipX0, clipX1, clipY0, clipY1);
 			for (int j = 0; j < vCount - 2; j++)
 			{
 				if (mTriangleCount == MAX_TRIANGLES)

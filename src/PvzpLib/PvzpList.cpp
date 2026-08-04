@@ -19,14 +19,14 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "TodList.h"
-#include "TodDebug.h"
-#include "TodCommon.h"
+#include "PvzpList.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
 #include "misc/Debug.h"
 
-void TodAllocator::Initialize(int theGrowCount, int theItemSize)
+void PvzpAllocator::Initialize(int theGrowCount, int theItemSize)
 {
-	TOD_ASSERT(static_cast<size_t>(theItemSize) >= sizeof(void*));
+	PVZP_ASSERT(static_cast<size_t>(theItemSize) >= sizeof(void*));
 
 	mFreeList = nullptr;
 	mBlockList = nullptr;
@@ -35,17 +35,17 @@ void TodAllocator::Initialize(int theGrowCount, int theItemSize)
 	mItemSize = theItemSize;
 }
 
-void TodAllocator::Dispose()
+void PvzpAllocator::Dispose()
 {
 	FreeAll();
 }
 
-void TodAllocator::Grow()
+void PvzpAllocator::Grow()
 {
-	TOD_ASSERT(mGrowCount > 0);
-	TOD_ASSERT(static_cast<size_t>(mItemSize) >= sizeof(void*));
+	PVZP_ASSERT(mGrowCount > 0);
+	PVZP_ASSERT(static_cast<size_t>(mItemSize) >= sizeof(void*));
 
-	void* aBlock = TodMalloc(mGrowCount * mItemSize + sizeof(void*));
+	void* aBlock = PvzpMalloc(mGrowCount * mItemSize + sizeof(void*));
 	*(void**)aBlock = mBlockList;
 	mBlockList = aBlock;
 
@@ -60,7 +60,7 @@ void TodAllocator::Grow()
 	mFreeList = aFreeList;
 }
 
-bool TodAllocator::IsPointerFromAllocator(void* theItem)
+bool PvzpAllocator::IsPointerFromAllocator(void* theItem)
 {
 	size_t aBlockSize = mGrowCount * mItemSize;  // 每次“Grow”的内存大小，即每个区块的内存大小
 	for (void* aPtr = mBlockList; aPtr != nullptr; aPtr = *(void**)aPtr)
@@ -75,7 +75,7 @@ bool TodAllocator::IsPointerFromAllocator(void* theItem)
 	return false;
 }
 
-bool TodAllocator::IsPointerOnFreeList(void* theItem)
+bool PvzpAllocator::IsPointerOnFreeList(void* theItem)
 {
 	for (void* aPtr = mFreeList; aPtr != nullptr; aPtr = *(void**)aPtr)
 		if (theItem == aPtr)
@@ -83,7 +83,7 @@ bool TodAllocator::IsPointerOnFreeList(void* theItem)
 	return false;
 }
 
-void* TodAllocator::Alloc(int theItemSize)
+void* PvzpAllocator::Alloc(int theItemSize)
 {
 	(void)theItemSize;
 	mTotalItems++;
@@ -95,29 +95,29 @@ void* TodAllocator::Alloc(int theItemSize)
 	return anItem;
 }
 
-void* TodAllocator::Calloc(int theItemSize)
+void* PvzpAllocator::Calloc(int theItemSize)
 {
 	void* anItem = Alloc(theItemSize);
 	memset(anItem, 0, theItemSize);
 	return anItem;
 }
 
-void TodAllocator::Free(void* theItem, int theItemSize)
+void PvzpAllocator::Free(void* theItem, int theItemSize)
 {
 	(void)theItemSize;
 	mTotalItems--;
-	TOD_ASSERT(IsPointerFromAllocator(theItem));
-	TOD_ASSERT(!IsPointerOnFreeList(theItem));
+	PVZP_ASSERT(IsPointerFromAllocator(theItem));
+	PVZP_ASSERT(!IsPointerOnFreeList(theItem));
 	*(void**)theItem = mFreeList;  // 将原可用区域头存入 [*theItem] 中
 	mFreeList = theItem;  // 将 theItem 设为新的可用区域头
 }
 
-void TodAllocator::FreeAll()
+void PvzpAllocator::FreeAll()
 {
 	for (void* aBlock = mBlockList; aBlock != nullptr; )
 	{
 		void* aNext = *(void**)aBlock;
-		TodFree(aBlock);
+		PvzpFree(aBlock);
 		aBlock = aNext;
 	}
 

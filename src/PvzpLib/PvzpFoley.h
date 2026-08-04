@@ -19,8 +19,8 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __TODFOLEY_H__
-#define __TODFOLEY_H__
+#ifndef __PVZPFOLEY_H__
+#define __PVZPFOLEY_H__
 
 #include <cstdint>
 #include "../Resources.h"
@@ -161,8 +161,8 @@ public:
     unsigned int        mFoleyFlags;
 };
 
-/*inline*/ void         TodFoleyInitialize(const FoleyParams* theFoleyParamArray, int theFoleyParamArraySize);
-/*inline*/ void         TodFoleyDispose();
+/*inline*/ void         PvzpFoleyInitialize(const FoleyParams* theFoleyParamArray, int theFoleyParamArraySize);
+/*inline*/ void         PvzpFoleyDispose();
 const FoleyParams*      LookupFoley(FoleyType theFoleyType);
 
 extern int gFoleyParamArraySize;
@@ -174,12 +174,12 @@ extern const FoleyParams gLawnFoleyParamArray[static_cast<int>(FoleyType::NUM_FO
 // ############################################################ 以下正式开始拟音音效相关声明 ############################################################
 // ######################################################################################################################################################
 
-class TodDSoundInstance : public SDLSoundInstance
+class PvzpDSoundInstance : public SDLSoundInstance
 {
-    friend class TodFoley;
+    friend class PvzpFoley;
 
 public:
-    TodDSoundInstance(SDLSoundManager* theSoundManager, Mix_Chunk* theSourceSound) : SDLSoundInstance(theSoundManager, theSourceSound) { }
+    PvzpDSoundInstance(SDLSoundManager* theSoundManager, Mix_Chunk* theSourceSound) : SDLSoundInstance(theSoundManager, theSourceSound) { }
 
     /*inline*/ int      GetSoundPosition();
     /*inline*/ void     SetSoundPosition(int thePosition);
@@ -208,7 +208,7 @@ public:
     FoleyTypeData();
 };
 
-class TodFoley
+class PvzpFoley
 {
 public:
     FoleyTypeData	    mFoleyTypeData[MAX_FOLEY_TYPES];
@@ -224,9 +224,9 @@ public:
     void                RehookupSoundWithMusicVolume();
 };
 
-void                    SoundSystemReleaseFinishedInstances(TodFoley* theSoundSystem);
-bool                    SoundSystemHasFoleyPlayedTooRecently(TodFoley* theSoundSystem, FoleyType theFoleyType);
-FoleyInstance*          SoundSystemFindInstance(TodFoley* theSoundSystem, FoleyType theFoleyType);
-FoleyInstance*          SoundSystemGetFreeInstanceIndex(TodFoley* theSoundSystem, FoleyType theFoleyType);
+void                    SoundSystemReleaseFinishedInstances(PvzpFoley* theSoundSystem);
+bool                    SoundSystemHasFoleyPlayedTooRecently(PvzpFoley* theSoundSystem, FoleyType theFoleyType);
+FoleyInstance*          SoundSystemFindInstance(PvzpFoley* theSoundSystem, FoleyType theFoleyType);
+FoleyInstance*          SoundSystemGetFreeInstanceIndex(PvzpFoley* theSoundSystem, FoleyType theFoleyType);
 
 #endif

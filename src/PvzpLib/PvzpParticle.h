@@ -19,11 +19,11 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __TODPARTICLE_H__
-#define __TODPARTICLE_H__
+#ifndef __PVZPPARTICLE_H__
+#define __PVZPPARTICLE_H__
 
 #include <cstdint>
-#include "TodList.h"
+#include "PvzpList.h"
 #include "DataArray.h"
 #include "misc/SexyVector.h"
 namespace Sexy
@@ -72,14 +72,14 @@ enum ParticleFieldType : int32_t
     FIELD_CIRCLE,                       // 引力场：该场内粒子围绕发射器中心做圆周运动（考虑误差，实为螺线运动）
     FIELD_AWAY,                         // 斥力场：该场内粒子沿径向不断远离发射器中心
     PARTICLE_FIELD_COUNT
-};  // 粒子场相关内容详见 TodParticleEmitter::UpdateParticleField() 函数（系统定位场为 TodParticleEmitter::UpdateSystemField() 函数）
+};  // 粒子场相关内容详见 PvzpParticleEmitter::UpdateParticleField() 函数（系统定位场为 PvzpParticleEmitter::UpdateSystemField() 函数）
 
 // ################################################################################
 // ▲ 以下粒子系统定义相关的各类型的实例与 XML 中的格式的对应关系示例简图
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // <Emitter>                                                         —
 //                       ↓←Node→↓                                ↑
-//     <SpawnRate>[.5 2] [2.5 4.5],40 [5 10]</SpawnRate>    TodEmitterDefinition
+//     <SpawnRate>[.5 2] [2.5 4.5],40 [5 10]</SpawnRate>    PvzpEmitterDefinition
 //     ↑←      FloatParameterTrack::mNodes        →↑             ↓
 // </Emitter>                                                        —
 // ################################################################################
@@ -96,8 +96,8 @@ public:
     float                       mTime;                          // 阶段的起始时间
     float                       mLowValue;                      // 阶段内数据允许的最小值
     float                       mHighValue;                     // 阶段内数据允许的最大值
-    TodCurves                   mCurveType;                     // 从当前阶段过渡至下一阶段的缓动效果曲线
-    TodCurves                   mDistribution;                  // 阶段内数据在最小值和最大值之间的概率分布曲线
+    PvzpCurves                   mCurveType;                     // 从当前阶段过渡至下一阶段的缓动效果曲线
+    PvzpCurves                   mDistribution;                  // 阶段内数据在最小值和最大值之间的概率分布曲线
 };
 
 // ====================================================================================================
@@ -137,7 +137,7 @@ public:
 // ----------------------------------------------------------------------------------------------------
 // 粒子发射器的定义数据描述了其各种行为的参数的变化规律和范围。
 // ====================================================================================================
-class TodEmitterDefinition
+class PvzpEmitterDefinition
 {
 public:
     Image*                      mImage;
@@ -196,15 +196,15 @@ public:
 // ----------------------------------------------------------------------------------------------------
 // 粒子系统的定义数据，是粒子系统中各个粒子发射器的定义数据的集合。
 // ====================================================================================================
-class TodParticleDefinition
+class PvzpParticleDefinition
 {
 public:
-    TodEmitterDefinition*       mEmitterDefs;
+    PvzpEmitterDefinition*       mEmitterDefs;
     int32_t                     mEmitterDefCount;
 };
 
 extern int gParticleDefCount;                       // [0x6A9F08]
-extern TodParticleDefinition* gParticleDefArray;    // [0x6A9F0C]。于 LawnApp::LoadingThreadProc() 函数中读取并赋值
+extern PvzpParticleDefinition* gParticleDefArray;    // [0x6A9F0C]。于 LawnApp::LoadingThreadProc() 函数中读取并赋值
 
 // ====================================================================================================
 // ★ 【粒子参数】
@@ -220,9 +220,9 @@ public:
 extern int gParticleParamArraySize;                 // [0x6A9F10]
 extern const ParticleParams* gParticleParamArray;         // [0x6A9F14]
 
-bool                            TodParticleLoadADef(TodParticleDefinition* theParticleDef, const char* theParticleFileName);
-void                            TodParticleLoadDefinitions(const ParticleParams* theParticleParamArray, int theParticleParamArraySize);
-void                            TodParticleFreeDefinitions();
+bool                            PvzpParticleLoadADef(PvzpParticleDefinition* theParticleDef, const char* theParticleFileName);
+void                            PvzpParticleLoadDefinitions(const ParticleParams* theParticleParamArray, int theParticleParamArraySize);
+void                            PvzpParticleFreeDefinitions();
 
 extern const ParticleParams gLawnParticleArray[static_cast<int>(ParticleEffect::NUM_PARTICLES)];  // 0x6A0FF0
 
@@ -266,25 +266,25 @@ enum ParticleTracks : int32_t
 	NUM_PARTICLE_TRACKS
 };
 
-class TodParticleSystem;
-class TodParticleEmitter;
-class TodParticle;
-class TodParticleHolder
+class PvzpParticleSystem;
+class PvzpParticleEmitter;
+class PvzpParticle;
+class PvzpParticleHolder
 {
 public:
-	DataArray<TodParticleSystem>	mParticleSystems;
-	DataArray<TodParticleEmitter>	mEmitters;
-	DataArray<TodParticle>			mParticles;
-	TodAllocator					mParticleListNodeAllocator;
-	TodAllocator					mEmitterListNodeAllocator;
+	DataArray<PvzpParticleSystem>	mParticleSystems;
+	DataArray<PvzpParticleEmitter>	mEmitters;
+	DataArray<PvzpParticle>			mParticles;
+	PvzpAllocator					mParticleListNodeAllocator;
+	PvzpAllocator					mEmitterListNodeAllocator;
 
 public:
-    ~TodParticleHolder();
+    ~PvzpParticleHolder();
 
     void							InitializeHolder();
     void							DisposeHolder();
-    TodParticleSystem*				AllocParticleSystemFromDef(float theX, float theY, int theRenderOrder, TodParticleDefinition* theDefinition, ParticleEffect theParticleEffect);
-    TodParticleSystem*				AllocParticleSystem(float theX, float theY, int theRenderOrder, ParticleEffect theParticleEffect);
+    PvzpParticleSystem*				AllocParticleSystemFromDef(float theX, float theY, int theRenderOrder, PvzpParticleDefinition* theDefinition, ParticleEffect theParticleEffect);
+    PvzpParticleSystem*				AllocParticleSystem(float theX, float theY, int theRenderOrder, ParticleEffect theParticleEffect);
     /*inline*/ bool					IsOverLoaded();
 };
 
@@ -310,10 +310,10 @@ public:
 	float							mPosY;
 };
 
-class TodParticle
+class PvzpParticle
 {
 public:
-	TodParticleEmitter*				mParticleEmitter;
+	PvzpParticleEmitter*				mParticleEmitter;
 	int32_t							mParticleDuration;
 	int32_t							mParticleAge;
 	float							mParticleTimeValue;
@@ -330,13 +330,13 @@ public:
 	float							mParticleFieldInterp[MAX_PARTICLE_FIELDS][2];
 };
 
-class TodTriangleGroup;
-class TodParticleEmitter
+class PvzpTriangleGroup;
+class PvzpParticleEmitter
 {
 public:
-	TodEmitterDefinition*			mEmitterDef;
-	TodParticleSystem*				mParticleSystem;
-	TodList<ParticleID>				mParticleList;
+	PvzpEmitterDefinition*			mEmitterDef;
+	PvzpParticleSystem*				mParticleSystem;
+	PvzpList<ParticleID>				mParticleList;
 	float							mSpawnAccum;
 	Sexy::SexyVector2				mSystemCenter;
 	int32_t							mParticlesSpawned;
@@ -356,46 +356,46 @@ public:
 	float							mSystemFieldInterp[MAX_PARTICLE_FIELDS][2];
 
 public:
-	void							TodEmitterInitialize(float theX, float theY, TodParticleSystem* theSystem, TodEmitterDefinition* theEmitterDef);
+	void							PvzpEmitterInitialize(float theX, float theY, PvzpParticleSystem* theSystem, PvzpEmitterDefinition* theEmitterDef);
 	void							Update();
 	void							Draw(Graphics* g);
 	void							SystemMove(float theX, float theY);
-	static bool						GetRenderParams(TodParticle* theParticle, ParticleRenderParams* theParams);
-	void							DrawParticle(Graphics* g, TodParticle* theParticle, TodTriangleGroup* theTriangleGroup);
+	static bool						GetRenderParams(PvzpParticle* theParticle, ParticleRenderParams* theParams);
+	void							DrawParticle(Graphics* g, PvzpParticle* theParticle, PvzpTriangleGroup* theTriangleGroup);
 	void							UpdateSpawning();
-	bool							UpdateParticle(TodParticle* theParticle);
-	TodParticle*					SpawnParticle(int theIndex, int theSpawnCount);
-	bool							CrossFadeParticle(TodParticle* theParticle, TodParticleEmitter* theToEmitter);
-	void							CrossFadeEmitter(TodParticleEmitter* theToEmitter);
-	bool							CrossFadeParticleToName(TodParticle* theParticle, const char* theEmitterName);
+	bool							UpdateParticle(PvzpParticle* theParticle);
+	PvzpParticle*					SpawnParticle(int theIndex, int theSpawnCount);
+	bool							CrossFadeParticle(PvzpParticle* theParticle, PvzpParticleEmitter* theToEmitter);
+	void							CrossFadeEmitter(PvzpParticleEmitter* theToEmitter);
+	bool							CrossFadeParticleToName(PvzpParticle* theParticle, const char* theEmitterName);
 	void							DeleteAll();
-	void							UpdateParticleField(TodParticle* theParticle, ParticleField* theParticleField, float theParticleTimeValue, int theFieldIndex);
+	void							UpdateParticleField(PvzpParticle* theParticle, ParticleField* theParticleField, float theParticleTimeValue, int theFieldIndex);
 	void							UpdateSystemField(ParticleField* theParticleField, float theParticleTimeValue, int theFieldIndex);
     /*inline*/ float				SystemTrackEvaluate(FloatParameterTrack& theTrack, ParticleSystemTracks theSystemTrack);
-	static /*inline*/ float			ParticleTrackEvaluate(FloatParameterTrack& theTrack, TodParticle* theParticle, ParticleTracks theParticleTrack);
-	void							DeleteParticle(TodParticle* theParticle);
+	static /*inline*/ float			ParticleTrackEvaluate(FloatParameterTrack& theTrack, PvzpParticle* theParticle, ParticleTracks theParticleTrack);
+	void							DeleteParticle(PvzpParticle* theParticle);
 	void							DeleteNonCrossFading();
 };
 /*inline*/ float                    CrossFadeLerp(float theFrom, float theTo, bool theFromIsSet, bool theToIsSet, float theFraction);
-void								RenderParticle(Graphics* g, TodParticle* theParticle, const Color& theColor, ParticleRenderParams* theParams, TodTriangleGroup* theTriangleGroup);
+void								RenderParticle(Graphics* g, PvzpParticle* theParticle, const Color& theColor, ParticleRenderParams* theParams, PvzpTriangleGroup* theTriangleGroup);
 
-class TodParticleSystem
+class PvzpParticleSystem
 {
 public:
 	ParticleEffect					mEffectType;
-    TodParticleDefinition*			mParticleDef;
-    TodParticleHolder*				mParticleHolder;
-    TodList<ParticleEmitterID>		mEmitterList;
+    PvzpParticleDefinition*			mParticleDef;
+    PvzpParticleHolder*				mParticleHolder;
+    PvzpList<ParticleEmitterID>		mEmitterList;
     bool							mDead;
     bool							mIsAttachment;
     int32_t							mRenderOrder;
     bool							mDontUpdate;
 
 public:
-    TodParticleSystem();
-    ~TodParticleSystem();
+    PvzpParticleSystem();
+    ~PvzpParticleSystem();
 
-    void							TodParticleInitializeFromDef(float theX, float theY, int theRenderOrder, TodParticleDefinition* theDefinition, ParticleEffect theEffectType);
+    void							PvzpParticleInitializeFromDef(float theX, float theY, int theRenderOrder, PvzpParticleDefinition* theDefinition, ParticleEffect theEffectType);
     void							ParticleSystemDie();
     void							Update();
     void							Draw(Graphics* g);
@@ -406,8 +406,8 @@ public:
     void							OverrideFrame(const char* theEmitterName, int theFrame);
     void							OverrideScale(const char* theEmitterName, float theScale);
     void							CrossFade(const char* theEmitterName);
-    TodParticleEmitter*				FindEmitterByName(const char* theEmitterName);
-    TodEmitterDefinition*			FindEmitterDefByName(const char* theEmitterName);
+    PvzpParticleEmitter*				FindEmitterByName(const char* theEmitterName);
+    PvzpEmitterDefinition*			FindEmitterDefByName(const char* theEmitterName);
 };
 
 #endif

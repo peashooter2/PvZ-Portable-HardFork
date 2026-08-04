@@ -29,8 +29,8 @@
 #include <switch.h>
 #endif
 
-#include "TodDebug.h"
-#include "TodCommon.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
 #include "misc/Debug.h"
 #include "../SexyAppFramework/Common.h"
 #include "../SexyAppFramework/SexyAppBase.h"
@@ -40,7 +40,7 @@ using namespace Sexy;
 static char gLogFileName[512];
 static char gDebugDataFolder[512];
 
-void TodErrorMessageBox(const char* theMessage, const char* theTitle)
+void PvzpErrorMessageBox(const char* theMessage, const char* theTitle)
 {
 #ifdef __SWITCH__
 	ErrorApplicationConfig c;
@@ -51,17 +51,17 @@ void TodErrorMessageBox(const char* theMessage, const char* theTitle)
 #endif
 }
 
-void TodTraceMemory()
+void PvzpTraceMemory()
 {
 }
 
-void* TodMalloc(int theSize)
+void* PvzpMalloc(int theSize)
 {
-	TOD_ASSERT(theSize > 0);
+	PVZP_ASSERT(theSize > 0);
 	return malloc(theSize);
 }
 
-void TodFree(void* theBlock)
+void PvzpFree(void* theBlock)
 {
 	if (theBlock != nullptr)
 	{
@@ -69,7 +69,7 @@ void TodFree(void* theBlock)
 	}
 }
 
-void TodAssertFailed(const char* theCondition, const char* theFile, int theLine, const char* theMsg, ...)
+void PvzpAssertFailed(const char* theCondition, const char* theFile, int theLine, const char* theMsg, ...)
 {
 	va_list argList;
 	va_start(argList, theMsg);
@@ -82,12 +82,12 @@ void TodAssertFailed(const char* theCondition, const char* theFile, int theLine,
 	else
 		aBuffer = Sexy::StrFormat("\n%s(%d)\nassertion failed: %s", theFile, theLine, aFormattedMsg.c_str());
 
-	TodTrace("%s", aBuffer.c_str());
-	TodErrorMessageBox(aBuffer.c_str(), "Assertion failed");
+	PvzpTrace("%s", aBuffer.c_str());
+	PvzpErrorMessageBox(aBuffer.c_str(), "Assertion failed");
 	exit(0);
 }
 
-void TodLogLn(const char* theFormat, ...)
+void PvzpLogLn(const char* theFormat, ...)
 {
 	va_list argList;
 	va_start(argList, theFormat);
@@ -95,10 +95,10 @@ void TodLogLn(const char* theFormat, ...)
 	va_end(argList);
 
 	if (!aBuffer.empty())
-		TodLogStringLn(aBuffer.c_str());
+		PvzpLogStringLn(aBuffer.c_str());
 }
 
-void TodLogStringLn(const char* theMsg)
+void PvzpLogStringLn(const char* theMsg)
 {
 #ifdef PVZ_DEBUG
 	std::ofstream f(Sexy::PathFromU8(gLogFileName), std::ios::app | std::ios::binary);
@@ -116,7 +116,7 @@ void TodLogStringLn(const char* theMsg)
 #endif
 }
 
-void TodTrace(const char* theFormat, ...)
+void PvzpTrace(const char* theFormat, ...)
 {
 	va_list argList;
 	va_start(argList, theFormat);
@@ -127,11 +127,11 @@ void TodTrace(const char* theFormat, ...)
 		Sexy::PrintF("%s", aBuffer.c_str());
 }
 
-void TodHesitationTrace(...)
+void PvzpHesitationTrace(...)
 {
 }
 
-void TodTraceAndLogLn(const char* theFormat, ...)
+void PvzpTraceAndLogLn(const char* theFormat, ...)
 {
 	va_list argList;
 	va_start(argList, theFormat);
@@ -142,10 +142,10 @@ void TodTraceAndLogLn(const char* theFormat, ...)
 		return;
 
 	Sexy::PrintF("%s", aBuffer.c_str());
-	TodLogStringLn(aBuffer.c_str());
+	PvzpLogStringLn(aBuffer.c_str());
 }
 
-void TodTraceWithoutSpamming(const char* theFormat, ...)
+void PvzpTraceWithoutSpamming(const char* theFormat, ...)
 {
 	static uint64_t gLastTraceTime = 0LL;
 	uint64_t aTime = time(nullptr);
@@ -163,14 +163,14 @@ void TodTraceWithoutSpamming(const char* theFormat, ...)
 		Sexy::PrintF("%s", aBuffer.c_str());
 }
 
-void TodAssertInitForApp()
+void PvzpAssertInitForApp()
 {
 	MkDir(GetAppDataPath("userdata"));
 	std::string aRelativeUserPath = GetAppDataPath("userdata/");
 	strcpy(gDebugDataFolder, aRelativeUserPath.c_str());
 	strcpy(gLogFileName, gDebugDataFolder);
 	strcpy(gLogFileName + strlen(gLogFileName), "log.txt");
-	TOD_ASSERT(strlen(gLogFileName) < 512);
+	PVZP_ASSERT(strlen(gLogFileName) < 512);
 
-	TodLogLn("Started %" PRIu64, static_cast<uint64_t>(time(nullptr)));
+	PvzpLogLn("Started %" PRIu64, static_cast<uint64_t>(time(nullptr)));
 }

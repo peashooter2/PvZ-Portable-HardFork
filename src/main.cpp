@@ -21,7 +21,7 @@
 
 #include "LawnApp.h"
 #include "Resources.h"
-#include "Sexy.TodLib/TodStringFile.h"
+#include "PvzpLib/PvzpStringFile.h"
 #include <cstdlib>
 #include <vector>
 using namespace Sexy;
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
 	BuildUtf8ArgsFromWin32(argc, argv);
 #endif
 
-	TodStringListSetColors(gLawnStringFormats, gLawnStringFormatCount);
+	PvzpStringListSetColors(gLawnStringFormats, gLawnStringFormatCount);
 	gExtractResourcesByName = Sexy::ExtractResourcesByName;
 	gLawnApp = new LawnApp();
 	gLawnApp->SetArgs(argc, argv);

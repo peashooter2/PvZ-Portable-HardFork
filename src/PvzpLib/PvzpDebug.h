@@ -19,44 +19,44 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __TODDEBUG_H__
-#define __TODDEBUG_H__
+#ifndef __PVZPDEBUG_H__
+#define __PVZPDEBUG_H__
 
-class TodHesitationBracket
+class PvzpHesitationBracket
 {
 public:
 	char			mMessage[256];
 	int				mBracketStartTime;
 
 public:
-	TodHesitationBracket(const char* /*theFormat*/, ...) { ; }
-	~TodHesitationBracket() { ; }
+	PvzpHesitationBracket(const char* /*theFormat*/, ...) { ; }
+	~PvzpHesitationBracket() { ; }
 
 	inline void		EndBracket() { ; }
 };
 
-void				TodLogLn(const char* theFormat, ...);
-void				TodLogStringLn(const char* theMsg);
-void				TodTrace(const char* theFormat, ...);
-void				TodTraceMemory();
-void				TodTraceAndLogLn(const char* theFormat, ...);
-void				TodTraceWithoutSpamming(const char* theFormat, ...);
-void				TodHesitationTrace(...);
-void				TodAssertFailed(const char* theCondition, const char* theFile, int theLine, const char* theMsg = "", ...);
-/*inline*/ void		TodErrorMessageBox(const char* theMessage, const char* theTitle);
+void				PvzpLogLn(const char* theFormat, ...);
+void				PvzpLogStringLn(const char* theMsg);
+void				PvzpTrace(const char* theFormat, ...);
+void				PvzpTraceMemory();
+void				PvzpTraceAndLogLn(const char* theFormat, ...);
+void				PvzpTraceWithoutSpamming(const char* theFormat, ...);
+void				PvzpHesitationTrace(...);
+void				PvzpAssertFailed(const char* theCondition, const char* theFile, int theLine, const char* theMsg = "", ...);
+/*inline*/ void		PvzpErrorMessageBox(const char* theMessage, const char* theTitle);
 
-/*inline*/ void*	TodMalloc(int theSize);
-/*inline*/ void		TodFree(void* theBlock);
-void				TodAssertInitForApp();
+/*inline*/ void*	PvzpMalloc(int theSize);
+/*inline*/ void		PvzpFree(void* theBlock);
+void				PvzpAssertInitForApp();
 
 #ifdef PVZ_DEBUG
-#define TOD_ASSERT(condition, ...) { \
-if (!bool(condition)) { TodAssertFailed(""#condition, __FILE__, __LINE__, ##__VA_ARGS__); \
+#define PVZP_ASSERT(condition, ...) { \
+if (!bool(condition)) { PvzpAssertFailed(""#condition, __FILE__, __LINE__, ##__VA_ARGS__); \
 /*if (IsDebuggerPresent()) { __debugbreak(); }*/\
-TodTraceMemory(); }\
+PvzpTraceMemory(); }\
 }
 #else
-#define TOD_ASSERT(condition, ...)
+#define PVZP_ASSERT(condition, ...)
 #endif
 
 #endif

@@ -42,7 +42,7 @@ file(GLOB SOURCES CONFIGURE_DEPENDS
 	src/SexyAppFramework/sound/*.cpp
 	src/SexyAppFramework/widget/*.cpp
 	src/SexyAppFramework/fcaseopen/*.c
-	src/Sexy.TodLib/*.cpp
+	src/PvzpLib/*.cpp
 	src/Lawn/*.cpp
 	src/Lawn/Widget/*.cpp
 	src/Lawn/System/*.cpp

@@ -20,8 +20,8 @@
  */
 
 #include <algorithm>
-#include "TodDebug.h"
-#include "TodCommon.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
 #include "Reanimator.h"
 #include "ReanimAtlas.h"
 #include "misc/PerfTimer.h"
@@ -174,7 +174,7 @@ bool ReanimAtlas::PlaceAtlasImage(ReanimAtlasImage* theAtlasImageToPlace, int th
 	if (ImageFindPlace(theAtlasImageToPlace, theImageCount, theMaxWidth))
 		return true;
 
-	TOD_ASSERT(false);
+	PVZP_ASSERT(false);
 	return false;
 }
 

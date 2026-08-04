@@ -23,7 +23,7 @@
 #define __TRAIL_H__
 
 #include <cstdint>
-#include "TodParticle.h"
+#include "PvzpParticle.h"
 
 #define MAX_TRAIL_TRIANGLES 38
 

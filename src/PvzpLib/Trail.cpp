@@ -40,7 +40,7 @@ TrailPoint::TrailPoint()
 
 bool TrailLoadADef(TrailDefinition* theTrailDef, const char* theTrailFileName)
 {
-	TodHesitationBracket aHesitation("Load Trail '%s'", theTrailFileName);
+	PvzpHesitationBracket aHesitation("Load Trail '%s'", theTrailFileName);
 
 	if (!DefinitionLoadXML(theTrailFileName, &gTrailDefMap, theTrailDef))
 		return false;
@@ -55,8 +55,8 @@ bool TrailLoadADef(TrailDefinition* theTrailDef, const char* theTrailFileName)
 
 void TrailLoadDefinitions(TrailParams* theTrailParamArray, int theTrailParamArraySize)
 {
-	TodHesitationBracket aHesitation("TrailLoadDefinitions");
-	TOD_ASSERT(!gTrailParamArray && !gTrailDefArray);
+	PvzpHesitationBracket aHesitation("TrailLoadDefinitions");
+	PVZP_ASSERT(!gTrailParamArray && !gTrailDefArray);
 
 	gTrailParamArraySize = theTrailParamArraySize;
 	gTrailParamArray = theTrailParamArray;
@@ -66,12 +66,12 @@ void TrailLoadDefinitions(TrailParams* theTrailParamArray, int theTrailParamArra
 	for (int i = 0; i < gTrailParamArraySize; i++)
 	{
 		TrailParams* aTrailParams = &theTrailParamArray[i];
-		TOD_ASSERT(aTrailParams->mTrailType == static_cast<TrailType>(i));
+		PVZP_ASSERT(aTrailParams->mTrailType == static_cast<TrailType>(i));
 		if (!TrailLoadADef(&gTrailDefArray[i], aTrailParams->mTrailFileName))
 		{
 			char aBuf[512];
 			snprintf(aBuf, sizeof(aBuf), "Failed to load trail '%s'", aTrailParams->mTrailFileName);
-			TodErrorMessageBox(aBuf, "Error");
+			PvzpErrorMessageBox(aBuf, "Error");
 		}
 	}
 }
@@ -178,7 +178,7 @@ void Trail::Draw(Graphics* g)
 
 	float aTimeValue = mTrailAge / static_cast<float>(mTrailDuration - 1);
 	int aTriangleCount = (mNumTrailPoints - 1) * 2;
-	TOD_ASSERT(aTriangleCount < MAX_TRAIL_TRIANGLES);
+	PVZP_ASSERT(aTriangleCount < MAX_TRAIL_TRIANGLES);
 
 	TriVertex aVertArray[MAX_TRAIL_TRIANGLES][3];
 
@@ -284,7 +284,7 @@ void TrailHolder::DisposeHolder()
 
 Trail* TrailHolder::AllocTrail(int theRenderOrder, TrailType theTrailType)
 {
-	TOD_ASSERT(theTrailType >= 0 && theTrailType < gTrailDefCount);
+	PVZP_ASSERT(theTrailType >= 0 && theTrailType < gTrailDefCount);
 	return AllocTrailFromDef(theRenderOrder, &gTrailDefArray[theTrailType]);
 }
 

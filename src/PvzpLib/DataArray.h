@@ -25,8 +25,8 @@
 #include <iterator>
 #include <memory>
 #include <new>
-#include "TodDebug.h"
-#include "TodCommon.h"
+#include "PvzpDebug.h"
+#include "PvzpCommon.h"
 
 enum 
 {
@@ -63,7 +63,7 @@ public:
 
 	void DataArrayInitialize(unsigned int theMaxSize, const char* theName)
 	{
-		TOD_ASSERT(mItems == nullptr);
+		PVZP_ASSERT(mItems == nullptr);
 		mItems = std::make_unique<DataArrayItem[]>(theMaxSize);
 		mItemIds = std::make_unique<unsigned int[]>(theMaxSize);
 		mMaxSize = theMaxSize;
@@ -86,7 +86,7 @@ public:
 	void DataArrayFree(T* theItem)
 	{
 		unsigned int anIndex = static_cast<unsigned int>(static_cast<DataArrayItem*>(theItem) - mItems.get());
-		TOD_ASSERT(DataArrayGet(mItemIds[anIndex]) == theItem, "Failed: DataArrayFree(0x%x) in %s", theItem, mName);
+		PVZP_ASSERT(DataArrayGet(mItemIds[anIndex]) == theItem, "Failed: DataArrayFree(0x%x) in %s", theItem, mName);
 		DataArrayResetItemAt(anIndex);
 		mItemIds[anIndex] = mFreeListHead;
 		mFreeListHead = anIndex;
@@ -106,7 +106,7 @@ public:
 	{
 		unsigned int anIndex = static_cast<unsigned int>(static_cast<DataArrayItem*>(theItem) - mItems.get());
 		unsigned int anId = mItemIds[anIndex];
-		TOD_ASSERT(DataArrayGet(anId) == theItem, "Failed: DataArrayGetID(0x%x) for %s", theItem, mName);
+		PVZP_ASSERT(DataArrayGet(anId) == theItem, "Failed: DataArrayGetID(0x%x) for %s", theItem, mName);
 		return anId;
 	}
 
@@ -155,8 +155,8 @@ public:
 
 	T* DataArrayAlloc()
 	{
-		TOD_ASSERT(mSize < mMaxSize, "Data array full: %s", mName);
-		TOD_ASSERT(mFreeListHead <= mMaxUsedCount, "DataArrayAlloc error in %s", mName);
+		PVZP_ASSERT(mSize < mMaxSize, "Data array full: %s", mName);
+		PVZP_ASSERT(mFreeListHead <= mMaxUsedCount, "DataArrayAlloc error in %s", mName);
 		unsigned int aNext = mMaxUsedCount;
 		if (mFreeListHead == mMaxUsedCount)
 			mFreeListHead = ++mMaxUsedCount;
@@ -185,7 +185,7 @@ public:
 
 	T* DataArrayGet(unsigned int theId)
 	{
-		TOD_ASSERT(DataArrayTryToGet(theId) != nullptr, "Failed: DataArrayGet(0x%x) for %s", theId, mName);
+		PVZP_ASSERT(DataArrayTryToGet(theId) != nullptr, "Failed: DataArrayGet(0x%x) for %s", theId, mName);
 		return &mItems[theId & DATA_ARRAY_INDEX_MASK];
 	}
 

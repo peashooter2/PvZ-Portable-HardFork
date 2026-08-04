@@ -33,8 +33,8 @@ class Reanimation;
 class ReanimAtlas;
 class AttacherInfo;
 class AttachEffect;
-class TodTriangleGroup;
-class TodParticleSystem;
+class PvzpTriangleGroup;
+class PvzpParticleSystem;
 class ReanimatorTransform;
 class ReanimatorDefinition;
 namespace Sexy
@@ -235,7 +235,7 @@ public:
     void                            Update();
     /*inline*/ void                 Draw(Graphics* g);
     void                            DrawRenderGroup(Graphics* g, int theRenderGroup);
-    bool                            DrawTrack(Graphics* g, int theTrackIndex, int theRenderGroup, TodTriangleGroup* theTriangleGroup);
+    bool                            DrawTrack(Graphics* g, int theTrackIndex, int theRenderGroup, PvzpTriangleGroup* theTriangleGroup);
     void                            GetCurrentTransform(int theTrackIndex, ReanimatorTransform* theTransformCurrent);
     void                            GetTransformAtTime(int theTrackIndex, ReanimatorTransform* theTransform, ReanimatorFrameTime* theFrameTime);
     void                            GetFrameTime(ReanimatorFrameTime* theFrameTime);
@@ -258,9 +258,9 @@ public:
     void                            AssignRenderGroupToPrefix(const char* theTrackName, int theRenderGroup);
     void                            PropogateColorToAttachments();
     bool                            ShouldTriggerTimedEvent(float theEventTime);
-//  void                            TodTriangleGroupDraw(Graphics* g, TodTriangleGroup* theTriangleGroup) { ; }
+//  void                            PvzpTriangleGroupDraw(Graphics* g, PvzpTriangleGroup* theTriangleGroup) { ; }
     Image*                          GetCurrentTrackImage(const char* theTrackName);
-    AttachEffect*                   AttachParticleToTrack(const char* theTrackName, TodParticleSystem* theParticleSystem, float thePosX, float thePosY);
+    AttachEffect*                   AttachParticleToTrack(const char* theTrackName, PvzpParticleSystem* theParticleSystem, float thePosX, float thePosY);
     void                            GetTrackBasePoseMatrix(int theTrackIndex, SexyTransform2D& theBasePosMatrix);
     bool                            IsTrackShowing(const char* theTrackName);
     /*inline*/ void                 SetTruncateDisappearingFrames(const char* theTrackName = nullptr, bool theTruncateDisappearingFrames = false);

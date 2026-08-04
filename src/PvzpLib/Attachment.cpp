@@ -20,18 +20,18 @@
  */
 
 #include "Trail.h"
-#include "TodDebug.h"
+#include "PvzpDebug.h"
 #include "Attachment.h"
 #include "Reanimator.h"
-#include "TodParticle.h"
+#include "PvzpParticle.h"
 #include "EffectSystem.h"
 #include "graphics/Graphics.h"
 
 static void PruneDeadEffects(Attachment* theAttachment)
 {
-	TOD_ASSERT(gEffectSystem);
-	TOD_ASSERT(theAttachment);
-	DataArray<TodParticleSystem>& aParticleSystems = gEffectSystem->mParticleHolder->mParticleSystems;
+	PVZP_ASSERT(gEffectSystem);
+	PVZP_ASSERT(theAttachment);
+	DataArray<PvzpParticleSystem>& aParticleSystems = gEffectSystem->mParticleHolder->mParticleSystems;
 	DataArray<Trail>& aTrails = gEffectSystem->mTrailHolder->mTrails;
 	DataArray<Reanimation>& aReanimations = gEffectSystem->mReanimationHolder->mReanimations;
 	DataArray<Attachment>& aAttachments = gEffectSystem->mAttachmentHolder->mAttachments;
@@ -44,7 +44,7 @@ static void PruneDeadEffects(Attachment* theAttachment)
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = aParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = aParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			aStillAlive = (aParticleSystem != nullptr && !aParticleSystem->mDead);
 			break;
 		}
@@ -70,7 +70,7 @@ static void PruneDeadEffects(Attachment* theAttachment)
 			aStillAlive = true;
 			break;
 		default:
-			TOD_ASSERT(false);
+			PVZP_ASSERT(false);
 			break;
 		}
 
@@ -103,7 +103,7 @@ Attachment::~Attachment()
 
 void Attachment::Update()
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 
 	for (int i = 0; i < mNumEffects; i++)
 	{
@@ -113,7 +113,7 @@ void Attachment::Update()
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aParticleSystem && !aParticleSystem->mDead)
 			{
 				aParticleSystem->Update();
@@ -156,7 +156,7 @@ void Attachment::Update()
 		}
 
 		default:
-			TOD_ASSERT(false);
+			PVZP_ASSERT(false);
 			break;
 		}
 
@@ -180,7 +180,7 @@ void Attachment::Update()
 
 void Attachment::SetPosition(const SexyVector2& thePosition)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 
 	for (int i = 0; i < mNumEffects; i++)
 	{
@@ -191,7 +191,7 @@ void Attachment::SetPosition(const SexyVector2& thePosition)
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aParticleSystem)
 			{
 				aParticleSystem->SystemMove(aNewPos.x, aNewPos.y);
@@ -237,7 +237,7 @@ void Attachment::SetPosition(const SexyVector2& thePosition)
 
 void Attachment::OverrideColor(const Color& theColor)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 
 	for (int i = 0; i < mNumEffects; i++)
 	{
@@ -246,7 +246,7 @@ void Attachment::OverrideColor(const Color& theColor)
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aParticleSystem)
 			{
 				aParticleSystem->OverrideColor("", theColor);
@@ -282,7 +282,7 @@ void Attachment::OverrideColor(const Color& theColor)
 
 void Attachment::PropogateColor(const Color& theColor, bool theEnableAdditiveColor, const Color& theAdditiveColor, bool theEnableOverlayColor, const Color& theOverlayColor)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 
 	for (int i = 0; i < mNumEffects; i++)
 	{
@@ -296,7 +296,7 @@ void Attachment::PropogateColor(const Color& theColor, bool theEnableAdditiveCol
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aParticleSystem)
 			{
 				aParticleSystem->OverrideColor(nullptr, theColor);
@@ -338,7 +338,7 @@ void Attachment::PropogateColor(const Color& theColor, bool theEnableAdditiveCol
 
 void Attachment::OverrideScale(float theScale)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 
 	for (int i = 0; i < mNumEffects; i++)
 	{
@@ -347,7 +347,7 @@ void Attachment::OverrideScale(float theScale)
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aParticleSystem)
 			{
 				aParticleSystem->OverrideScale(nullptr, theScale);
@@ -383,14 +383,14 @@ void Attachment::OverrideScale(float theScale)
 
 void Attachment::CrossFade(const char* theCrossFadeName)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 
 	for (int i = 0; i < mNumEffects; i++)
 	{
 		AttachEffect* aAttachEffect = &mEffectArray[i];
 		if (aAttachEffect->mEffectType == EffectType::EFFECT_PARTICLE)
 		{
-			TodParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aParticleSystem)
 			{
 				aParticleSystem->CrossFade(theCrossFadeName);
@@ -401,7 +401,7 @@ void Attachment::CrossFade(const char* theCrossFadeName)
 
 void Attachment::SetMatrix(const SexyTransform2D& theMatrix)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 
 	for (int i = 0; i < mNumEffects; i++)
 	{
@@ -412,7 +412,7 @@ void Attachment::SetMatrix(const SexyTransform2D& theMatrix)
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aParticleSystem)
 			{
 				aParticleSystem->SystemMove(aPosition.m02, aPosition.m12);
@@ -457,9 +457,9 @@ void Attachment::SetMatrix(const SexyTransform2D& theMatrix)
 
 void Attachment::Draw(Graphics* g, bool theParentHidden)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 
-	DataArray<TodParticleSystem>& aParticleSystems = gEffectSystem->mParticleHolder->mParticleSystems;
+	DataArray<PvzpParticleSystem>& aParticleSystems = gEffectSystem->mParticleHolder->mParticleSystems;
 	DataArray<Trail>& aTrails = gEffectSystem->mTrailHolder->mTrails;
 	DataArray<Reanimation>& aReanimations = gEffectSystem->mReanimationHolder->mReanimations;
 	DataArray<Attachment>& aAttachments = gEffectSystem->mAttachmentHolder->mAttachments;
@@ -476,7 +476,7 @@ void Attachment::Draw(Graphics* g, bool theParentHidden)
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = aParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = aParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aParticleSystem)
 			{
 				aParticleSystem->Draw(g);
@@ -522,9 +522,9 @@ void Attachment::Draw(Graphics* g, bool theParentHidden)
 
 void Attachment::Detach()
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 
-	DataArray<TodParticleSystem>& aParticleSystems = gEffectSystem->mParticleHolder->mParticleSystems;
+	DataArray<PvzpParticleSystem>& aParticleSystems = gEffectSystem->mParticleHolder->mParticleSystems;
 	DataArray<Trail>& aTrails = gEffectSystem->mTrailHolder->mTrails;
 	DataArray<Reanimation>& aReanimations = gEffectSystem->mReanimationHolder->mReanimations;
 	DataArray<Attachment>& aAttachments = gEffectSystem->mAttachmentHolder->mAttachments;
@@ -536,10 +536,10 @@ void Attachment::Detach()
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = aParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+			PvzpParticleSystem* aParticleSystem = aParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aParticleSystem)
 			{
-				TOD_ASSERT(aParticleSystem->mIsAttachment);
+				PVZP_ASSERT(aParticleSystem->mIsAttachment);
 				aParticleSystem->mIsAttachment = false;
 			}
 			break;
@@ -550,7 +550,7 @@ void Attachment::Detach()
 			Trail* aTrail = aTrails.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aTrail)
 			{
-				TOD_ASSERT(aTrail->mIsAttachment);
+				PVZP_ASSERT(aTrail->mIsAttachment);
 				aTrail->mIsAttachment = false;
 			}
 			break;
@@ -561,7 +561,7 @@ void Attachment::Detach()
 			Reanimation* aReanimation = aReanimations.DataArrayTryToGet(aAttachEffect->mEffectID);
 			if (aReanimation)
 			{
-				TOD_ASSERT(aReanimation->mIsAttachment);
+				PVZP_ASSERT(aReanimation->mIsAttachment);
 				aReanimation->mIsAttachment = false;
 			}
 			break;
@@ -603,7 +603,7 @@ void Attachment::AttachmentDie()
 		return;
 	}
 
-	DataArray<TodParticleSystem> *aParticleSystems = nullptr;
+	DataArray<PvzpParticleSystem> *aParticleSystems = nullptr;
 	DataArray<Trail> *aTrails = nullptr;
 	DataArray<Reanimation> *aReanimations = nullptr;
 	DataArray<Attachment> *aAttachments = nullptr;
@@ -619,7 +619,7 @@ void Attachment::AttachmentDie()
 		{
 		case EffectType::EFFECT_PARTICLE:
 		{
-			TodParticleSystem* aParticleSystem = aParticleSystems?aParticleSystems->DataArrayTryToGet(aAttachEffect->mEffectID):nullptr;
+			PvzpParticleSystem* aParticleSystem = aParticleSystems?aParticleSystems->DataArrayTryToGet(aAttachEffect->mEffectID):nullptr;
 			if (aParticleSystem)
 			{
 				aParticleSystem->ParticleSystemDie();
@@ -710,7 +710,7 @@ void AttachmentUpdateAndSetMatrix(AttachmentID& theAttachmentID, SexyTransform2D
 	if (theAttachmentID == AttachmentID::ATTACHMENTID_NULL)
 		return;
 
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet(static_cast<unsigned int>(theAttachmentID));
 	if (aAttachment)
 	{
@@ -728,7 +728,7 @@ void AttachmentUpdateAndMove(AttachmentID& theAttachmentID, float theX, float th
 	if (theAttachmentID == AttachmentID::ATTACHMENTID_NULL)
 		return;
 
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet(static_cast<unsigned int>(theAttachmentID));
 	if (aAttachment)
 	{
@@ -746,7 +746,7 @@ void AttachmentOverrideColor(AttachmentID& theAttachmentID, const Color& theColo
 	if (theAttachmentID == AttachmentID::ATTACHMENTID_NULL)
 		return;
 
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet(static_cast<unsigned int>(theAttachmentID));
 	if (aAttachment)
 	{
@@ -759,7 +759,7 @@ void AttachmentOverrideScale(AttachmentID& theAttachmentID, float theScale)
 	if (theAttachmentID == AttachmentID::ATTACHMENTID_NULL)
 		return;
 
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	if (aAttachment)
 	{
@@ -797,8 +797,8 @@ void AttachmentDetachCrossFadeParticleType(AttachmentID& theAttachmentID, Partic
 		return;
 	}
 
-	TOD_ASSERT(theParticleEffect >= 0 && theParticleEffect < gParticleDefCount);
-	TodParticleDefinition* aDefinition = &gParticleDefArray[(int)theParticleEffect];
+	PVZP_ASSERT(theParticleEffect >= 0 && theParticleEffect < gParticleDefCount);
+	PvzpParticleDefinition* aDefinition = &gParticleDefArray[(int)theParticleEffect];
 
 	for (int i = 0; i < aAttachment->mNumEffects;)
 	{
@@ -809,7 +809,7 @@ void AttachmentDetachCrossFadeParticleType(AttachmentID& theAttachmentID, Partic
 			continue;
 		}
 
-		TodParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
+		PvzpParticleSystem* aParticleSystem = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayTryToGet(aAttachEffect->mEffectID);
 		if (aParticleSystem && aParticleSystem->mParticleDef == aDefinition)
 		{
 			if (theCrossFadeName)
@@ -847,7 +847,7 @@ void AttachmentPropogateColor(AttachmentID& theAttachmentID, const Color& theCol
 	if (theAttachmentID == AttachmentID::ATTACHMENTID_NULL)
 		return;
 
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	if (aAttachment)
 	{
@@ -860,7 +860,7 @@ void AttachmentCrossFade(AttachmentID& theAttachmentID, const char* theCrossFade
 	if (theAttachmentID == AttachmentID::ATTACHMENTID_NULL)
 		return;
 
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	if (aAttachment)
 	{
@@ -873,7 +873,7 @@ void AttachmentDraw(AttachmentID& theAttachmentID, Graphics* g, bool theParentHi
 	if (theAttachmentID == AttachmentID::ATTACHMENTID_NULL)
 		return;
 
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	if (aAttachment)
 	{
@@ -886,7 +886,7 @@ void AttachmentDie(AttachmentID& theAttachmentID)
 	if (theAttachmentID == AttachmentID::ATTACHMENTID_NULL)
 		return;
 
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	theAttachmentID = AttachmentID::ATTACHMENTID_NULL;
 	if (aAttachment)
@@ -900,7 +900,7 @@ void AttachmentDetach(AttachmentID& theAttachmentID)
 	if (theAttachmentID == AttachmentID::ATTACHMENTID_NULL)
 		return;
 
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	theAttachmentID = AttachmentID::ATTACHMENTID_NULL;
 	if (aAttachment)
@@ -911,7 +911,7 @@ void AttachmentDetach(AttachmentID& theAttachmentID)
 
 Reanimation* FindReanimAttachment(AttachmentID& theAttachmentID)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	if (aAttachment == nullptr)
 	{
@@ -936,7 +936,7 @@ Reanimation* FindReanimAttachment(AttachmentID& theAttachmentID)
 
 AttachEffect* FindFirstAttachment(AttachmentID& theAttachmentID)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	if (aAttachment == nullptr)
 	{
@@ -948,7 +948,7 @@ AttachEffect* FindFirstAttachment(AttachmentID& theAttachmentID)
 
 AttachEffect* CreateEffectAttachment(AttachmentID& theAttachmentID, EffectType theEffectType, unsigned int theDataID, float theOffsetX, float theOffsetY)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	if (aAttachment == nullptr || aAttachment->mDead)
 	{
@@ -956,8 +956,8 @@ AttachEffect* CreateEffectAttachment(AttachmentID& theAttachmentID, EffectType t
 		theAttachmentID = (AttachmentID)gEffectSystem->mAttachmentHolder->mAttachments.DataArrayGetID(aAttachment);
 	}
 
-	TOD_ASSERT(aAttachment->mNumEffects < MAX_EFFECTS_PER_ATTACHMENT);
-	TOD_ASSERT(!aAttachment->mDead);
+	PVZP_ASSERT(aAttachment->mNumEffects < MAX_EFFECTS_PER_ATTACHMENT);
+	PVZP_ASSERT(!aAttachment->mDead);
 
 	AttachEffect* aAttachEffect = &aAttachment->mEffectArray[aAttachment->mNumEffects];
 	aAttachEffect->mEffectType = theEffectType;
@@ -975,13 +975,13 @@ AttachEffect* AttachReanim(AttachmentID& theAttachmentID, Reanimation* theReanim
 	unsigned int aReanimId = gEffectSystem->mReanimationHolder->mReanimations.DataArrayGetID(theReanimation);
 	AttachEffect* aAttachEffect = CreateEffectAttachment(theAttachmentID, EffectType::EFFECT_REANIM, aReanimId, theOffsetX, theOffsetY);
 
-	TOD_ASSERT(!theReanimation->mIsAttachment);
+	PVZP_ASSERT(!theReanimation->mIsAttachment);
 	theReanimation->mIsAttachment = true;
 
 	return aAttachEffect;
 }
 
-AttachEffect* AttachParticle(AttachmentID& theAttachmentID, TodParticleSystem* theParticleSystem, float theOffsetX, float theOffsetY)
+AttachEffect* AttachParticle(AttachmentID& theAttachmentID, PvzpParticleSystem* theParticleSystem, float theOffsetX, float theOffsetY)
 {
 	if (theParticleSystem == nullptr)
 		return nullptr;
@@ -989,7 +989,7 @@ AttachEffect* AttachParticle(AttachmentID& theAttachmentID, TodParticleSystem* t
 	unsigned int aParticleId = gEffectSystem->mParticleHolder->mParticleSystems.DataArrayGetID(theParticleSystem);
 	AttachEffect* aAttachEffect = CreateEffectAttachment(theAttachmentID, EffectType::EFFECT_PARTICLE, aParticleId, theOffsetX, theOffsetY);
 
-	TOD_ASSERT(!theParticleSystem->mIsAttachment);
+	PVZP_ASSERT(!theParticleSystem->mIsAttachment);
 	theParticleSystem->mIsAttachment = true;
 
 	return aAttachEffect;
@@ -1000,7 +1000,7 @@ AttachEffect* AttachTrail(AttachmentID& theAttachmentID, Trail* theTrail, float 
 	unsigned int aTrailId = gEffectSystem->mTrailHolder->mTrails.DataArrayGetID(theTrail);
 	AttachEffect* aAttachEffect = CreateEffectAttachment(theAttachmentID, EffectType::EFFECT_TRAIL, aTrailId, theOffsetX, theOffsetY);
 
-	TOD_ASSERT(!theTrail->mIsAttachment);
+	PVZP_ASSERT(!theTrail->mIsAttachment);
 	theTrail->mIsAttachment = true;
 
 	return aAttachEffect;
@@ -1008,7 +1008,7 @@ AttachEffect* AttachTrail(AttachmentID& theAttachmentID, Trail* theTrail, float 
 
 bool IsFullOfAttachments(AttachmentID& theAttachmentID)
 {
-	TOD_ASSERT(gEffectSystem);
+	PVZP_ASSERT(gEffectSystem);
 	Attachment* aAttachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet((unsigned int)theAttachmentID);
 	return aAttachment && aAttachment->mNumEffects >= MAX_EFFECTS_PER_ATTACHMENT;
 }

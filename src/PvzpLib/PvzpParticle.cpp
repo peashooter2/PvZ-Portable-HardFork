@@ -19,9 +19,9 @@
  * along with PvZ-Portable. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "TodDebug.h"
+#include "PvzpDebug.h"
 #include "Definition.h"
-#include "TodParticle.h"
+#include "PvzpParticle.h"
 #include "EffectSystem.h"
 #include "../GameConstants.h"
 #include "graphics/Graphics.h"
@@ -29,7 +29,7 @@
 #include <algorithm>
 
 int gParticleDefCount;                      // [0x6A9F08]
-TodParticleDefinition* gParticleDefArray;   // [0x6A9F0C]
+PvzpParticleDefinition* gParticleDefArray;   // [0x6A9F0C]
 int gParticleParamArraySize;				// [0x6A9F10]
 const ParticleParams* gParticleParamArray;		// [0x6A9F14]
 
@@ -143,21 +143,21 @@ constinit const ParticleParams gLawnParticleArray[ParticleEffect::NUM_PARTICLES]
 };  // 0x6A0FF0
 
 // (ecx = *theParticleFileName, *theParticleDef)  //esp -= 4
-bool TodParticleLoadADef(TodParticleDefinition* theParticleDef, const char* theParticleFileName)
+bool PvzpParticleLoadADef(PvzpParticleDefinition* theParticleDef, const char* theParticleFileName)
 {
-	TodHesitationBracket("Load Particle %s", theParticleFileName);
+	PvzpHesitationBracket("Load Particle %s", theParticleFileName);
 	if (!DefinitionLoadXML(theParticleFileName, &gParticleDefMap, theParticleDef))
 	{
 		char aBuf[512];
 		snprintf(aBuf, sizeof(aBuf), "Failed to load particle '%s'", theParticleFileName);
-		TodErrorMessageBox(aBuf, "Error");
+		PvzpErrorMessageBox(aBuf, "Error");
 		return false;
 	}
 	else
 	{
 		for (int i = 0; i < theParticleDef->mEmitterDefCount; i++)
 		{
-			TodEmitterDefinition& aDef = theParticleDef->mEmitterDefs[i];
+			PvzpEmitterDefinition& aDef = theParticleDef->mEmitterDefs[i];
 			FloatTrackSetDefault(aDef.mSystemDuration, 0.0f);
 			FloatTrackSetDefault(aDef.mSpawnRate, 0.0f);
 			FloatTrackSetDefault(aDef.mSpawnMinActive, -1.0f);
@@ -202,32 +202,32 @@ bool TodParticleLoadADef(TodParticleDefinition* theParticleDef, const char* theP
 	}
 }
 
-void TodParticleLoadDefinitions(const ParticleParams* theParticleParamArray, int theParticleParamArraySize)
+void PvzpParticleLoadDefinitions(const ParticleParams* theParticleParamArray, int theParticleParamArraySize)
 {
-	TodHesitationBracket aHesitiation("TodParticleLoadDefinitions");
-	TOD_ASSERT(!gParticleParamArray && !gParticleDefArray);
+	PvzpHesitationBracket aHesitiation("PvzpParticleLoadDefinitions");
+	PVZP_ASSERT(!gParticleParamArray && !gParticleDefArray);
 	gParticleParamArraySize = theParticleParamArraySize;
 	gParticleParamArray = theParticleParamArray;
 	gParticleDefCount = theParticleParamArraySize;
-	gParticleDefArray = new TodParticleDefinition[theParticleParamArraySize];
+	gParticleDefArray = new PvzpParticleDefinition[theParticleParamArraySize];
 	// This was uninitialised before!
-	// memset(gParticleDefArray, 0, theParticleParamArraySize*sizeof(TodParticleDefinition));
+	// memset(gParticleDefArray, 0, theParticleParamArraySize*sizeof(PvzpParticleDefinition));
 
 	for (int i = 0; i < gParticleParamArraySize; i++)
 	{
 		const ParticleParams& aParticleParams = gParticleParamArray[i];
-		TOD_ASSERT(aParticleParams.mParticleEffect == i);
-		if (!TodParticleLoadADef(&gParticleDefArray[i], aParticleParams.mParticleFileName))
+		PVZP_ASSERT(aParticleParams.mParticleEffect == i);
+		if (!PvzpParticleLoadADef(&gParticleDefArray[i], aParticleParams.mParticleFileName))
 		{
 			char aBuf[512];
 			snprintf(aBuf, sizeof(aBuf), "Failed to load particle '%s'", aParticleParams.mParticleFileName);
-			TodErrorMessageBox(aBuf, "Error");
+			PvzpErrorMessageBox(aBuf, "Error");
 		}
 		gSexyAppBase->mCompletedLoadingThreadTasks += 6;
 	}
 }
 
-void TodParticleFreeDefinitions()
+void PvzpParticleFreeDefinitions()
 {
 	for (int i = 0; i < gParticleDefCount; i++)
 		DefinitionFreeMap(&gParticleDefMap, &gParticleDefArray[i]);
@@ -238,7 +238,7 @@ void TodParticleFreeDefinitions()
 	gParticleParamArraySize = 0;
 }
 
-TodParticleSystem::TodParticleSystem()
+PvzpParticleSystem::PvzpParticleSystem()
 {
 	mEffectType = ParticleEffect::PARTICLE_NONE;
 	mParticleDef = nullptr;
@@ -249,16 +249,16 @@ TodParticleSystem::TodParticleSystem()
 	mRenderOrder = 0;
 }
 
-TodParticleSystem::~TodParticleSystem()
+PvzpParticleSystem::~PvzpParticleSystem()
 {
 	ParticleSystemDie();
 	mEmitterList.RemoveAll();
 }
 
 // (edx = theEffectType, *theDefinition, ecx = theRenderOrder, theY, theX, *this)
-void TodParticleSystem::TodParticleInitializeFromDef(float theX, float theY, int theRenderOrder, TodParticleDefinition* theDefinition, ParticleEffect theEffectType)
+void PvzpParticleSystem::PvzpParticleInitializeFromDef(float theX, float theY, int theRenderOrder, PvzpParticleDefinition* theDefinition, ParticleEffect theEffectType)
 {
-	TOD_ASSERT(mParticleHolder);
+	PVZP_ASSERT(mParticleHolder);
 	mEmitterList.SetAllocator(&mParticleHolder->mEmitterListNodeAllocator);
 	mParticleDef = theDefinition;
 	mEffectType = theEffectType;
@@ -266,7 +266,7 @@ void TodParticleSystem::TodParticleInitializeFromDef(float theX, float theY, int
 
 	for (int i = 0; i < theDefinition->mEmitterDefCount; i++)
 	{
-		TodEmitterDefinition& aDef = theDefinition->mEmitterDefs[i];
+		PvzpEmitterDefinition& aDef = theDefinition->mEmitterDefs[i];
 		if (!FloatTrackIsSet(aDef.mCrossFadeDuration))
 		{
 			if (TestBit(aDef.mParticleFlags, static_cast<int>(ParticleFlags::PARTICLE_DIE_IF_OVERLOADED)) && mParticleHolder->IsOverLoaded())
@@ -274,15 +274,15 @@ void TodParticleSystem::TodParticleInitializeFromDef(float theX, float theY, int
 				ParticleSystemDie();
 				break;
 			}
-			TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayAlloc();
-			aEmitter->TodEmitterInitialize(theX, theY, this, &aDef);
+			PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayAlloc();
+			aEmitter->PvzpEmitterInitialize(theX, theY, this, &aDef);
 			mEmitterList.AddTail(static_cast<ParticleEmitterID>(mParticleHolder->mEmitters.DataArrayGetID(aEmitter)));
 		}
 	}
 }
 
 // (*theEmitterDef, *theSystem, theY, theX, ecx = *this)
-void TodParticleEmitter::TodEmitterInitialize(float theX, float theY, TodParticleSystem* theSystem, TodEmitterDefinition* theEmitterDef)
+void PvzpParticleEmitter::PvzpEmitterInitialize(float theX, float theY, PvzpParticleSystem* theSystem, PvzpEmitterDefinition* theEmitterDef)
 {
 	mSpawnAccum = 0.0f;
 	mParticlesSpawned = 0;
@@ -319,11 +319,11 @@ void TodParticleEmitter::TodEmitterInitialize(float theX, float theY, TodParticl
 	Update();
 }
 
-void TodParticleSystem::ParticleSystemDie()
+void PvzpParticleSystem::ParticleSystemDie()
 {
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 	{
-		TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		aEmitter->DeleteAll();
 		mParticleHolder->mEmitters.DataArrayFree(aEmitter);
 	}
@@ -331,17 +331,17 @@ void TodParticleSystem::ParticleSystemDie()
 	mDead = true;
 }
 
-TodParticle* TodParticleEmitter::SpawnParticle(int theIndex, int theSpawnCount)
+PvzpParticle* PvzpParticleEmitter::SpawnParticle(int theIndex, int theSpawnCount)
 {
-	DataArray<TodParticle>& aDataArray = mParticleSystem->mParticleHolder->mParticles;
+	DataArray<PvzpParticle>& aDataArray = mParticleSystem->mParticleHolder->mParticles;
 	if (aDataArray.mSize == aDataArray.mMaxSize)
 	{
-		TodTraceWithoutSpamming("Too many particles '%s'\n", mEmitterDef->mName);
+		PvzpTraceWithoutSpamming("Too many particles '%s'\n", mEmitterDef->mName);
 		return nullptr;
 	}
 
-	TodParticle* aParticle = aDataArray.DataArrayAlloc();
-	TOD_ASSERT(mEmitterDef->mParticleFields.count <= MAX_PARTICLE_FIELDS);
+	PvzpParticle* aParticle = aDataArray.DataArrayAlloc();
+	PVZP_ASSERT(mEmitterDef->mParticleFields.count <= MAX_PARTICLE_FIELDS);
 	for (int i = 0; i < mEmitterDef->mParticleFields.count; i++)
 	{
 		aParticle->mParticleFieldInterp[i][0] = Sexy::Rand(1.0f);  // 初始化每个粒子场的横向插值
@@ -439,7 +439,7 @@ TodParticle* TodParticleEmitter::SpawnParticle(int theIndex, int theSpawnCount)
 		break;
 	}
 	default:
-		TOD_ASSERT(false);
+		PVZP_ASSERT(false);
 		break;
 	}
 	float aEmitterSkewXInterp = Sexy::Rand(1.0f);
@@ -476,14 +476,14 @@ TodParticle* TodParticleEmitter::SpawnParticle(int theIndex, int theSpawnCount)
 	return aParticle;
 }
 
-float TodParticleEmitter::ParticleTrackEvaluate(FloatParameterTrack& theTrack, TodParticle* theParticle, ParticleTracks theParticleTrack)
+float PvzpParticleEmitter::ParticleTrackEvaluate(FloatParameterTrack& theTrack, PvzpParticle* theParticle, ParticleTracks theParticleTrack)
 {
 	return FloatTrackEvaluate(theTrack, theParticle->mParticleTimeValue, theParticle->mParticleInterp[theParticleTrack]);
 }
 
-void TodParticleEmitter::UpdateParticleField(TodParticle* theParticle, ParticleField* theParticleField, float theParticleTimeValue, int theFieldIndex)
+void PvzpParticleEmitter::UpdateParticleField(PvzpParticle* theParticle, ParticleField* theParticleField, float theParticleTimeValue, int theFieldIndex)
 {
-	TOD_ASSERT(theFieldIndex < MAX_PARTICLE_FIELDS);
+	PVZP_ASSERT(theFieldIndex < MAX_PARTICLE_FIELDS);
 	float aInterpX = theParticle->mParticleFieldInterp[theFieldIndex][0];
 	float aInterpY = theParticle->mParticleFieldInterp[theFieldIndex][1];
 	float x = FloatTrackEvaluate(theParticleField->mX, theParticleTimeValue, aInterpX);
@@ -577,19 +577,19 @@ void TodParticleEmitter::UpdateParticleField(TodParticle* theParticle, ParticleF
 		break;
 	}
 	default:
-		TOD_ASSERT(0);
+		PVZP_ASSERT(0);
 		break;
 	}
 }
 
-float TodParticleEmitter::SystemTrackEvaluate(FloatParameterTrack& theTrack, ParticleSystemTracks theSystemTrack)
+float PvzpParticleEmitter::SystemTrackEvaluate(FloatParameterTrack& theTrack, ParticleSystemTracks theSystemTrack)
 {
 	return FloatTrackEvaluate(theTrack, mSystemTimeValue, mTrackInterp[theSystemTrack]);
 }
 
-void TodParticleEmitter::UpdateSystemField(ParticleField* theParticleField, float theParticleTimeValue, int theFieldIndex)
+void PvzpParticleEmitter::UpdateSystemField(ParticleField* theParticleField, float theParticleTimeValue, int theFieldIndex)
 {
-	TOD_ASSERT(theFieldIndex < MAX_PARTICLE_FIELDS);
+	PVZP_ASSERT(theFieldIndex < MAX_PARTICLE_FIELDS);
 	float aInterpX = mSystemFieldInterp[theFieldIndex][0];
 	float aInterpY = mSystemFieldInterp[theFieldIndex][1];
 	float x = FloatTrackEvaluate(theParticleField->mX, theParticleTimeValue, aInterpX);
@@ -606,33 +606,33 @@ void TodParticleEmitter::UpdateSystemField(ParticleField* theParticleField, floa
 		break;
 	}
 	default:
-		TOD_ASSERT(0);
+		PVZP_ASSERT(0);
 		break;
 	}
 }
 
-bool TodParticleEmitter::CrossFadeParticleToName(TodParticle* theParticle, const char* theEmitterName)
+bool PvzpParticleEmitter::CrossFadeParticleToName(PvzpParticle* theParticle, const char* theEmitterName)
 {
-	TodEmitterDefinition* aDef = mParticleSystem->FindEmitterDefByName(theEmitterName);
+	PvzpEmitterDefinition* aDef = mParticleSystem->FindEmitterDefByName(theEmitterName);
 	if (aDef == nullptr)
 	{
-		TodTrace("Can't find emitter to cross fade: %s\n", theEmitterName);
+		PvzpTrace("Can't find emitter to cross fade: %s\n", theEmitterName);
 		return false;
 	}
 	if (mParticleSystem->mParticleHolder->mEmitters.mSize == mParticleSystem->mParticleHolder->mEmitters.mMaxSize)
 	{
-		TodTrace("Too many emitters to cross fade\n");
+		PvzpTrace("Too many emitters to cross fade\n");
 		return false;
 	}
 
-	TodParticleEmitter* aEmitter = mParticleSystem->mParticleHolder->mEmitters.DataArrayAlloc();
-	aEmitter->TodEmitterInitialize(mSystemCenter.x, mSystemCenter.y, mParticleSystem, aDef);
+	PvzpParticleEmitter* aEmitter = mParticleSystem->mParticleHolder->mEmitters.DataArrayAlloc();
+	aEmitter->PvzpEmitterInitialize(mSystemCenter.x, mSystemCenter.y, mParticleSystem, aDef);
 	ParticleEmitterID aEmitterID = static_cast<ParticleEmitterID>(mParticleSystem->mParticleHolder->mEmitters.DataArrayGetID(aEmitter));
 	mParticleSystem->mEmitterList.AddTail(aEmitterID);
 	return CrossFadeParticle(theParticle, aEmitter);
 }
 
-bool TodParticleEmitter::UpdateParticle(TodParticle* theParticle)
+bool PvzpParticleEmitter::UpdateParticle(PvzpParticle* theParticle)
 {
 	if (theParticle->mParticleAge >= theParticle->mParticleDuration)  // 粒子的生命周期结束时
 	{
@@ -672,10 +672,10 @@ bool TodParticleEmitter::UpdateParticle(TodParticle* theParticle)
 	return true;
 }
 
-void TodParticleEmitter::UpdateSpawning()
+void PvzpParticleEmitter::UpdateSpawning()
 {
-	TodParticleEmitter* aCrossFadeEmitter = mParticleSystem->mParticleHolder->mEmitters.DataArrayTryToGet(static_cast<unsigned int>(mCrossFadeEmitterID));
-	TodParticleEmitter* aSpawningEmitter = !aCrossFadeEmitter ? this : aCrossFadeEmitter;  // 各项数据的计算均以此“主发射器”为准
+	PvzpParticleEmitter* aCrossFadeEmitter = mParticleSystem->mParticleHolder->mEmitters.DataArrayTryToGet(static_cast<unsigned int>(mCrossFadeEmitterID));
+	PvzpParticleEmitter* aSpawningEmitter = !aCrossFadeEmitter ? this : aCrossFadeEmitter;  // 各项数据的计算均以此“主发射器”为准
 	mSpawnAccum += aSpawningEmitter->SystemTrackEvaluate(aSpawningEmitter->mEmitterDef->mSpawnRate, ParticleSystemTracks::TRACK_SPAWN_RATE) * 0.01;
 	int aSpawnCount = static_cast<int>(mSpawnAccum);
 	mSpawnAccum -= aSpawnCount;
@@ -695,43 +695,43 @@ void TodParticleEmitter::UpdateSpawning()
 
 	for (int i = 0; i < aSpawnCount; i++)
 	{
-		TodParticle* aParticle = SpawnParticle(i, aSpawnCount);
+		PvzpParticle* aParticle = SpawnParticle(i, aSpawnCount);
 		if (aCrossFadeEmitter != nullptr)
 			CrossFadeParticle(aParticle, aCrossFadeEmitter);
 	}
 }
 
-void TodParticleEmitter::DeleteNonCrossFading()
+void PvzpParticleEmitter::DeleteNonCrossFading()
 {
-	for (TodListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; )
+	for (PvzpListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; )
 	{
-		TodListNode<ParticleID>* aNext = aNode->mNext;
-		TodParticle* aParticle = mParticleSystem->mParticleHolder->mParticles.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpListNode<ParticleID>* aNext = aNode->mNext;
+		PvzpParticle* aParticle = mParticleSystem->mParticleHolder->mParticles.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		if (aParticle->mCrossFadeDuration <= 0)  // 当粒子不处于交叉混合状态，则删除该粒子
 			DeleteParticle(aParticle);
 		aNode = aNext;
 	}
 }
 
-void TodParticleEmitter::DeleteAll()
+void PvzpParticleEmitter::DeleteAll()
 {
 	while (mParticleList.mSize != 0)
 	{
 		ParticleID anId = mParticleList.RemoveHead();
-		DataArray<TodParticle>& aDataArray = mParticleSystem->mParticleHolder->mParticles;
+		DataArray<PvzpParticle>& aDataArray = mParticleSystem->mParticleHolder->mParticles;
 		aDataArray.DataArrayFree(aDataArray.DataArrayGet(anId));
 	}
 }
 
 // GOTY @Patoke: 0x521A20
-void TodParticleSystem::Update()
+void PvzpParticleSystem::Update()
 {
 	if (!mDontUpdate)
 	{
 		bool aEmitterAlive = false;
-		for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+		for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 		{
-			TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+			PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 			aEmitter->Update();
 			if ((FloatTrackIsSet(aEmitter->mEmitterDef->mCrossFadeDuration) && aEmitter->mParticleList.mSize > 0) || !aEmitter->mDead)
 				aEmitterAlive = true;
@@ -741,21 +741,21 @@ void TodParticleSystem::Update()
 	}
 }
 
-bool TodParticleEmitter::CrossFadeParticle(TodParticle* theParticle, TodParticleEmitter* theToEmitter)
+bool PvzpParticleEmitter::CrossFadeParticle(PvzpParticle* theParticle, PvzpParticleEmitter* theToEmitter)
 {
 	if (theParticle->mCrossFadeDuration > 0)  // 粒子已处于交叉混合的过程中
 	{
-		TodTrace("We don't support cross fading more than one at a time\n");
+		PvzpTrace("We don't support cross fading more than one at a time\n");
 		return false;
 	}
 	if (!FloatTrackIsSet(theToEmitter->mEmitterDef->mCrossFadeDuration))  // 目标发射器未设定交叉混合时长轨道
 	{
-		TodTrace("Can't cross fade to emitter that doesn't have CrossFadeDuration");
+		PvzpTrace("Can't cross fade to emitter that doesn't have CrossFadeDuration");
 		return false;
 	}
-	TOD_ASSERT(theToEmitter != this);  // 不能交叉混合至自身
+	PVZP_ASSERT(theToEmitter != this);  // 不能交叉混合至自身
 
-	TodParticle* aToParticle = theToEmitter->SpawnParticle(0, 1);
+	PvzpParticle* aToParticle = theToEmitter->SpawnParticle(0, 1);
 	if (aToParticle == nullptr)
 		return false;
 	if (mEmitterCrossFadeCountDown > 0)  // 如果源发射器正处于交叉混合过程中
@@ -772,9 +772,9 @@ bool TodParticleEmitter::CrossFadeParticle(TodParticle* theParticle, TodParticle
 	return true;
 }
 
-void TodParticleEmitter::DeleteParticle(TodParticle* theParticle)
+void PvzpParticleEmitter::DeleteParticle(PvzpParticle* theParticle)
 {
-	TodParticle* aCrossFadeParticle = mParticleSystem->mParticleHolder->mParticles.DataArrayTryToGet(static_cast<unsigned int>(theParticle->mCrossFadeParticleID));
+	PvzpParticle* aCrossFadeParticle = mParticleSystem->mParticleHolder->mParticles.DataArrayTryToGet(static_cast<unsigned int>(theParticle->mCrossFadeParticleID));
 	if (aCrossFadeParticle != nullptr)
 	{
 		aCrossFadeParticle->mParticleEmitter->DeleteParticle(aCrossFadeParticle);  // 同时删除交叉混合的源粒子
@@ -786,7 +786,7 @@ void TodParticleEmitter::DeleteParticle(TodParticle* theParticle)
 	mParticleSystem->mParticleHolder->mParticles.DataArrayFree(theParticle);
 }
 
-void TodParticleEmitter::Update()
+void PvzpParticleEmitter::Update()
 {
 	if (mDead)
 		return;
@@ -812,7 +812,7 @@ void TodParticleEmitter::Update()
 	}
 	if (mCrossFadeEmitterID != ParticleEmitterID::PARTICLEEMITTERID_NULL)
 	{
-		TodParticleEmitter* aCrossFadeEmitter = mParticleSystem->mParticleHolder->mEmitters.DataArrayTryToGet(mCrossFadeEmitterID);
+		PvzpParticleEmitter* aCrossFadeEmitter = mParticleSystem->mParticleHolder->mEmitters.DataArrayTryToGet(mCrossFadeEmitterID);
 		if (aCrossFadeEmitter == nullptr || aCrossFadeEmitter->mDead)
 			aDie = true;
 	}
@@ -820,10 +820,10 @@ void TodParticleEmitter::Update()
 	mSystemTimeValue = mSystemAge / static_cast<float>(mSystemDuration - 1);
 	for (int i = 0; i < mEmitterDef->mSystemFields.count; i++)
 		UpdateSystemField(&mEmitterDef->mSystemFields.Fields[i], mSystemTimeValue, i);  // 更新发射器受到每个系统场的作用
-	for (TodListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; )
+	for (PvzpListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; )
 	{
-		TodListNode<ParticleID>* aNext = aNode->mNext;
-		TodParticle* aParticle = mParticleSystem->mParticleHolder->mParticles.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpListNode<ParticleID>* aNext = aNode->mNext;
+		PvzpParticle* aParticle = mParticleSystem->mParticleHolder->mParticles.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		if (!UpdateParticle(aParticle))  // 更新发射器中的每个粒子
 			DeleteParticle(aParticle);
 		aNode = aNext;
@@ -851,10 +851,10 @@ float CrossFadeLerp(float theFrom, float theTo, bool theFromIsSet, bool theToIsS
 	return theFrom + (theTo - theFrom) * theFraction;
 }
 
-bool TodParticleEmitter::GetRenderParams(TodParticle* theParticle, ParticleRenderParams* theParams)
+bool PvzpParticleEmitter::GetRenderParams(PvzpParticle* theParticle, ParticleRenderParams* theParams)
 {
-	TodParticleEmitter* aEmitter = theParticle->mParticleEmitter;
-	TodEmitterDefinition* aDef = aEmitter->mEmitterDef;
+	PvzpParticleEmitter* aEmitter = theParticle->mParticleEmitter;
+	PvzpEmitterDefinition* aDef = aEmitter->mEmitterDef;
 
 	// 颜色。对于每一色彩通道，当系统对应轨道、粒子对应轨道和对应覆写中任一有定义时，认为该通道已设定。
 	theParams->mRedIsSet = false;
@@ -917,11 +917,11 @@ bool TodParticleEmitter::GetRenderParams(TodParticle* theParticle, ParticleRende
 	theParams->mParticleScale = aParticleScale * aEmitter->mScaleOverride;
 	theParams->mSpinPosition = theParticle->mSpinPosition;
 
-	TodParticle* aCrossFadeParticle = aEmitter->mParticleSystem->mParticleHolder->mParticles.DataArrayTryToGet(static_cast<unsigned int>(theParticle->mCrossFadeParticleID));
+	PvzpParticle* aCrossFadeParticle = aEmitter->mParticleSystem->mParticleHolder->mParticles.DataArrayTryToGet(static_cast<unsigned int>(theParticle->mCrossFadeParticleID));
 	if (aCrossFadeParticle != nullptr)  // 当存在交叉混合的粒子时，将二者的渲染参数进行混合（从 aCrossFadeParticle 至 theParticle 的交叉混合）
 	{
 		ParticleRenderParams aCrossFadeParams;
-		if (TodParticleEmitter::GetRenderParams(aCrossFadeParticle, &aCrossFadeParams))
+		if (PvzpParticleEmitter::GetRenderParams(aCrossFadeParticle, &aCrossFadeParams))
 		{
 			float aFraction = theParticle->mParticleAge / static_cast<float>(aCrossFadeParticle->mCrossFadeDuration - 1);
 			// 各项数值按照 aFraction 比例混合
@@ -951,10 +951,10 @@ bool TodParticleEmitter::GetRenderParams(TodParticle* theParticle, ParticleRende
 	return true;
 }
 
-void RenderParticle(Graphics* g, TodParticle* theParticle, const Color& theColor, ParticleRenderParams* theParams, TodTriangleGroup* theTriangleGroup)
+void RenderParticle(Graphics* g, PvzpParticle* theParticle, const Color& theColor, ParticleRenderParams* theParams, PvzpTriangleGroup* theTriangleGroup)
 {
-	TodParticleEmitter* aEmitter = theParticle->mParticleEmitter;
-	TodEmitterDefinition* aEmitterDef = aEmitter->mEmitterDef;
+	PvzpParticleEmitter* aEmitter = theParticle->mParticleEmitter;
+	PvzpEmitterDefinition* aEmitterDef = aEmitter->mEmitterDef;
 	Image* aImage = aEmitter->mImageOverride != nullptr ? aEmitter->mImageOverride : aEmitterDef->mImage;  // 优先使用覆写贴图，无覆写贴图则使用定义的贴图
 	if (aImage == nullptr)
 		return;  // 不存在贴图时，取消绘制
@@ -976,24 +976,24 @@ void RenderParticle(Graphics* g, TodParticle* theParticle, const Color& theColor
 		aFrame = aImage->mNumCols - 1;
 
 	Rect aSrcRect(aFrame * aCelWidth, std::min(aEmitterDef->mImageRow, aImage->mNumRows - 1) * aCelHeight, aCelWidth, aCelHeight);
-	float aClipTop = TodParticleEmitter::ParticleTrackEvaluate(aEmitterDef->mClipTop, theParticle, ParticleTracks::TRACK_PARTICLE_CLIP_TOP);
-	float aClipBottom = TodParticleEmitter::ParticleTrackEvaluate(aEmitterDef->mClipBottom, theParticle, ParticleTracks::TRACK_PARTICLE_CLIP_BOTTOM);
-	float aClipLeft = TodParticleEmitter::ParticleTrackEvaluate(aEmitterDef->mClipLeft, theParticle, ParticleTracks::TRACK_PARTICLE_CLIP_LEFT);
-	float aClipRight = TodParticleEmitter::ParticleTrackEvaluate(aEmitterDef->mClipRight, theParticle, ParticleTracks::TRACK_PARTICLE_CLIP_RIGHT);
-	TOD_ASSERT(aClipTop >= 0.0f && aClipTop <= 1.0f);
-	TOD_ASSERT(aClipBottom >= 0.0f && aClipBottom <= 1.0f);
-	TOD_ASSERT(aClipLeft >= 0.0f && aClipLeft <= 1.0f);
-	TOD_ASSERT(aClipRight >= 0.0f && aClipRight <= 1.0f);
+	float aClipTop = PvzpParticleEmitter::ParticleTrackEvaluate(aEmitterDef->mClipTop, theParticle, ParticleTracks::TRACK_PARTICLE_CLIP_TOP);
+	float aClipBottom = PvzpParticleEmitter::ParticleTrackEvaluate(aEmitterDef->mClipBottom, theParticle, ParticleTracks::TRACK_PARTICLE_CLIP_BOTTOM);
+	float aClipLeft = PvzpParticleEmitter::ParticleTrackEvaluate(aEmitterDef->mClipLeft, theParticle, ParticleTracks::TRACK_PARTICLE_CLIP_LEFT);
+	float aClipRight = PvzpParticleEmitter::ParticleTrackEvaluate(aEmitterDef->mClipRight, theParticle, ParticleTracks::TRACK_PARTICLE_CLIP_RIGHT);
+	PVZP_ASSERT(aClipTop >= 0.0f && aClipTop <= 1.0f);
+	PVZP_ASSERT(aClipBottom >= 0.0f && aClipBottom <= 1.0f);
+	PVZP_ASSERT(aClipLeft >= 0.0f && aClipLeft <= 1.0f);
+	PVZP_ASSERT(aClipRight >= 0.0f && aClipRight <= 1.0f);
 	theParams->mPosX += aClipLeft * aCelWidth;
 	theParams->mPosY += aClipTop * aCelHeight;
 	aSrcRect.mX += FloatRoundToInt(aClipLeft * aCelWidth);
 	aSrcRect.mY += FloatRoundToInt(aClipTop * aCelHeight);
 	aSrcRect.mWidth -= FloatRoundToInt(aCelWidth * (aClipLeft + aClipRight));
 	aSrcRect.mHeight -= FloatRoundToInt(aCelHeight * (aClipBottom + aClipTop));  // 以上根据裁剪各方向的比例调整源矩形
-	TOD_ASSERT(aSrcRect.mX == aCelWidth * aFrame + FloatRoundToInt(aClipLeft * aCelWidth));
-	TOD_ASSERT(aSrcRect.mY == aCelHeight * aEmitterDef->mImageRow + FloatRoundToInt(aClipTop * aCelHeight));
-	TOD_ASSERT(aSrcRect.mX >= 0 && aSrcRect.mX < 10000);
-	TOD_ASSERT(aSrcRect.mY >= 0 && aSrcRect.mY < 10000);
+	PVZP_ASSERT(aSrcRect.mX == aCelWidth * aFrame + FloatRoundToInt(aClipLeft * aCelWidth));
+	PVZP_ASSERT(aSrcRect.mY == aCelHeight * aEmitterDef->mImageRow + FloatRoundToInt(aClipTop * aCelHeight));
+	PVZP_ASSERT(aSrcRect.mX >= 0 && aSrcRect.mX < 10000);
+	PVZP_ASSERT(aSrcRect.mY >= 0 && aSrcRect.mY < 10000);
 
 	if (TestBit(aEmitterDef->mParticleFlags, static_cast<int>(ParticleFlags::PARTICLE_ALIGN_TO_PIXELS)))  // 坐标对齐至整数像素点
 	{
@@ -1016,7 +1016,7 @@ void RenderParticle(Graphics* g, TodParticle* theParticle, const Color& theColor
 	else
 	{
 		SexyMatrix3 aTransform;
-		TodScaleRotateTransformMatrix(
+		PvzpScaleRotateTransformMatrix(
 			aTransform, 
 			theParams->mPosX, 
 			theParams->mPosY, 
@@ -1030,7 +1030,7 @@ void RenderParticle(Graphics* g, TodParticle* theParticle, const Color& theColor
 	}
 }
 
-void TodParticleEmitter::DrawParticle(Graphics* g, TodParticle* theParticle, TodTriangleGroup* theTriangleGroup)
+void PvzpParticleEmitter::DrawParticle(Graphics* g, PvzpParticle* theParticle, PvzpTriangleGroup* theTriangleGroup)
 {
 	if (theParticle->mCrossFadeDuration > 0)  // 交叉混合的源粒子，不绘制
 		return;
@@ -1049,7 +1049,7 @@ void TodParticleEmitter::DrawParticle(Graphics* g, TodParticle* theParticle, Tod
 			aParams.mPosX += g->mTransX;
 			aParams.mPosY += g->mTransY;
 
-			TodParticle* aParticle;
+			PvzpParticle* aParticle;
 			if (mImageOverride || mEmitterDef->mImage)  // 粒子有贴图时，渲染该粒子
 				aParticle = theParticle;
 			else  // 粒子没有贴图时，尝试渲染交叉混合来源的粒子
@@ -1060,32 +1060,32 @@ void TodParticleEmitter::DrawParticle(Graphics* g, TodParticle* theParticle, Tod
 	}
 }
 
-void TodParticleSystem::Draw(Graphics* g)
+void PvzpParticleSystem::Draw(Graphics* g)
 {
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 		mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue))->Draw(g);
 }
 
-void TodParticleEmitter::Draw(Graphics* g)
+void PvzpParticleEmitter::Draw(Graphics* g)
 {
 	bool aHardWare = gSexyAppBase->Is3DAccelerated();
 	if ((TestBit(mEmitterDef->mParticleFlags, static_cast<int>(ParticleFlags::PARTICLE_SOFTWARE_ONLY)) && aHardWare) ||
 		(TestBit(mEmitterDef->mParticleFlags, static_cast<int>(ParticleFlags::PARTICLE_HARDWARE_ONLY)) && !aHardWare))
 		return;
 
-	TodTriangleGroup aTriangleGroup;
-	for (TodListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	PvzpTriangleGroup aTriangleGroup;
+	for (PvzpListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; aNode = aNode->mNext)
 		DrawParticle(g, mParticleSystem->mParticleHolder->mParticles.DataArrayGet(static_cast<unsigned int>(aNode->mValue)), &aTriangleGroup);
 	aTriangleGroup.DrawGroup(g);
 }
 
-void TodParticleSystem::SystemMove(float theX, float theY)
+void PvzpParticleSystem::SystemMove(float theX, float theY)
 {
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 		mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue))->SystemMove(theX, theY);
 }
 
-void TodParticleEmitter::SystemMove(float theX, float theY)
+void PvzpParticleEmitter::SystemMove(float theX, float theY)
 {
 	float aDeltaX = theX - mSystemCenter.x;
 	float aDeltaY = theY - mSystemCenter.y;
@@ -1096,101 +1096,101 @@ void TodParticleEmitter::SystemMove(float theX, float theY)
 	mSystemCenter.y = theY;
 	if (!TestBit(mEmitterDef->mParticleFlags, static_cast<int>(ParticleFlags::PARTICLE_PARTICLES_DONT_FOLLOW)))
 	{
-		for (TodListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; aNode = aNode->mNext)
+		for (PvzpListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; aNode = aNode->mNext)
 		{
-			TodParticle* aParticle = mParticleSystem->mParticleHolder->mParticles.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+			PvzpParticle* aParticle = mParticleSystem->mParticleHolder->mParticles.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 			aParticle->mPosition.x += aDeltaX;
 			aParticle->mPosition.y += aDeltaY;
 		}
 	}
 }
 
-void TodParticleSystem::OverrideColor(const char* theEmitterName, const Color& theColor)
+void PvzpParticleSystem::OverrideColor(const char* theEmitterName, const Color& theColor)
 {
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 	{
-		TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		if (theEmitterName == nullptr || strcasecmp(theEmitterName, aEmitter->mEmitterDef->mName) == 0)
 			aEmitter->mColorOverride = theColor;
 	}
 }
 
-void TodParticleSystem::OverrideExtraAdditiveDraw(const char* theEmitterName, bool theEnableExtraAdditiveDraw)
+void PvzpParticleSystem::OverrideExtraAdditiveDraw(const char* theEmitterName, bool theEnableExtraAdditiveDraw)
 {
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 	{
-		TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		if (theEmitterName == nullptr || strcasecmp(theEmitterName, aEmitter->mEmitterDef->mName) == 0)
 			aEmitter->mExtraAdditiveDrawOverride = theEnableExtraAdditiveDraw;
 	}
 }
 
 // GOTY @Patoke: 0x522CB0
-void TodParticleSystem::OverrideImage(const char* theEmitterName, Image* theImage)
+void PvzpParticleSystem::OverrideImage(const char* theEmitterName, Image* theImage)
 {
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 	{
-		TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		if (theEmitterName == nullptr || strcasecmp(theEmitterName, aEmitter->mEmitterDef->mName) == 0)
 			aEmitter->mImageOverride = theImage;
 	}
 }
 
-void TodParticleSystem::OverrideFrame(const char* theEmitterName, int theFrame)
+void PvzpParticleSystem::OverrideFrame(const char* theEmitterName, int theFrame)
 {
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 	{
-		TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		if (theEmitterName == nullptr || strcasecmp(theEmitterName, aEmitter->mEmitterDef->mName) == 0)
 			aEmitter->mFrameOverride = theFrame;
 	}
 }
 
-void TodParticleSystem::OverrideScale(const char* theEmitterName, float theScale)
+void PvzpParticleSystem::OverrideScale(const char* theEmitterName, float theScale)
 {
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 	{
-		TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		if (theEmitterName == nullptr || strcasecmp(theEmitterName, aEmitter->mEmitterDef->mName) == 0)
 			aEmitter->mScaleOverride = theScale;
 	}
 }
 
-TodParticleEmitter* TodParticleSystem::FindEmitterByName(const char* theEmitterName)
+PvzpParticleEmitter* PvzpParticleSystem::FindEmitterByName(const char* theEmitterName)
 {
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 	{
-		TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		if (strcasecmp(theEmitterName, aEmitter->mEmitterDef->mName) == 0)
 			return aEmitter;
 	}
 	return nullptr;
 }
 
-TodEmitterDefinition* TodParticleSystem::FindEmitterDefByName(const char* theEmitterName)
+PvzpEmitterDefinition* PvzpParticleSystem::FindEmitterDefByName(const char* theEmitterName)
 {
 	for (int i = 0; i < mParticleDef->mEmitterDefCount; i++)
 	{
-		TodEmitterDefinition* aEmitterDef = &mParticleDef->mEmitterDefs[i];
+		PvzpEmitterDefinition* aEmitterDef = &mParticleDef->mEmitterDefs[i];
 		if (strcasecmp(theEmitterName, aEmitterDef->mName) == 0)
 			return aEmitterDef;
 	}
 	return nullptr;
 }
 
-void TodParticleEmitter::CrossFadeEmitter(TodParticleEmitter* theToEmitter)
+void PvzpParticleEmitter::CrossFadeEmitter(PvzpParticleEmitter* theToEmitter)
 {
 	if (mEmitterCrossFadeCountDown > 0)
 	{
-		TodTrace("We don't support cross fading emitters more than one at a time\n");
+		PvzpTrace("We don't support cross fading emitters more than one at a time\n");
 		return;
 	}
 	if (!FloatTrackIsSet(theToEmitter->mEmitterDef->mCrossFadeDuration))
 	{
-		TodTrace("Can't cross fade to emitter that doesn't have CrossFadeDuration");
+		PvzpTrace("Can't cross fade to emitter that doesn't have CrossFadeDuration");
 		return;
 	}
-	TOD_ASSERT(theToEmitter != this);
+	PVZP_ASSERT(theToEmitter != this);
 
 	float aCrossFadeDurationInterp = Sexy::Rand(1.0f);
 	mEmitterCrossFadeCountDown = FloatTrackEvaluate(theToEmitter->mEmitterDef->mCrossFadeDuration, mSystemTimeValue, aCrossFadeDurationInterp);
@@ -1199,37 +1199,37 @@ void TodParticleEmitter::CrossFadeEmitter(TodParticleEmitter* theToEmitter)
 	if (!FloatTrackIsSet(theToEmitter->mEmitterDef->mSystemDuration))
 		theToEmitter->mSystemDuration = mEmitterCrossFadeCountDown;
 
-	for (TodListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleID>* aNode = mParticleList.mHead; aNode != nullptr; aNode = aNode->mNext)
 		CrossFadeParticle(mParticleSystem->mParticleHolder->mParticles.DataArrayGet(static_cast<unsigned int>(aNode->mValue)), theToEmitter);
 }
 
-void TodParticleSystem::CrossFade(const char* theEmitterName)
+void PvzpParticleSystem::CrossFade(const char* theEmitterName)
 {
-	TodEmitterDefinition* aEmitterDef = FindEmitterDefByName(theEmitterName);
+	PvzpEmitterDefinition* aEmitterDef = FindEmitterDefByName(theEmitterName);
 	if (aEmitterDef == nullptr)
 	{
-		TodTrace("Can't find cross fade emitter: %s\n", theEmitterName);
+		PvzpTrace("Can't find cross fade emitter: %s\n", theEmitterName);
 		return;
 	}
 	if (!FloatTrackIsSet(aEmitterDef->mCrossFadeDuration))
 	{
-		TodTrace("Can't cross fade without duration set: %s\n", theEmitterName);
+		PvzpTrace("Can't cross fade without duration set: %s\n", theEmitterName);
 		return;
 	}
 	if (mParticleHolder->mEmitters.mSize + mEmitterList.mSize > mParticleHolder->mEmitters.mMaxSize)
 	{
-		TodTrace("Too many emitters to cross fade\n");
+		PvzpTrace("Too many emitters to cross fade\n");
 		ParticleSystemDie();
 		return;
 	}
 
-	for (TodListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+	for (PvzpListNode<ParticleEmitterID>* aNode = mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
 	{
-		TodParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
+		PvzpParticleEmitter* aEmitter = mParticleHolder->mEmitters.DataArrayGet(static_cast<unsigned int>(aNode->mValue));
 		if (aEmitter->mEmitterDef != aEmitterDef)  // 不能交叉混合至同种类的发射器
 		{
-			TodParticleEmitter* aCrossFadeEmitter = mParticleHolder->mEmitters.DataArrayAlloc();
-			aCrossFadeEmitter->TodEmitterInitialize(aEmitter->mSystemCenter.x, aEmitter->mSystemCenter.y, this, aEmitterDef);
+			PvzpParticleEmitter* aCrossFadeEmitter = mParticleHolder->mEmitters.DataArrayAlloc();
+			aCrossFadeEmitter->PvzpEmitterInitialize(aEmitter->mSystemCenter.x, aEmitter->mSystemCenter.y, this, aEmitterDef);
 			ParticleEmitterID aCrossFadeEmitterID = static_cast<ParticleEmitterID>(mParticleHolder->mEmitters.DataArrayGetID(aCrossFadeEmitter));
 			mEmitterList.AddTail(aCrossFadeEmitterID);
 			aEmitter->CrossFadeEmitter(aCrossFadeEmitter);
@@ -1237,21 +1237,21 @@ void TodParticleSystem::CrossFade(const char* theEmitterName)
 	}
 }
 
-TodParticleHolder::~TodParticleHolder()
+PvzpParticleHolder::~PvzpParticleHolder()
 {
 	DisposeHolder();
 }
 
-void TodParticleHolder::InitializeHolder()
+void PvzpParticleHolder::InitializeHolder()
 {
 	mParticleSystems.DataArrayInitialize(1024U, "particle systems");
 	mEmitters.DataArrayInitialize(1024U, "emitters");
 	mParticles.DataArrayInitialize(1024U, "particles");
-	mParticleListNodeAllocator.Initialize(1024, sizeof(TodListNode<ParticleID>));
-	mEmitterListNodeAllocator.Initialize(1024, sizeof(TodListNode<ParticleEmitterID>));
+	mParticleListNodeAllocator.Initialize(1024, sizeof(PvzpListNode<ParticleID>));
+	mEmitterListNodeAllocator.Initialize(1024, sizeof(PvzpListNode<ParticleEmitterID>));
 }
 
-void TodParticleHolder::DisposeHolder()
+void PvzpParticleHolder::DisposeHolder()
 {
 	mParticleSystems.DataArrayDispose();
 	mEmitters.DataArrayDispose();
@@ -1260,32 +1260,32 @@ void TodParticleHolder::DisposeHolder()
 	mEmitterListNodeAllocator.FreeAll();
 }
 
-bool TodParticleHolder::IsOverLoaded()
+bool PvzpParticleHolder::IsOverLoaded()
 {
 	return mParticleSystems.mSize > MAX_PARTICLES_SIZE || mEmitters.mSize > MAX_PARTICLES_SIZE || mParticles.mSize > MAX_PARTICLES_SIZE;
 }
 
-TodParticleSystem* TodParticleHolder::AllocParticleSystemFromDef(float theX, float theY, int theRenderOrder, TodParticleDefinition* theDefinition, ParticleEffect theParticleEffect)
+PvzpParticleSystem* PvzpParticleHolder::AllocParticleSystemFromDef(float theX, float theY, int theRenderOrder, PvzpParticleDefinition* theDefinition, ParticleEffect theParticleEffect)
 {
 	if (mParticleSystems.mSize == mParticleSystems.mMaxSize)
 	{
-		TodTrace("Too many particle systems\n");
+		PvzpTrace("Too many particle systems\n");
 		return nullptr;
 	}
 	if (theDefinition->mEmitterDefCount + mEmitters.mSize > mEmitters.mMaxSize)
 	{
-		TodTrace("Too many particle emitters\n");
+		PvzpTrace("Too many particle emitters\n");
 		return nullptr;
 	}
 
-	TodParticleSystem* aTodParticle = mParticleSystems.DataArrayAlloc();
-	aTodParticle->mParticleHolder = this;
-	aTodParticle->TodParticleInitializeFromDef(theX, theY, theRenderOrder, theDefinition, theParticleEffect);
-	return aTodParticle;
+	PvzpParticleSystem* aPvzpParticle = mParticleSystems.DataArrayAlloc();
+	aPvzpParticle->mParticleHolder = this;
+	aPvzpParticle->PvzpParticleInitializeFromDef(theX, theY, theRenderOrder, theDefinition, theParticleEffect);
+	return aPvzpParticle;
 }
 
-TodParticleSystem* TodParticleHolder::AllocParticleSystem(float theX, float theY, int theRenderOrder, ParticleEffect theParticleEffect)
+PvzpParticleSystem* PvzpParticleHolder::AllocParticleSystem(float theX, float theY, int theRenderOrder, ParticleEffect theParticleEffect)
 {
-	TOD_ASSERT(static_cast<int>(theParticleEffect) >= 0 && static_cast<int>(theParticleEffect) < gParticleDefCount);
+	PVZP_ASSERT(static_cast<int>(theParticleEffect) >= 0 && static_cast<int>(theParticleEffect) < gParticleDefCount);
 	return AllocParticleSystemFromDef(theX, theY, theRenderOrder, &gParticleDefArray[theParticleEffect], theParticleEffect);
 }

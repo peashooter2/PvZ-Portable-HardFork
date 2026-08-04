@@ -70,10 +70,10 @@
 #define NAME5 BLEND0
 #endif
 
-#define funcname2additive(t0,t1,t2,t3,t4,t5) TodDrawTriangle_##t0##_##t1##_##t2##_##t3##_##t4##_##t5##_ADDITIVE
+#define funcname2additive(t0,t1,t2,t3,t4,t5) PvzpDrawTriangle_##t0##_##t1##_##t2##_##t3##_##t4##_##t5##_ADDITIVE
 #define funcname1additive(t0,t1,t2,t3,t4,t5) funcname2additive(t0,t1,t2,t3,t4,t5)
 #define funcnameadditive funcname1additive(NAME0,NAME1,NAME2,NAME3,NAME4,NAME5)
-#define funcname2(t0,t1,t2,t3,t4,t5) TodDrawTriangle_##t0##_##t1##_##t2##_##t3##_##t4##_##t5
+#define funcname2(t0,t1,t2,t3,t4,t5) PvzpDrawTriangle_##t0##_##t1##_##t2##_##t3##_##t4##_##t5
 #define funcname1(t0,t1,t2,t3,t4,t5) funcname2(t0,t1,t2,t3,t4,t5)
 #ifdef NAME_ADDITIVE
 #define funcname funcname1additive(NAME0,NAME1,NAME2,NAME3,NAME4,NAME5)
@@ -84,7 +84,7 @@ void	funcname(SWHelper::SWVertex* pVerts, void* pFrameBuffer, const unsigned int
 {
 	(void)globalDiffuse;
 #if !defined(NAME_ADDITIVE)
-	if (gTodTriangleDrawAdditive)
+	if (gPvzpTriangleDrawAdditive)
 	{
 #if (TRI0 == 1 || TRI0 == 2) && (defined(TEX_ALPHA) || defined(MOD_ARGB) || defined(GLOBAL_ARGB))
 		funcnameadditive(pVerts, pFrameBuffer, bytepitch, textureInfo, globalDiffuse);
