@@ -2549,14 +2549,15 @@ void LawnApp::CrazyDaveDie()
 	if (aCrazyDaveReanim)
 	{
 		aCrazyDaveReanim->ReanimationDie();
-
-		mCrazyDaveState = CrazyDaveState::CRAZY_DAVE_OFF;
-		mCrazyDaveReanimID = ReanimationID::REANIMATIONID_NULL;
-		mCrazyDaveMessageIndex = -1;
-		mCrazyDaveMessageText.clear();
-
-		CrazyDaveStopSound();
 	}
+
+	mCrazyDaveState = CrazyDaveState::CRAZY_DAVE_OFF;
+	mCrazyDaveReanimID = ReanimationID::REANIMATIONID_NULL;
+	mCrazyDaveBlinkReanimID = ReanimationID::REANIMATIONID_NULL;
+	mCrazyDaveMessageIndex = -1;
+	mCrazyDaveMessageText.clear();
+
+	CrazyDaveStopSound();
 }
 
 void LawnApp::CrazyDaveLeave()
@@ -3323,7 +3324,12 @@ void LawnApp::DoNeedRegisterDialog()
 
 void LawnApp::FinishModelessDialogs()
 {
-
+	// Kill dialogs bound to the board; a killed dialog counts as cancelled and deletion is deferred
+	KillDialog(Dialogs::DIALOG_CONFIRM_RESTART);
+	KillDialog(Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN);
+	KillDialog(Dialogs::DIALOG_PAUSED);
+	KillDialog(Dialogs::DIALOG_ALMANAC);  // may be mid-WaitForResult with the options dialog parked under it
+	KillNewOptionsDialog();
 }
 
 bool LawnApp::NeedRegister()
