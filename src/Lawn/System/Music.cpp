@@ -378,10 +378,6 @@ unsigned long Music::GetMusicOrder(MusicFile theMusicFile)
 	return ((SDLMusicInterface*)mApp->mMusicInterface)->GetMusicOrder((int)theMusicFile);
 }
 
-void Music::MusicResync()
-{
-}
-
 void Music::StartBurst()
 {
 	if (mMusicBurstState == MusicBurstState::MUSIC_BURST_OFF)
@@ -576,7 +572,6 @@ void Music::MusicUpdate()
 	if (mApp->mBoard == nullptr || !mApp->mBoard->mPaused)
 	{
 		UpdateMusicBurst();
-		MusicResync();
 	}
 }
 

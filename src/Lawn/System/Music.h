@@ -123,7 +123,6 @@ public:
 	Mix_Music*		GetMusicHandle(MusicFile theMusicFile);
 	void						StartGameMusic();
 	void				LoadSong(MusicFile theMusicFile, std::string_view theFileName);
-	void						MusicResync();
 	void						UpdateMusicBurst();
 	void				StartBurst();
 	void						GameMusicPause(bool thePause);
