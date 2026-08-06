@@ -1407,9 +1407,6 @@ void DefinitionFreeMap(const DefMap* theDefMap, void* theDefinition)
 		switch (aField->mFieldType)
 		{
 		case DefFieldType::DT_STRING:
-			// todo: removed this, caused a heap problem when closing the game, add back properly (causes memory leak)
-			//if (**(const char**)aVar != '\0')
-			//    delete[] *(const char**)aVar;
 			*(const char**)aVar = nullptr;
 			break;
 		case DefFieldType::DT_ARRAY:
