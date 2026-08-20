@@ -169,7 +169,7 @@ jobs:
     - name: Build SDL2 (static)
       if: steps.deps-cache.outputs.cache-hit != 'true'
       run: |
-        wget -q "https://lgithub.xyz/libsdl-org/SDL/releases/download/release-${SDL2_TAG}/SDL2-${SDL2_TAG}.tar.gz"
+        wget -q "https://github.com/libsdl-org/SDL/releases/download/release-${SDL2_TAG}/SDL2-${SDL2_TAG}.tar.gz"
         tar xf "SDL2-${SDL2_TAG}.tar.gz"
         # Use SDL's built-in iconv for wider glibc compatibility, including glibc installs without iconv
         cmake -G Ninja -B build-sdl2 \
