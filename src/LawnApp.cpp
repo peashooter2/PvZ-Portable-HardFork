@@ -1233,7 +1233,7 @@ void LawnApp::Init()
 	// these debug checks break the whole exe in release mode
 //#ifdef PVZ_DEBUG
 	PvzpAssertInitForApp();
-	PvzpLogLn("session id: %u", mSessionID);
+	PvzpLogLn("session id: %lld", static_cast<long long>(mSessionID));
 //#endif
 
 	if (!mResourceManager->ParseResourcesFile("properties/resources.xml"))
@@ -3248,7 +3248,7 @@ std::string LawnGetCurrentLevelName()
 	}
 	if (gLawnApp->IsAdventureMode())
 	{
-		return StrFormat("F%d", gLawnApp->GetStageString(gLawnApp->mBoard->mLevel).c_str());
+		return StrFormat("F%s", gLawnApp->GetStageString(gLawnApp->mBoard->mLevel).c_str());
 	}
 
 	return gLawnApp->GetCurrentChallengeDef().mChallengeName;
