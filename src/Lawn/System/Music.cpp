@@ -42,10 +42,12 @@ Music::Music()
 	mCurMusicFileHihats = MusicFile::MUSIC_FILE_NONE;
 	mBurstOverride = -1;
 	mMusicDrumsState = MusicDrumsState::MUSIC_DRUMS_OFF;
+	mDrumsStateCounter = 0;
 	mQueuedDrumTrackPackedOrder = -1;
 	mBaseBPM = 155;
 	mBaseModSpeed = 3;
 	mMusicBurstState = MusicBurstState::MUSIC_BURST_OFF;
+	mBurstStateCounter = 0;
 	mPauseOffset = 0;
 	mPauseOffsetDrums = 0;
 	mPaused = false;
