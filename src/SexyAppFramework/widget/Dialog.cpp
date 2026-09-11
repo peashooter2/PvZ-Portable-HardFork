@@ -40,15 +40,15 @@ std::string Sexy::DIALOG_NO_STRING				= "NO";
 std::string Sexy::DIALOG_OK_STRING				= "OK";
 std::string Sexy::DIALOG_CANCEL_STRING			= "CANCEL";
 
-static int gDialogColors[][3] =
-{{255, 255, 255},
-{255, 255, 0},
-{255, 255, 255},
-{255, 255, 255},
-{255, 255, 255},
-
-{80, 80, 80},
-{255, 255, 255}};
+static constexpr DialogColorScheme gDefaultDialogColors{
+	.mHeader = Color(255, 255, 255),
+	.mLines = Color(255, 255, 0),
+	.mFooter = Color(255, 255, 255),
+	.mButtonText = Color(255, 255, 255),
+	.mButtonTextHilite = Color(255, 255, 255),
+	.mBkg = Color(80, 80, 80),
+	.mOutline = Color(255, 255, 255),
+};
 
 Dialog::Dialog(Image* theComponentImage, Image* theButtonComponentImage, int theId, bool isModal, const std::string& theDialogHeader, const std::string& theDialogLines, const std::string& theDialogFooter, int theButtonMode)
 {
@@ -104,40 +104,68 @@ Dialog::Dialog(Image* theComponentImage, Image* theButtonComponentImage, int the
 	mDragging = false;
 	mPriority = 1;
 
+	DialogColorScheme aColors = gDefaultDialogColors;
 	if (theButtonComponentImage == nullptr)
 	{
-		gDialogColors[COLOR_BUTTON_TEXT][0] = 0;
-		gDialogColors[COLOR_BUTTON_TEXT][1] = 0;
-		gDialogColors[COLOR_BUTTON_TEXT][2] = 0;
-		gDialogColors[COLOR_BUTTON_TEXT_HILITE][0] = 0;
-		gDialogColors[COLOR_BUTTON_TEXT_HILITE][1] = 0;
-		gDialogColors[COLOR_BUTTON_TEXT_HILITE][2] = 0;
+		aColors.mButtonText = Color(0, 0, 0);
+		aColors.mButtonTextHilite = Color(0, 0, 0);
 	}
 
-	SetColors(gDialogColors, NUM_COLORS);
+	SetColors(aColors);
 }
 
 
 Dialog::~Dialog() = default;
 
-void Dialog::SetColor(int theIdx, const Color& theColor)
+void Dialog::SetColors(const DialogColorScheme& theColors)
 {
-	Widget::SetColor(theIdx, theColor);
+	mColors = theColors;
+	MarkDirty();
 
-	if (theIdx == COLOR_BUTTON_TEXT)
+	if (mYesButton != nullptr)
 	{
-		if (mYesButton != nullptr)
-			mYesButton->SetColor(DialogButton::COLOR_LABEL, theColor);
-		if (mNoButton != nullptr)
-			mNoButton->SetColor(DialogButton::COLOR_LABEL, theColor);
+		mYesButton->SetLabelColor(mColors.mButtonText);
+		mYesButton->SetLabelHiliteColor(mColors.mButtonTextHilite);
 	}
-	else if (theIdx == COLOR_BUTTON_TEXT_HILITE)
+	if (mNoButton != nullptr)
 	{
-		if (mYesButton != nullptr)
-			mYesButton->SetColor(DialogButton::COLOR_LABEL_HILITE, theColor);
-		if (mNoButton != nullptr)
-			mNoButton->SetColor(DialogButton::COLOR_LABEL_HILITE, theColor);
+		mNoButton->SetLabelColor(mColors.mButtonText);
+		mNoButton->SetLabelHiliteColor(mColors.mButtonTextHilite);
 	}
+}
+
+void Dialog::SetHeaderColor(const Color& theColor)
+{
+	mColors.mHeader = theColor;
+	MarkDirty();
+}
+
+void Dialog::SetLinesColor(const Color& theColor)
+{
+	mColors.mLines = theColor;
+	MarkDirty();
+}
+
+void Dialog::SetButtonTextColor(const Color& theColor)
+{
+	mColors.mButtonText = theColor;
+	MarkDirty();
+
+	if (mYesButton != nullptr)
+		mYesButton->SetLabelColor(theColor);
+	if (mNoButton != nullptr)
+		mNoButton->SetLabelColor(theColor);
+}
+
+void Dialog::SetButtonTextHiliteColor(const Color& theColor)
+{
+	mColors.mButtonTextHilite = theColor;
+	MarkDirty();
+
+	if (mYesButton != nullptr)
+		mYesButton->SetLabelHiliteColor(theColor);
+	if (mNoButton != nullptr)
+		mNoButton->SetLabelHiliteColor(theColor);
 }
 
 void Dialog::SetButtonFont(_Font* theFont)
@@ -219,9 +247,9 @@ void Dialog::Draw(Graphics* g)
 	}
 	else
 	{
-		g->SetColor(GetColor(COLOR_OUTLINE, Color(gDialogColors[COLOR_OUTLINE])));
+		g->SetColor(mColors.mOutline);
 		g->DrawRect(12, 12, mWidth - 12*2 - 1, mHeight - 12*2 - 1);
-		g->SetColor(GetColor(COLOR_BKG, Color(gDialogColors[COLOR_BKG])));
+		g->SetColor(mColors.mBkg);
 		g->FillRect(12+1, 12+1, mWidth - 12*2 - 2, mHeight - 12*2 - 2);
 
 		g->SetColor(Color(0, 0, 0, 128));
@@ -236,7 +264,7 @@ void Dialog::Draw(Graphics* g)
 		aCurY += mHeaderFont->GetAscent() - mHeaderFont->GetAscentPadding();
 
 		g->SetFont(mHeaderFont.get());
-		g->SetColor(mColors[COLOR_HEADER]);
+		g->SetColor(mColors.mHeader);
 		WriteCenteredLine(g, aCurY, mDialogHeader);
 
 		aCurY += mHeaderFont->GetHeight() - mHeaderFont->GetAscent();
@@ -245,7 +273,7 @@ void Dialog::Draw(Graphics* g)
 	}
 
 	g->SetFont(mLinesFont.get());
-	g->SetColor(mColors[COLOR_LINES]);
+	g->SetColor(mColors.mLines);
 
 	Rect aRect(mBackgroundInsets.mLeft+mContentInsets.mLeft+2, aCurY, mWidth-mContentInsets.mLeft-mContentInsets.mRight-mBackgroundInsets.mLeft-mBackgroundInsets.mRight-4, 0);
 	aCurY += WriteWordWrapped(g, aRect, mDialogLines, mLinesFont->GetLineSpacing() + mLineSpacingOffset, mTextAlign);
@@ -256,7 +284,7 @@ void Dialog::Draw(Graphics* g)
 		aCurY += mHeaderFont->GetLineSpacing();
 
 		g->SetFont(mHeaderFont.get());
-		g->SetColor(mColors[COLOR_FOOTER]);
+		g->SetColor(mColors.mFooter);
 		WriteCenteredLine(g, aCurY, mDialogFooter);
 	}
 }
