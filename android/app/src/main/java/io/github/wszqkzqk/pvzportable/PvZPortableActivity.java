@@ -141,7 +141,6 @@ public class PvZPortableActivity extends SDLActivity {
         }
     }
 
-    
     @Override
     public boolean dispatchKeyEvent(android.view.KeyEvent event) {
         int keyCode = event.getKeyCode();
@@ -170,10 +169,7 @@ public class PvZPortableActivity extends SDLActivity {
 
     @Override
     protected String[] getLibraries() {
-        return new String[]{
-            "SDL2",
-            "main"
-        };
+        return new String[]{"main"};
     }
 
     @Override
