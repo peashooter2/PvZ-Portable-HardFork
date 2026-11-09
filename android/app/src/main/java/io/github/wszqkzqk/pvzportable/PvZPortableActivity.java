@@ -154,7 +154,7 @@ public class PvZPortableActivity extends SDLActivity {
             // 检查是否是双击
             if (keyCode == lastVolumeKeyCode && (currentTime - lastVolumeKeyTime) < DOUBLE_CLICK_TIMEOUT) {
                 // 双击音量键，打开输入键盘
-                SDLActivity.showTextInput(0, 0, 0, 0);
+                SDLActivity.showTextInput(0, 0, 0, 0, 0);
                 return true; // 消费事件，防止重复处理
             }
             
